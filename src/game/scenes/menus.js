@@ -198,9 +198,10 @@ export class PracticeScene extends Scene {
   }
   draw(ctx) {
     backdrop(ctx, this.game.time);
-    card(ctx, W / 2 - 110, 30, 220, 110, 'PRACTICE');
+    const skillY = 56 + 14 * (EVENTS.length + 1) + 2; // below the last menu row (BACK)
+    card(ctx, W / 2 - 110, 30, 220, skillY - 30 + 16, 'PRACTICE');
     this.menu.draw(ctx, W / 2, 56, 14);
     const ev = EVENTS[this.menu.sel];
-    if (ev) text(ctx, `SKILL: ${ev.skill}`, W / 2, 124, 'cyan.2', { align: 'center' });
+    if (ev) text(ctx, `SKILL: ${ev.skill}`, W / 2, skillY, 'cyan.2', { align: 'center' });
   }
 }

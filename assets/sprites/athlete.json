@@ -727,9 +727,119 @@
    "duration": 200
   },
   {
-   "filename": "athlete lift_ready_0",
+   "filename": "athlete arch_draw_0",
    "frame": {
     "x": 40,
+    "y": 256,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 150
+  },
+  {
+   "filename": "athlete arch_draw_1",
+   "frame": {
+    "x": 80,
+    "y": 256,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 300
+  },
+  {
+   "filename": "athlete arch_draw_2",
+   "frame": {
+    "x": 120,
+    "y": 256,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 450
+  },
+  {
+   "filename": "athlete arch_hold_0",
+   "frame": {
+    "x": 160,
+    "y": 256,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete arch_loose_0",
+   "frame": {
+    "x": 200,
+    "y": 256,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete lift_ready_0",
+   "frame": {
+    "x": 240,
     "y": 256,
     "w": 40,
     "h": 64
@@ -751,7 +861,7 @@
   {
    "filename": "athlete lift_pull_0",
    "frame": {
-    "x": 80,
+    "x": 280,
     "y": 256,
     "w": 40,
     "h": 64
@@ -773,8 +883,8 @@
   {
    "filename": "athlete lift_pull_1",
    "frame": {
-    "x": 120,
-    "y": 256,
+    "x": 0,
+    "y": 320,
     "w": 40,
     "h": 64
    },
@@ -795,8 +905,8 @@
   {
    "filename": "athlete lift_rack_0",
    "frame": {
-    "x": 160,
-    "y": 256,
+    "x": 40,
+    "y": 320,
     "w": 40,
     "h": 64
    },
@@ -817,8 +927,8 @@
   {
    "filename": "athlete lift_dip_0",
    "frame": {
-    "x": 200,
-    "y": 256,
+    "x": 80,
+    "y": 320,
     "w": 40,
     "h": 64
    },
@@ -839,8 +949,8 @@
   {
    "filename": "athlete lift_jerk_0",
    "frame": {
-    "x": 240,
-    "y": 256,
+    "x": 120,
+    "y": 320,
     "w": 40,
     "h": 64
    },
@@ -861,8 +971,8 @@
   {
    "filename": "athlete lift_hold_0",
    "frame": {
-    "x": 280,
-    "y": 256,
+    "x": 160,
+    "y": 320,
     "w": 40,
     "h": 64
    },
@@ -883,7 +993,7 @@
   {
    "filename": "athlete lift_wobble_l_0",
    "frame": {
-    "x": 0,
+    "x": 200,
     "y": 320,
     "w": 40,
     "h": 64
@@ -905,7 +1015,7 @@
   {
    "filename": "athlete lift_wobble_r_0",
    "frame": {
-    "x": 40,
+    "x": 240,
     "y": 320,
     "w": 40,
     "h": 64
@@ -927,7 +1037,7 @@
   {
    "filename": "athlete lift_drop_0",
    "frame": {
-    "x": 80,
+    "x": 280,
     "y": 320,
     "w": 40,
     "h": 64
@@ -949,8 +1059,8 @@
   {
    "filename": "athlete celebrate_0",
    "frame": {
-    "x": 120,
-    "y": 320,
+    "x": 0,
+    "y": 384,
     "w": 40,
     "h": 64
    },
@@ -971,8 +1081,8 @@
   {
    "filename": "athlete celebrate_1",
    "frame": {
-    "x": 160,
-    "y": 320,
+    "x": 40,
+    "y": 384,
     "w": 40,
     "h": 64
    },
@@ -993,8 +1103,8 @@
   {
    "filename": "athlete dejected_0",
    "frame": {
-    "x": 200,
-    "y": 320,
+    "x": 80,
+    "y": 384,
     "w": 40,
     "h": 64
    },
@@ -1020,7 +1130,7 @@
   "format": "RGBA8888",
   "size": {
    "w": 320,
-   "h": 384
+   "h": 448
   },
   "scale": "1",
   "frameTags": [
@@ -1067,69 +1177,87 @@
     "direction": "forward"
    },
    {
-    "name": "lift_ready",
+    "name": "arch_draw",
     "from": 33,
-    "to": 33,
-    "direction": "forward"
-   },
-   {
-    "name": "lift_pull",
-    "from": 34,
     "to": 35,
     "direction": "forward"
    },
    {
-    "name": "lift_rack",
+    "name": "arch_hold",
     "from": 36,
     "to": 36,
     "direction": "forward"
    },
    {
-    "name": "lift_dip",
+    "name": "arch_loose",
     "from": 37,
     "to": 37,
     "direction": "forward"
    },
    {
-    "name": "lift_jerk",
+    "name": "lift_ready",
     "from": 38,
     "to": 38,
     "direction": "forward"
    },
    {
-    "name": "lift_hold",
+    "name": "lift_pull",
     "from": 39,
-    "to": 39,
-    "direction": "forward"
-   },
-   {
-    "name": "lift_wobble_l",
-    "from": 40,
     "to": 40,
     "direction": "forward"
    },
    {
-    "name": "lift_wobble_r",
+    "name": "lift_rack",
     "from": 41,
     "to": 41,
     "direction": "forward"
    },
    {
-    "name": "lift_drop",
+    "name": "lift_dip",
     "from": 42,
     "to": 42,
     "direction": "forward"
    },
    {
-    "name": "celebrate",
+    "name": "lift_jerk",
     "from": 43,
+    "to": 43,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_hold",
+    "from": 44,
     "to": 44,
     "direction": "forward"
    },
    {
-    "name": "dejected",
+    "name": "lift_wobble_l",
     "from": 45,
     "to": 45,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_wobble_r",
+    "from": 46,
+    "to": 46,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_drop",
+    "from": 47,
+    "to": 47,
+    "direction": "forward"
+   },
+   {
+    "name": "celebrate",
+    "from": 48,
+    "to": 49,
+    "direction": "forward"
+   },
+   {
+    "name": "dejected",
+    "from": 50,
+    "to": 50,
     "direction": "forward"
    }
   ],
@@ -1735,6 +1863,96 @@
     },
     "33": {
      "handF": [
+      35,
+      35
+     ],
+     "handB": [
+      35,
+      33
+     ],
+     "head": [
+      19,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ]
+    },
+    "34": {
+     "handF": [
+      36,
+      31
+     ],
+     "handB": [
+      24,
+      37
+     ],
+     "head": [
+      19,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ]
+    },
+    "35": {
+     "handF": [
+      36,
+      31
+     ],
+     "handB": [
+      20,
+      32
+     ],
+     "head": [
+      19,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ]
+    },
+    "36": {
+     "handF": [
+      36,
+      31
+     ],
+     "handB": [
+      20,
+      32
+     ],
+     "head": [
+      19,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ]
+    },
+    "37": {
+     "handF": [
+      36,
+      31
+     ],
+     "handB": [
+      17,
+      34
+     ],
+     "head": [
+      19,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ]
+    },
+    "38": {
+     "handF": [
       23,
       59
      ],
@@ -1751,7 +1969,7 @@
       50
      ]
     },
-    "34": {
+    "39": {
      "handF": [
       23,
       53
@@ -1769,7 +1987,7 @@
       46
      ]
     },
-    "35": {
+    "40": {
      "handF": [
       22,
       48
@@ -1787,7 +2005,7 @@
       42
      ]
     },
-    "36": {
+    "41": {
      "handF": [
       21,
       28
@@ -1805,7 +2023,7 @@
       43
      ]
     },
-    "37": {
+    "42": {
      "handF": [
       21,
       30
@@ -1823,7 +2041,7 @@
       45
      ]
     },
-    "38": {
+    "43": {
      "handF": [
       20,
       20
@@ -1841,7 +2059,7 @@
       46
      ]
     },
-    "39": {
+    "44": {
      "handF": [
       21,
       15
@@ -1859,7 +2077,7 @@
       41
      ]
     },
-    "40": {
+    "45": {
      "handF": [
       20,
       15
@@ -1877,7 +2095,7 @@
       41
      ]
     },
-    "41": {
+    "46": {
      "handF": [
       21,
       15
@@ -1895,7 +2113,7 @@
       41
      ]
     },
-    "42": {
+    "47": {
      "handF": [
       38,
       38
@@ -1913,7 +2131,7 @@
       44
      ]
     },
-    "43": {
+    "48": {
      "handF": [
       23,
       15
@@ -1931,7 +2149,7 @@
       41
      ]
     },
-    "44": {
+    "49": {
      "handF": [
       32,
       21
@@ -1949,7 +2167,7 @@
       41
      ]
     },
-    "45": {
+    "50": {
      "handF": [
       26,
       48

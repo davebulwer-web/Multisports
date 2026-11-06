@@ -169,6 +169,16 @@ const LIFT = {
   drop:   { hip: [19, 44], torso: 18, legF: [20, 30], legB: [4, 26], armF: [70, 10], armB: [60, 10], footFlatF: true, footFlatB: true, headTilt: 2 },
 };
 
+// Archery: bow hand (armF) pushes out at the target, string hand (armB)
+// draws back to the chin. Side-on stance, feet shoulder width.
+const ARCH_STANCE = { hip: [20, 41], torso: -2, legF: [10, 2], legB: [-10, 2], footFlatF: true, footFlatB: true };
+const ARCH = {
+  raise: { ...ARCH_STANCE, armF: [70, 6], armB: [62, 40] },
+  half:  { ...ARCH_STANCE, armF: [90, 0], armB: [-30, 125] },
+  full:  { ...ARCH_STANCE, armF: [90, 0], armB: [-92, 172] },
+  loose: { ...ARCH_STANCE, armF: [88, 0], armB: [-112, 150] },
+};
+
 const JAV = {
   withdraw: { hip: [20, 42], torso: -8, legF: [36, 10], legB: [-24, 20], armF: [-112, 6], armB: [70, 40] },
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
@@ -188,6 +198,9 @@ export function animations() {
     { tag: 'jog', frames: run(8, 110, 6) },
     { tag: 'jav_run', frames: run(8, 80, 8, JAV_CARRY) },
     { tag: 'jav_throw', frames: [[JAV.withdraw, 90], [JAV.block, 90], [lerpPose(JAV.block, JAV.release, 0.5), 60], [JAV.release, 90], [JAV.follow, 200]] },
+    { tag: 'arch_draw', frames: [[ARCH.raise, 150], [ARCH.half, 300], [ARCH.full, 450]] },
+    { tag: 'arch_hold', frames: [[ARCH.full, 500]] },
+    { tag: 'arch_loose', frames: [[ARCH.loose, 500]] },
     { tag: 'lift_ready', frames: [[LIFT.ready, 500]] },
     { tag: 'lift_pull', frames: [[lerpPose(LIFT.ready, LIFT.pull, 0.5), 100], [LIFT.pull, 100]] },
     { tag: 'lift_rack', frames: [[LIFT.rack, 400]] },

@@ -31,6 +31,7 @@ npm start          # serves the folder on http://localhost:8080
 | **100m Sprint** | Rhythm | Alternate ← → on the beat. The beat speeds up as you do. Early presses overstride, the same foot twice slips, and going before the gun twice disqualifies you. Mashing is slower than keeping the rhythm. |
 | **Javelin** | Power + angle | Hold Space to run up and let go to plant. You slide on after planting, so plant just short of the line. Then lock the release angle; around 33–37° is best. Wind affects the throw, and a flat landing scores no mark. Three throws. |
 | **Weightlifting** | Timing + balance | Pick the weight, hit the pull gauge, then the drive gauge. After that, keep the bar centred with ← → for 3 seconds. Two of the three judges' lights make a good lift. Heavier bars give tighter windows and more wobble. |
+| **Archery** | Fine control | Hold Space to draw the bow, then keep holding while you steady the sight. It sways with your breathing and has momentum, so nudge it with the arrow keys rather than yanking it. Aim off into the wind and let go to shoot. Hold too long and your arms start to shake. Six arrows, scored 10 (gold) to 1, out of 60. |
 
 ### Competition
 
@@ -52,7 +53,7 @@ src/
   engine/             loop, input (ms-accurate press timestamps), font, audio synth, sprites, gfx helpers
   art/                palette, raster, pose rig (athlete.js), props, sheet packer  (no DOM; shared with Node)
   game/
-    sim/              pure event models (sprint, javelin, lift), scoring, rng (unit tested)
+    sim/              pure event models (sprint, javelin, lift, archery), scoring, rng (unit tested)
     events/           one Scene per event + registry (events/index.js)
     scenes/           title, setup, practice, cards/results/standings/podium
     competition.js    turn order, CPU results, points
