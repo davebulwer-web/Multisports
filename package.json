@@ -1,0 +1,13 @@
+{
+  "name": "multisports",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A browser multi-event sports game in the spirit of 80s home-computer sports compilations and TV all-rounder contests.",
+  "type": "module",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "export-sprites": "node tools/export-sprites.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": { "node": ">=18" }
+}

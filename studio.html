@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sprite Studio</title>
+  <style>
+    :root {
+      --bg: #1c1a22; --panel: #2a2733; --ink: #e8e6ef; --muted: #a09cb0; --accent: #e6ef9f; --line: #444;
+      --stage: #5e8ed0;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 ui-monospace, Menlo, Consolas, monospace; }
+    header { padding: 12px 16px; border-bottom: 1px solid var(--line); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    header h1 { font-size: 16px; margin: 0; color: var(--accent); letter-spacing: 1px; }
+    header a { color: var(--muted); }
+    main { display: grid; grid-template-columns: minmax(260px, 320px) 1fr; gap: 16px; padding: 16px; }
+    @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+    section { background: var(--panel); border: 1px solid var(--line); padding: 12px; border-radius: 4px; min-width: 0; }
+    h2 { font-size: 13px; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; letter-spacing: 1px; }
+    label { display: block; margin: 8px 0 4px; color: var(--muted); }
+    select, button, input[type=file] { font: inherit; width: 100%; }
+    select, button { background: #36323f; color: var(--ink); border: 1px solid #555; padding: 6px 8px; border-radius: 3px; }
+    button { cursor: pointer; margin-top: 6px; }
+    button:hover { border-color: var(--accent); }
+    canvas { image-rendering: pixelated; background: var(--stage); display: block; max-width: 100%; }
+    .row { display: flex; gap: 8px; } .row > * { flex: 1; }
+    #tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    #tags button { width: auto; margin: 0; padding: 3px 8px; }
+    #tags button.on { background: var(--accent); color: #000; }
+    .sheetwrap { overflow: auto; max-height: 60vh; border: 1px solid var(--line); }
+    .note { color: var(--muted); font-size: 12px; }
+    code { color: var(--accent); }
+    #status { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MULTISPORTS SPRITE STUDIO</h1>
+    <a href="index.html">&larr; back to the game</a>
+    <span id="status"></span>
+  </header>
+  <main>
+    <div>
+      <section>
+        <h2>Sheet</h2>
+        <select id="sheet"></select>
+        <p class="note" id="source"></p>
+        <div id="kitrow">
+          <div class="row">
+            <div><label for="kit">Kit</label><select id="kit"></select></div>
+            <div><label for="skin">Skin</label><select id="skin"></select></div>
+          </div>
+        </div>
+        <label for="zoom">Preview zoom</label>
+        <select id="zoom"><option>2</option><option>3</option><option selected>4</option><option>6</option><option>8</option></select>
+      </section>
+      <section style="margin-top:16px">
+        <h2>Export</h2>
+        <p class="note">Downloads come from the built-in pose rig. Paint over the PNG, keep the frame grid, and drop both files into <code>assets/sprites/</code>.</p>
+        <button id="dl-png">Download rig PNG</button>
+        <button id="dl-json">Download rig JSON</button>
+        <button id="dl-pal">Download palette (.gpl)</button>
+      </section>
+      <section style="margin-top:16px">
+        <h2>Try your own art</h2>
+        <p class="note">Preview an edited sheet here before copying it into the game. Nothing is uploaded.</p>
+        <label for="up-png">PNG</label><input type="file" id="up-png" accept="image/png">
+        <label for="up-json">JSON (optional; defaults to the current layout)</label><input type="file" id="up-json" accept="application/json,.json">
+        <button id="up-reset">Back to the game's sheet</button>
+      </section>
+    </div>
+    <div>
+      <section>
+        <h2>Animations</h2>
+        <div id="tags"></div>
+        <div class="row" style="margin-top:12px; align-items:flex-start">
+          <div><canvas id="anim"></canvas><p class="note" id="frameinfo"></p></div>
+        </div>
+      </section>
+      <section style="margin-top:16px">
+        <h2>Sheet layout</h2>
+        <p class="note">Frames are on a fixed grid; tags are listed in the JSON's <code>meta.frameTags</code>. Yellow outline = frames of the selected animation. Cross = pivot (feet).</p>
+        <div class="sheetwrap"><canvas id="sheetview"></canvas></div>
+      </section>
+    </div>
+  </main>
+  <script type="module">
+    import { SHEETS } from './src/art/index.js';
+    import { KITS, SKINS, RAMPS, hexToRgb, recolourMap } from './src/art/palette.js';
+    import { loadSheet, bakeSheet, Sheet, Anim } from './src/engine/sprites.js';
+
+    const $ = (id) => document.getElementById(id);
+    const state = { name: 'athlete', base: null, view: null, tag: null, anim: null, zoom: 4 };
+
+    for (const n of Object.keys(SHEETS)) $('sheet').add(new Option(n, n));
+    KITS.forEach((k, i) => $('kit').add(new Option(k.name, i)));
+    SKINS.forEach((k, i) => $('skin').add(new Option(k.name, i)));
+    $('skin').value = 1;
+
+    function download(name, blob) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    async function load(name) {
+      state.name = name;
+      state.base = await loadSheet(name);
+      $('source').textContent = state.base.source === 'file'
+        ? `Loaded from assets/sprites/${name}.png`
+        : 'No PNG in assets/sprites, so this is baked from the rig';
+      refresh();
+    }
+
+    function refresh() {
+      const rec = SHEETS[state.name]?.recolour;
+      $('kitrow').style.display = rec ? '' : 'none';
+      state.view = rec ? state.base.recolour(recolourMap(+$('kit').value, +$('skin').value)) : state.base;
+      const tags = Object.keys(state.view.tags);
+      if (!tags.includes(state.tag)) state.tag = tags[0];
+      $('tags').innerHTML = '';
+      for (const t of tags) {
+        const b = document.createElement('button');
+        b.textContent = t;
+        b.className = t === state.tag ? 'on' : '';
+        b.onclick = () => { state.tag = t; refresh(); };
+        $('tags').append(b);
+      }
+      state.anim = new Anim(state.view, state.tag);
+      drawSheet();
+    }
+
+    function drawSheet() {
+      const s = state.view, z = 2;
+      const c = $('sheetview');
+      c.width = s.image.width * z;
+      c.height = s.image.height * z;
+      const x = c.getContext('2d');
+      x.imageSmoothingEnabled = false;
+      x.drawImage(s.image, 0, 0, c.width, c.height);
+      const t = s.tags[state.tag];
+      s.frames.forEach((f, i) => {
+        const on = t && i >= t.from && i <= t.to;
+        x.strokeStyle = on ? '#e6ef9f' : 'rgba(0,0,0,0.25)';
+        x.lineWidth = on ? 2 : 1;
+        x.strokeRect(f.x * z + 0.5, f.y * z + 0.5, f.w * z - 1, f.h * z - 1);
+        x.fillStyle = '#ff8a7a';
+        const px = (f.x + s.pivot.x) * z, py = (f.y + s.pivot.y) * z;
+        x.fillRect(px - 3, py, 7, 1); x.fillRect(px, py - 3, 1, 7);
+      });
+    }
+
+    let last = performance.now();
+    function tick(now) {
+      const a = state.anim;
+      if (a) {
+        a.update(now - last);
+        const s = state.view, f = s.frames[a.index], z = state.zoom;
+        const c = $('anim');
+        if (c.width !== f.w * z) { c.width = f.w * z; c.height = f.h * z; }
+        const x = c.getContext('2d');
+        x.imageSmoothingEnabled = false;
+        x.clearRect(0, 0, c.width, c.height);
+        x.fillStyle = '#2f7a33';
+        x.fillRect(0, (s.pivot.y + 1) * z, c.width, c.height);
+        x.drawImage(s.image, f.x, f.y, f.w, f.h, 0, 0, f.w * z, f.h * z);
+        $('frameinfo').textContent = `${state.tag}  frame ${a.index - a.t.from + 1}/${a.t.to - a.t.from + 1}  (sheet #${a.index}, ${f.duration}ms)`;
+      }
+      last = now;
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    $('sheet').onchange = (e) => load(e.target.value);
+    $('kit').onchange = $('skin').onchange = refresh;
+    $('zoom').onchange = (e) => { state.zoom = +e.target.value; $('anim').width = 0; };
+
+    async function rigCanvas() {
+      const s = bakeSheet(state.name);
+      return { s, blob: await new Promise((r) => s.image.toBlob(r, 'image/png')) };
+    }
+    $('dl-png').onclick = async () => download(`${state.name}.png`, (await rigCanvas()).blob);
+    $('dl-json').onclick = () => {
+      const { json } = SHEETS[state.name].bake();
+      download(`${state.name}.json`, new Blob([JSON.stringify(json, null, 1)], { type: 'application/json' }));
+    };
+    $('dl-pal').onclick = () => {
+      const lines = ['GIMP Palette', 'Name: Multisports', 'Columns: 8', '#'];
+      for (const [ramp, list] of Object.entries(RAMPS))
+        list.forEach((h, i) => { const [r, g, b] = hexToRgb(h); lines.push(`${r} ${g} ${b}\t${ramp}.${i}`); });
+      download('multisports.gpl', new Blob([lines.join('\n') + '\n'], { type: 'text/plain' }));
+    };
+
+    async function tryUpload() {
+      const png = $('up-png').files[0];
+      if (!png) return;
+      const jf = $('up-json').files[0];
+      const json = jf ? JSON.parse(await jf.text()) : state.base.json;
+      const img = new Image();
+      img.src = URL.createObjectURL(png);
+      await img.decode();
+      const s = new Sheet(state.name, img, json);
+      if (!s.anchors) s.anchors = state.base.anchors;
+      state.base = s;
+      $('source').textContent = `Previewing ${png.name}${jf ? ' + ' + jf.name : ''} (local only)`;
+      refresh();
+    }
+    $('up-png').onchange = $('up-json').onchange = () => tryUpload().catch((e) => { $('status').textContent = e.message; });
+    $('up-reset').onclick = () => { $('up-png').value = ''; $('up-json').value = ''; load(state.name); };
+
+    load('athlete');
+  </script>
+</body>
+</html>

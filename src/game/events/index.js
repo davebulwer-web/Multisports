@@ -1,0 +1,65 @@
+// Event registry. Add a new event by writing a Scene + sim module and
+// listing it here; menus, competition flow and scoring pick it up.
+import { SprintScene } from './sprint.js';
+import { JavelinScene } from './javelin.js';
+import { WeightliftingScene } from './weightlifting.js';
+import { cpuSprint } from '../sim/sprint.js';
+import { cpuJavelin } from '../sim/javelin.js';
+import { cpuLift } from '../sim/lift.js';
+import { fmtTime, fmtDist, fmtKg } from '../hud.js';
+
+export const EVENTS = [
+  {
+    id: 'sprint',
+    name: '100M SPRINT',
+    skill: 'RHYTHM',
+    better: 'lower',
+    format: fmtTime,
+    cpu: cpuSprint,
+    Scene: SprintScene,
+    baseRecord: 10.6,
+    help: [
+      'WAIT FOR THE GUN. GO EARLY TWICE AND YOU ARE OUT.',
+      'STRIDE WITH [ AND ] IN TURN.',
+      'PRESS ON THE BEAT: WATCH THE BAR, LISTEN FOR THE TICK.',
+      'THE BEAT GETS FASTER AS YOU DO.',
+      'RUSHING OR USING THE SAME FOOT TWICE SLOWS YOU.',
+    ],
+  },
+  {
+    id: 'javelin',
+    name: 'JAVELIN',
+    skill: 'POWER + ANGLE',
+    better: 'higher',
+    format: fmtDist,
+    cpu: cpuJavelin,
+    Scene: JavelinScene,
+    baseRecord: 84,
+    help: [
+      'HOLD SPACE TO RUN UP. MORE SPEED = MORE DISTANCE.',
+      'LET GO TO PLANT. YOU SLIDE ON A LITTLE AFTERWARDS,',
+      'SO PLANT JUST SHORT OF THE RED LINE.',
+      'PRESS SPACE AGAIN TO SET THE RELEASE ANGLE.',
+      'TOO FLAT AND THE TIP WON\'T LAND FIRST. 3 THROWS.',
+    ],
+  },
+  {
+    id: 'lift',
+    name: 'WEIGHTLIFTING',
+    skill: 'TIMING + BALANCE',
+    better: 'higher',
+    format: fmtKg,
+    cpu: cpuLift,
+    Scene: WeightliftingScene,
+    baseRecord: 215,
+    help: [
+      'PICK A WEIGHT. HEAVIER = TIGHTER WINDOWS.',
+      'CLEAN: PRESS SPACE AT THE TOP OF THE PULL.',
+      'JERK: PRESS SPACE IN THE DRIVE ZONE.',
+      'HOLD: USE [ ] TO KEEP THE BAR CENTRED FOR 3 SECONDS.',
+      '2 OF 3 WHITE LIGHTS IS A GOOD LIFT. 3 ATTEMPTS.',
+    ],
+  },
+];
+
+export const eventById = (id) => EVENTS.find((e) => e.id === id);
