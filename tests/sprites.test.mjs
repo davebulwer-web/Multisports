@@ -20,7 +20,7 @@ test('every sheet bakes with Aseprite-style JSON', () => {
 test('athlete sheet has the animations the events use', () => {
   const { json } = SHEETS.athlete.bake();
   const tags = json.meta.frameTags.map((t) => t.name);
-  for (const t of ['idle', 'set', 'run', 'stumble', 'jog', 'jav_run', 'jav_throw', 'arch_draw', 'arch_hold', 'arch_loose', 'lift_ready', 'lift_pull', 'lift_rack',
+  for (const t of ['idle', 'set', 'run', 'stumble', 'jog', 'jav_run', 'jav_throw', 'arch_draw', 'arch_hold', 'arch_loose', 'clay_ready', 'clay_mount', 'lift_ready', 'lift_pull', 'lift_rack',
     'lift_dip', 'lift_jerk', 'lift_hold', 'lift_wobble_l', 'lift_wobble_r', 'lift_drop', 'celebrate', 'dejected']) {
     assert.ok(tags.includes(t), `missing ${t}`);
   }

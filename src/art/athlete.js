@@ -179,6 +179,13 @@ const ARCH = {
   loose: { ...ARCH_STANCE, armF: [88, 0], armB: [-112, 150] },
 };
 
+// Clay shooting: gun held low and ready, then mounted to the shoulder.
+// The scene draws the gun itself from handF, pointing at the sight.
+const CLAY_POSE = {
+  ready: { hip: [20, 41], torso: 4, legF: [12, 4], legB: [-8, 2], armF: [52, 70], armB: [30, 80], footFlatF: true, footFlatB: true },
+  mount: { hip: [20, 41], torso: 8, legF: [14, 6], legB: [-8, 2], armF: [112, 40], armB: [84, 100], footFlatF: true, footFlatB: true },
+};
+
 const JAV = {
   withdraw: { hip: [20, 42], torso: -8, legF: [36, 10], legB: [-24, 20], armF: [-112, 6], armB: [70, 40] },
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
@@ -201,6 +208,8 @@ export function animations() {
     { tag: 'arch_draw', frames: [[ARCH.raise, 150], [ARCH.half, 300], [ARCH.full, 450]] },
     { tag: 'arch_hold', frames: [[ARCH.full, 500]] },
     { tag: 'arch_loose', frames: [[ARCH.loose, 500]] },
+    { tag: 'clay_ready', frames: [[CLAY_POSE.ready, 500]] },
+    { tag: 'clay_mount', frames: [[CLAY_POSE.mount, 500]] },
     { tag: 'lift_ready', frames: [[LIFT.ready, 500]] },
     { tag: 'lift_pull', frames: [[lerpPose(LIFT.ready, LIFT.pull, 0.5), 100], [LIFT.pull, 100]] },
     { tag: 'lift_rack', frames: [[LIFT.rack, 400]] },

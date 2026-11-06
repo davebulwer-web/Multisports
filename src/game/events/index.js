@@ -4,11 +4,13 @@ import { SprintScene } from './sprint.js';
 import { JavelinScene } from './javelin.js';
 import { WeightliftingScene } from './weightlifting.js';
 import { ArcheryScene } from './archery.js';
+import { ClayScene } from './clay.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
 import { cpuArchery } from '../sim/archery.js';
-import { fmtTime, fmtDist, fmtKg, fmtPts } from '../hud.js';
+import { cpuClay, totalClays } from '../sim/clay.js';
+import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
   {
@@ -77,6 +79,23 @@ export const EVENTS = [
       'SMALL NUDGES. THE SIGHT HAS MOMENTUM.',
       'AIM OFF INTO THE WIND. LET GO OF SPACE TO SHOOT.',
       'HOLD TOO LONG AND YOUR ARMS SHAKE. 6 ARROWS.',
+    ],
+  },
+  {
+    id: 'clay',
+    name: 'CLAY PIGEON',
+    skill: 'REACTION + TRACKING',
+    better: 'higher',
+    format: fmtClays,
+    cpu: cpuClay,
+    Scene: ClayScene,
+    baseRecord: totalClays() - 1,
+    help: [
+      'PRESS SPACE TO CALL PULL. THE CLAY COMES FROM',
+      'THE LEFT OR RIGHT TRAP. SWING AFTER IT WITH ARROWS.',
+      'THE SHOT TAKES TIME TO ARRIVE: AIM AHEAD OF THE CLAY,',
+      'FURTHER AHEAD THE FURTHER AWAY IT IS. SPACE FIRES.',
+      '6 SINGLES THEN 3 DOUBLES. 2 SHELLS EACH ROUND.',
     ],
   },
 ];
