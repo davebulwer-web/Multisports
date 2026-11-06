@@ -352,3 +352,57 @@ test('ski jump: CPU totals scale with skill', () => {
   assert.ok(hi > lo + 40, `${lo} vs ${hi}`);
   assert.ok(hi < 300, `cpu ${hi}`);
 });
+
+// Biathlon
+import { Skier, RifleSight, BIATHLON, cpuBiathlon, fmtRace } from '../src/game/sim/biathlon.js';
+
+function skiLeg(push, len = BIATHLON.legs[0]) {
+  const s = new Skier();
+  let t = 0;
+  while (s.d < len && t < 200) { s.update(1 / 60, push(s)); t += 1 / 60; }
+  return t;
+}
+
+test('biathlon: pacing below the redline beats flat out and cruising', () => {
+  const paced = skiLeg((s) => s.hr < BIATHLON.burn.redline - 4);
+  const flatOut = skiLeg(() => true);
+  const cruise = skiLeg(() => false);
+  assert.ok(paced < flatOut - 2, `paced ${paced} flat out ${flatOut}`);
+  assert.ok(paced < cruise - 3, `paced ${paced} cruise ${cruise}`);
+});
+
+/** Shoot 5 at a fixed heart rate, firing as soon as the sight is within `loose` x the hit radius. */
+function shoot(kind, hr, loose, seed) {
+  const rng = makeRng(seed), r = new RifleSight(kind, rng);
+  let hits = 0, since = 0;
+  for (let t = 0; r.target < 5 && t < 60; t += 1 / 60) {
+    const cx = r.target * BIATHLON.sight.spacing;
+    const ex = cx - r.aimX, ey = -r.aimY;
+    r.update(1 / 60, hr, Math.abs(ex) > 1.5 ? Math.sign(ex) : 0, Math.abs(ey) > 1.5 ? Math.sign(ey) : 0);
+    since += 1 / 60;
+    const p = r.pos(hr);
+    if (since > 0.5 && Math.hypot(p.x - cx, p.y) < r.k.hit * loose) { if (r.fire(hr).hit) hits++; since = 0; }
+  }
+  return hits;
+}
+
+test('biathlon: a racing heart makes hasty shots miss', () => {
+  let calm = 0, racing = 0;
+  for (let i = 0; i < 30; i++) { calm += shoot('prone', 110, 1.2, i); racing += shoot('prone', 185, 1.2, i); }
+  assert.ok(calm > racing + 15, `calm ${calm} racing ${racing}`);
+});
+
+test('biathlon: the heart rate settles at the range', () => {
+  const s = new Skier();
+  s.hr = 180;
+  for (let t = 0; t < 5; t += 1 / 60) s.rest(1 / 60);
+  assert.ok(s.hr < 145, `${s.hr}`);
+});
+
+test('biathlon: CPU times and formatting', () => {
+  const rng = makeRng(2);
+  const avg = (sk) => { let t = 0; for (let i = 0; i < 100; i++) t += cpuBiathlon(sk, rng); return t / 100; };
+  assert.ok(avg(0.9) < avg(0.3) - 20);
+  assert.equal(fmtRace(65.25), '1:05.3');
+  assert.equal(fmtRace(null), '--');
+});

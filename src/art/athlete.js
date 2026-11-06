@@ -200,6 +200,27 @@ const SKI_POSE = {
   fall:    { hip: [16, 57], torso: 86, legF: [-78, 14], legB: [-96, 8], armF: [132, 20], armB: [112, 30], headTilt: 3 },
 };
 
+// Biathlon: classic diagonal stride (long gliding legs, big opposite arm
+// swing; the scene adds skis and poles), then prone and standing shooting.
+function xcPose(phase) {
+  const a = phase * Math.PI * 2;
+  const leg = (ph) => {
+    const s = Math.sin(ph * Math.PI * 2);
+    return [8 + 34 * s, 10 + 22 * Math.max(0, -Math.cos(ph * Math.PI * 2))];
+  };
+  return {
+    hip: [20, 43 - 0.8 * Math.abs(Math.sin(a))],
+    torso: 34,
+    legF: leg(phase), legB: leg(phase + 0.5),
+    armF: [5 - 55 * Math.sin(a), 25], armB: [5 + 55 * Math.sin(a), 25],
+    footFlatF: true, footFlatB: true,
+  };
+}
+const BIA = {
+  prone:  { hip: [21, 58], torso: 84, legF: [-82, 4], legB: [-88, 4], armF: [40, 100], armB: [10, 120], footFlatF: true, footFlatB: true, headTilt: 2 },
+  stand:  { hip: [20, 41], torso: 0, legF: [10, 2], legB: [-10, 2], armF: [96, 50], armB: [40, 110], footFlatF: true, footFlatB: true },
+};
+
 const JAV = {
   withdraw: { hip: [20, 42], torso: -8, legF: [36, 10], legB: [-24, 20], armF: [-112, 6], armB: [70, 40] },
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
@@ -233,6 +254,9 @@ export function animations() {
     { tag: 'ski_land', frames: [[lerpPose(SKI_POSE.feet, SKI_POSE.land, 0.5), 80], [SKI_POSE.land, 500]] },
     { tag: 'ski_feet', frames: [[SKI_POSE.feet, 500]] },
     { tag: 'ski_fall', frames: [[SKI_POSE.fall, 500]] },
+    { tag: 'xc_stride', frames: Array.from({ length: 8 }, (_, i) => [xcPose(i / 8), 110]) },
+    { tag: 'bia_prone', frames: [[BIA.prone, 500]] },
+    { tag: 'bia_stand', frames: [[BIA.stand, 500]] },
     { tag: 'lift_ready', frames: [[LIFT.ready, 500]] },
     { tag: 'lift_pull', frames: [[lerpPose(LIFT.ready, LIFT.pull, 0.5), 100], [LIFT.pull, 100]] },
     { tag: 'lift_rack', frames: [[LIFT.rack, 400]] },

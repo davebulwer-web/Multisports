@@ -34,6 +34,7 @@ npm start          # serves the folder on http://localhost:8080
 | **Archery** | Fine control | Hold Space to draw the bow, then keep holding while you steady the sight. It sways with your breathing and has momentum, so nudge it with the arrow keys rather than yanking it. Aim off into the wind and let go to shoot. Hold too long and your arms start to shake. Six arrows, scored 10 (gold) to 1, out of 60. |
 | **Clay Pigeon** | Reaction + tracking | Press Space to call for the clay, which comes from the left or right trap after a short random delay. Swing the sight after it with the arrow keys (it has momentum) and fire ahead of it, because the shot takes time to get there. The further away the clay, the more lead it needs, but the pattern also spreads wider. Six singles then three doubles, two shells per round, scored out of 12. |
 | **Ski Jump** | Timing + balance | Press Space to push off and hold ↓ to tuck down the inrun for speed. Press Space again right on the lip to spring: early or late costs height and leaves you rotating. In the air the flight position is unstable, so keep your lean in the green with ← →. Press Space just before touchdown for a telemark landing, but not too early, because setting it kills your lift. Two jumps, each scored as distance points (60 at the 120 m K-point, 1.8 per metre) plus style from five judges (middle three count). Lean too far forward and you go over; land past the hill size without a telemark and you fall. |
+| **Biathlon** | Pacing + steady aim | Ski three legs, holding → to push. Your heart rate climbs as you push (and faster on the climbs). Go past the redline and the burn slows you right down, so ease off to recover. At each range (prone, then standing) steer the sight onto five targets and fire with Space. The sight sways with your breathing and jumps with every heartbeat, so you either wait for your heart to settle or shoot quickly and risk misses. Prone only counts the inner ring; standing counts the whole target but sways more. Each miss adds 10 seconds. Lowest time wins. |
 
 ### Competition
 
@@ -55,9 +56,10 @@ src/
   engine/             loop, input (ms-accurate press timestamps), font, audio synth, sprites, gfx helpers
   art/                palette, raster, pose rig (athlete.js), props, sheet packer  (no DOM; shared with Node)
   game/
-    sim/              pure event models (sprint, javelin, lift, archery, clay, ski), scoring, rng (unit tested)
+    sim/              pure event models (sprint, javelin, lift, archery, clay, ski, biathlon), scoring, rng (unit tested)
     events/           one Scene per event + registry (events/index.js)
     scenes/           title, setup, practice, cards/results/standings/podium
+    winter.js         shared winter scenery (sky, mountains, pines, snowfall)
     competition.js    turn order, CPU results, points
 tools/                export-sprites.mjs, png.mjs, serve.mjs
 tests/                node --test
