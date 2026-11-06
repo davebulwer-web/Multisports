@@ -3,10 +3,12 @@
 import { SprintScene } from './sprint.js';
 import { JavelinScene } from './javelin.js';
 import { WeightliftingScene } from './weightlifting.js';
+import { ArcheryScene } from './archery.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
-import { fmtTime, fmtDist, fmtKg } from '../hud.js';
+import { cpuArchery } from '../sim/archery.js';
+import { fmtTime, fmtDist, fmtKg, fmtPts } from '../hud.js';
 
 export const EVENTS = [
   {
@@ -58,6 +60,23 @@ export const EVENTS = [
       'JERK: PRESS SPACE IN THE DRIVE ZONE.',
       'HOLD: USE [ ] TO KEEP THE BAR CENTRED FOR 3 SECONDS.',
       '2 OF 3 WHITE LIGHTS IS A GOOD LIFT. 3 ATTEMPTS.',
+    ],
+  },
+  {
+    id: 'archery',
+    name: 'ARCHERY',
+    skill: 'FINE CONTROL',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuArchery,
+    Scene: ArcheryScene,
+    baseRecord: 57,
+    help: [
+      'HOLD SPACE TO DRAW THE BOW. KEEP HOLDING TO AIM.',
+      'THE SIGHT SWAYS AS YOU BREATHE: STEER WITH ARROWS.',
+      'SMALL NUDGES. THE SIGHT HAS MOMENTUM.',
+      'AIM OFF INTO THE WIND. LET GO OF SPACE TO SHOOT.',
+      'HOLD TOO LONG AND YOUR ARMS SHAKE. 6 ARROWS.',
     ],
   },
 ];

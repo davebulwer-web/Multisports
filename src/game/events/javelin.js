@@ -7,7 +7,7 @@ import { JAVELIN, simulateThrow } from '../sim/javelin.js';
 import { makeRng } from '../sim/rng.js';
 import { drawStadium, drawGrass } from '../stadium.js';
 import { playerSheet } from '../assets.js';
-import { topBar, banner, fmtDist } from '../hud.js';
+import { topBar, banner, fmtDist, windSock } from '../hud.js';
 
 const PX = 5;          // pixels per metre
 const ORIGIN = 150;    // world px of the foul line
@@ -224,18 +224,7 @@ export class JavelinScene extends Scene {
       const s = a ? (a.value != null ? fmtDist(a.value) : a.reason === 'FLAT LANDING' ? 'FLAT' : 'FOUL') : '--';
       text(ctx, `${i + 1} ${s}`, W - 88, y + 3 + i * 9, a && a.value == null ? 'lamp.2' : 'grey.6');
     }
-    // wind sock
-    panel(ctx, 4, y, 76, 20, { bg: 'grey.1', edge: 'grey.2', shadow: 'grey.0' });
-    const w = this.wind;
-    text(ctx, 'WIND', 8, y + 3, 'grey.4', { shadow: null });
-    text(ctx, `${w >= 0 ? '+' : ''}${w.toFixed(1)}`, 8, y + 11, w >= 0 ? 'green.2' : 'lamp.2');
-    const sx = 46;
-    fill(ctx, 'grey.4', sx, y + 3, 1, 14);
-    const len = 4 + Math.abs(w) * 3;
-    const dir = w >= 0 ? 1 : -1;
-    for (let i = 0; i < len; i++) {
-      fill(ctx, Math.floor(i / 3) % 2 ? 'grey.6' : 'lamp.1', sx + dir * (i + 1), y + 4 + Math.floor(i / 6), 1, Math.max(2, 4 - Math.floor(i / 4)));
-    }
+    windSock(ctx, 4, y, this.wind);
 
     // bottom: run speed + angle dial
     const by = 190;
