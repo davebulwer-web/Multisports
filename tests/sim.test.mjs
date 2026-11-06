@@ -406,3 +406,62 @@ test('biathlon: CPU times and formatting', () => {
   assert.equal(fmtRace(65.25), '1:05.3');
   assert.equal(fmtRace(null), '--');
 });
+
+// Curling
+import { CURL, Stone, deliver, settle, scoreEnd, ringPoints, setupEnd, cpuCurling, maxScore } from '../src/game/sim/curling.js';
+
+/** Weight that draws an unswept stone closest to the tee with the given aim/turn. */
+function drawWeight(aim, turn) {
+  let best = null;
+  for (let w = 0; w <= 1; w += 0.005) {
+    const s = settle([deliver(w, aim, turn)])[0];
+    if (!s.out && (!best || s.dist < best.d)) best = { w, d: s.dist };
+  }
+  return best;
+}
+
+test('curling: the right weight and line draw to the button', () => {
+  const b = drawWeight(-1.0, 1);
+  assert.ok(b.d < 0.3, `closest ${b.d}`);
+  assert.ok(b.w > 0.2 && b.w < 0.45, `draw weight ${b.w}`);
+});
+
+test('curling: the stone curls with the turn', () => {
+  const up = settle([deliver(0.3, 0, -1)])[0], down = settle([deliver(0.3, 0, 1)])[0];
+  assert.ok(up.y < -0.4 && down.y > 0.4, `${up.y} ${down.y}`);
+});
+
+test('curling: sweeping carries the stone further and straighter', () => {
+  const plain = settle([deliver(0.25, 0, 1)])[0];
+  const swept = settle([deliver(0.25, 0, 1)], () => true)[0];
+  assert.ok(swept.x > plain.x + 1.5, `${plain.x} vs ${swept.x}`);
+  assert.ok(Math.abs(swept.y) < Math.abs(plain.y), 'sweeping straightens it');
+});
+
+test('curling: light stones are hogged, heavy ones go through', () => {
+  assert.ok(settle([deliver(0, 0, 1)])[0].out);
+  assert.ok(settle([deliver(1, 0, 1)])[0].out);
+});
+
+test('curling: a takeout knocks the opposition stone out', () => {
+  const stones = setupEnd(2); // stone on the button
+  stones.push(deliver(1, 0.05, 1));
+  settle(stones);
+  assert.ok(stones[0].out || stones[0].dist > 1.83, 'their stone should be removed from the house');
+});
+
+test('curling: only stones closer than all of theirs score', () => {
+  const mine = (x, y) => new Stone(x, y, 'me');
+  const theirs = new Stone(CURL.tee + 0.5, 0, 'them');
+  const r = scoreEnd([mine(CURL.tee, 0.05), mine(CURL.tee + 1.0, 0), theirs]);
+  assert.equal(r.points, 4); // only the button stone counts
+  assert.equal(scoreEnd([mine(CURL.tee + 1.0, 0)]).points, 2);
+  assert.equal(ringPoints(3), 0);
+  assert.equal(maxScore(), 32);
+});
+
+test('curling: CPU scores scale with skill', () => {
+  const rng = makeRng(5);
+  const avg = (sk) => { let t = 0; for (let i = 0; i < 200; i++) t += cpuCurling(sk, rng); return t / 200; };
+  assert.ok(avg(0.9) > avg(0.3) + 8);
+});
