@@ -12,7 +12,7 @@ Multisports also reads two optional extras from `meta.multisports`:
 | Key | Meaning | If missing |
 |---|---|---|
 | `pivot` `{x,y}` | Point inside each frame that sits on the ground (the feet). | An Aseprite slice named `pivot`, otherwise bottom-centre. |
-| `anchors` `{frameIndex: {handF:[x,y], handB, head, hip}}` | Where props attach. The javelin and barbell are drawn at `handF`. | Borrowed from the built-in rig, so keep hands roughly where the rig puts them. |
+| `anchors` `{frameIndex: {handF:[x,y], handB, head, hip, footF, footB}}` | Where props attach. The javelin, barbell, bow and gun are drawn at `handF`; ski jump skis are drawn under `footF`/`footB`. | Borrowed from the built-in rig, so keep hands and feet roughly where the rig puts them. |
 
 | Sheet | Frame | Used for |
 |---|---|---|

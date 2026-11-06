@@ -270,3 +270,85 @@ test('clay: CPU hits rise with skill and stay within the round', () => {
   const lo = avg(0.35), hi = avg(0.9);
   assert.ok(hi > lo + 2 && hi < 12 && lo > 4, `lo ${lo} hi ${hi}`);
 });
+
+// Ski jump
+import { SkiJumper, INRUN, slopeAt, scoreJump, styleMarks, distancePoints, takeoffQuality, cpuSki, SKI } from '../src/game/sim/ski.js';
+
+/**
+ * Play one jump. `offset` = take-off press relative to the lip (s, - = early),
+ * null for no press. `react` = steering reaction delay (s), null = no steering.
+ * `lead` = telemark press this long before touchdown, null for none.
+ */
+function skiJump(seed, { offset = 0, tuck = true, react = 0.15, lead = 0.25, wind = 0 } = {}) {
+  const j = new SkiJumper(makeRng(seed), wind);
+  const dt = 1 / 60;
+  j.start();
+  while (j.phase === 'inrun') {
+    const toLip = (INRUN.length - j.s) / j.v;
+    if (offset != null && offset <= 0 && toLip <= -offset + dt) j.jump(j.t + toLip + offset);
+    j.update(dt, { tuck });
+  }
+  const seen = [];
+  for (let n = 0; j.phase === 'air' && n < 1200; n++) {
+    if (offset != null && offset > 0 && j.t - j.lipT >= offset) j.jump(j.t);
+    seen.push(j.lean + j.leanV * 0.25);
+    const e = react == null ? 0 : seen[Math.max(0, seen.length - 1 - Math.round(react / dt))];
+    const close = -j.vy - j.vx * Math.tan(slopeAt(j.x));
+    if (lead != null && j.takeoff && close > 0 && j.height / close < lead) j.telemark();
+    j.update(dt, { lean: e > 3 ? -1 : e < -3 ? 1 : 0 });
+  }
+  return j.result;
+}
+
+test('ski jump: a clean jump lands around the hill size with a telemark', () => {
+  const r = skiJump(1);
+  assert.ok(r.distance > 125 && r.distance <= SKI.HS + 2, `distance ${r.distance}`);
+  assert.equal(r.landing, 'telemark');
+});
+
+test('ski jump: take-off timing matters', () => {
+  const good = skiJump(2).distance;
+  const late = skiJump(2, { offset: 0.12 }).distance;
+  const early = skiJump(2, { offset: -0.12 }).distance;
+  const none = skiJump(2, { offset: null }).distance;
+  assert.ok(good > late + 6 && good > early + 6, `good ${good} late ${late} early ${early}`);
+  assert.ok(none < good - 20, `no spring ${none}`);
+  assert.equal(takeoffQuality(0), 1);
+  assert.equal(takeoffQuality(-0.5), 0);
+});
+
+test('ski jump: tucking on the inrun carries more speed', () => {
+  assert.ok(skiJump(3).distance > skiJump(3, { tuck: false }).distance + 8);
+});
+
+test('ski jump: no steering in the air ends in a fall', () => {
+  for (const seed of [4, 5, 6]) assert.equal(skiJump(seed, { react: null }).landing, 'fall', `seed ${seed}`);
+});
+
+test('ski jump: telemark too early costs distance and style', () => {
+  const good = skiJump(7);
+  const early = skiJump(7, { lead: 1.6 });
+  const none = skiJump(7, { lead: null });
+  assert.ok(early.distance < good.distance - 3, `${early.distance} vs ${good.distance}`);
+  assert.equal(none.landing, 'feet');
+  const rng = makeRng(1);
+  assert.ok(scoreJump(good, rng).style.total > scoreJump(none, rng).style.total);
+});
+
+test('ski jump: scoring', () => {
+  assert.equal(distancePoints(SKI.K), 60);
+  assert.equal(distancePoints(SKI.K + 10), 78);
+  assert.equal(distancePoints(10), 0);
+  const s = styleMarks({ steadiness: 0, landing: 'telemark' }, makeRng(3));
+  assert.equal(s.marks.length, 5);
+  assert.ok(s.total <= 60 && s.total >= 55);
+  const f = styleMarks({ steadiness: 10, landing: 'fall' }, makeRng(3));
+  assert.ok(f.total < 33);
+});
+
+test('ski jump: CPU totals scale with skill', () => {
+  const avg = (skill) => { const rng = makeRng(11); let t = 0; for (let i = 0; i < 200; i++) t += cpuSki(skill, rng); return t / 200; };
+  const lo = avg(0.3), hi = avg(0.9);
+  assert.ok(hi > lo + 40, `${lo} vs ${hi}`);
+  assert.ok(hi < 300, `cpu ${hi}`);
+});
