@@ -7,6 +7,7 @@ import { ArcheryScene } from './archery.js';
 import { ClayScene } from './clay.js';
 import { SkiJumpScene } from './skijump.js';
 import { BiathlonScene } from './biathlon.js';
+import { CurlingScene } from './curling.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
@@ -14,6 +15,7 @@ import { cpuArchery } from '../sim/archery.js';
 import { cpuClay, totalClays } from '../sim/clay.js';
 import { cpuSki } from '../sim/ski.js';
 import { cpuBiathlon, fmtRace } from '../sim/biathlon.js';
+import { cpuCurling, maxScore } from '../sim/curling.js';
 import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
@@ -134,6 +136,23 @@ export const EVENTS = [
       'AT THE RANGE, AIM WITH ARROWS AND FIRE WITH SPACE.',
       'BREATHING AND HEARTBEAT SHAKE THE SIGHT. WAIT TO CALM.',
       'PRONE THEN STANDING. EACH MISS ADDS 10 SECONDS.',
+    ],
+  },
+  {
+    id: 'curling',
+    name: 'CURLING',
+    skill: 'JUDGEMENT + SWEEPING',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuCurling,
+    Scene: CurlingScene,
+    baseRecord: 26,
+    help: [
+      'UP/DOWN MOVES YOUR BROOM. [ ] PICKS THE CURL.',
+      'SPACE, THEN SPACE AGAIN TO SET THE WEIGHT.',
+      'HOLD SPACE TO SWEEP: FURTHER AND STRAIGHTER.',
+      'YOUR STONES CLOSER THAN ALL OF THEIRS SCORE.',
+      `BUTTON 4 DOWN TO 12-FOOT 1. 4 ENDS, MAX ${maxScore()}.`,
     ],
   },
 ];
