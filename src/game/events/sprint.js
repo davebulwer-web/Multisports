@@ -21,6 +21,8 @@ const GRADE_STYLE = {
   early: ['RUSHED', 'lamp.2'], late: ['LATE', 'orange.3'], slip: ['SAME FOOT!', 'lamp.1'],
 };
 
+const KEY_FLASH = { go: 'green.2', perfect: 'green.3', good: 'green.2', early: 'lamp.1', late: 'orange.2', slip: 'lamp.1' };
+
 /** Pacer runs a smooth speed curve that finishes in a target time. */
 function pacerX(t, target, react = 0.17) {
   const tau = 1.15;
@@ -51,6 +53,7 @@ export class SprintScene extends Scene {
     this.simT = 0;
     this.lastBeat = -1;
     this.popups = [];
+    this.keyFlash = {};
     this.stumbleT = 0;
     this.anim = new Anim(playerSheet(this.o.player), 'idle');
     this.pacerAnims = this.o.pacers.map((p) => new Anim(playerSheet(p.player), 'idle'));
@@ -96,6 +99,7 @@ export class SprintScene extends Scene {
           const r = this.runner.step(e.action, t);
           const [label, color] = GRADE_STYLE[r.grade] || [];
           if (label) this.popup(label, color);
+          this.keyFlash[e.action] = { t: this.game.time, color: KEY_FLASH[r.grade] || 'grey.5' };
           if (r.grade === 'slip') { this.stumbleT = 0.25; sfx.bad(); }
           else sfx.step(r.grade === 'perfect' || r.grade === 'good' || r.grade === 'go');
         }
@@ -228,20 +232,51 @@ export class SprintScene extends Scene {
     }
   }
 
+  /**
+   * Stride keys. The key for the next foot fills up as its beat approaches
+   * and flashes bright inside the timing window, so the keys themselves
+   * carry the rhythm. A pressed key flashes the grade colour of that stride.
+   */
+  drawKeys(ctx, y) {
+    const r = this.runner;
+    const running = this.state === 'run';
+    const next = r.lastFoot === 'left' ? 'right' : r.lastFoot === 'right' ? 'left' : null;
+    const W8 = SPRINT.window;
+    const key = (foot, label, x) => {
+      const flash = this.keyFlash[foot];
+      const pressed = flash && this.game.time - flash.t < 0.15;
+      const oy = pressed ? 1 : 0;
+      let bg = 'grey.2', fg = 'grey.4', charge = 0, chargeCol = 'yellow.0';
+      if (running && !r.started) {
+        // gun has gone: both keys pulse to say "go"
+        bg = Math.floor(this.simT * 8) % 2 ? 'green.1' : 'green.2';
+        fg = 'grey.0';
+      } else if (running && foot === next) {
+        const dt = this.simT - r.nextIdeal;
+        if (Math.abs(dt) <= W8) { bg = 'yellow.2'; fg = 'grey.0'; }           // press now
+        else if (dt > W8) { bg = 'orange.2'; fg = 'grey.0'; }                 // late
+        else { charge = Math.max(0, Math.min(1, r.beatPhase(this.simT))); fg = 'grey.6'; }
+      }
+      if (pressed) { bg = flash.color; fg = 'grey.0'; }
+      fill(ctx, 'grey.0', x, y + 15, 18, 1);
+      fill(ctx, bg, x, y - 2 + oy, 18, 17 - oy);
+      if (charge > 0) {
+        const h = Math.round(15 * charge);
+        fill(ctx, chargeCol, x + 1, y + 14 - h + oy, 16, h);
+      }
+      fill(ctx, pressed ? 'grey.1' : 'grey.4', x, y - 2 + oy, 18, 1);
+      text(ctx, label, x + 7, y + 4 + oy, fg, { shadow: null });
+    };
+    key('left', '[', 10);
+    key('right', ']', 32);
+  }
+
   drawMeters(ctx) {
     const r = this.runner;
     const y = 192;
     panel(ctx, 4, y - 6, W - 8, 28, { bg: 'grey.1', edge: 'grey.2', shadow: 'grey.0' });
-    // feet
-    const next = r.lastFoot === 'left' ? 'right' : r.lastFoot === 'right' ? 'left' : null;
-    const foot = (label, x, on) => {
-      fill(ctx, on ? 'yellow.1' : 'grey.2', x, y - 2, 18, 18);
-      fill(ctx, 'grey.0', x, y + 15, 18, 1);
-      text(ctx, label, x + 7, y + 4, on ? 'grey.0' : 'grey.4', { shadow: null });
-    };
     const running = this.state === 'run';
-    foot('[', 10, running && (next === 'left' || !next));
-    foot(']', 32, running && (next === 'right' || !next));
+    this.drawKeys(ctx, y);
 
     // rhythm bar: ideal beat sits at 2/3 of the bar
     const bx = 60, bw = 200, bh = 10;
