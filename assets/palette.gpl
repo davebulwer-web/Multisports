@@ -1,0 +1,61 @@
+GIMP Palette
+Name: Multisports
+Columns: 8
+#
+  0   0   0	grey.0
+ 28  26  34	grey.1
+ 68  68  68	grey.2
+108 108 108	grey.3
+149 149 149	grey.4
+196 196 196	grey.5
+255 255 255	grey.6
+ 58  26  20	red.0
+104  55  43	red.1
+154 103  89	red.2
+201 154 140	red.3
+ 47  90 102	cyan.0
+112 164 178	cyan.1
+166 212 221	cyan.2
+ 58  31  74	purple.0
+111  61 134	purple.1
+160 114 184	purple.2
+ 36  64  28	green.0
+ 88 141  67	green.1
+154 210 132	green.2
+205 238 192	green.3
+ 27  20  70	blue.0
+ 53  40 121	blue.1
+108  94 181	blue.2
+163 153 230	blue.3
+125 138  60	yellow.0
+184 199 111	yellow.1
+230 239 159	yellow.2
+ 67  40  15	orange.0
+111  79  37	orange.1
+163 122  62	orange.2
+217 169  94	orange.3
+ 34  29   0	brown.0
+ 67  57   0	brown.1
+107  93  26	brown.2
+ 61 106 168	sky.0
+ 94 142 208	sky.1
+143 182 232	sky.2
+198 220 245	sky.3
+110  42  30	track.0
+156  65  40	track.1
+194  90  53	track.2
+ 31  90  38	grass.0
+ 47 122  51	grass.1
+ 70 160  67	grass.2
+124 199 106	grass.3
+122  16  48	kitA.0
+192  32  74	kitA.1
+240  90 120	kitA.2
+ 16  58 122	kitB.0
+ 32  96 192	kitB.1
+ 90 144 240	kitB.2
+138  74  42	skin.0
+192 120  80	skin.1
+232 168 120	skin.2
+ 42  22   8	hair.0
+ 80  48  26	hair.1
