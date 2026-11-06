@@ -32,6 +32,7 @@ npm start          # serves the folder on http://localhost:8080
 | **Javelin** | Power + angle | Hold Space to run up and let go to plant. You slide on after planting, so plant just short of the line. Then lock the release angle; around 33–37° is best. Wind affects the throw, and a flat landing scores no mark. Three throws. |
 | **Weightlifting** | Timing + balance | Pick the weight, hit the pull gauge, then the drive gauge. After that, keep the bar centred with ← → for 3 seconds. Two of the three judges' lights make a good lift. Heavier bars give tighter windows and more wobble. |
 | **Archery** | Fine control | Hold Space to draw the bow, then keep holding while you steady the sight. It sways with your breathing and has momentum, so nudge it with the arrow keys rather than yanking it. Aim off into the wind and let go to shoot. Hold too long and your arms start to shake. Six arrows, scored 10 (gold) to 1, out of 60. |
+| **Clay Pigeon** | Reaction + tracking | Press Space to call for the clay, which comes from the left or right trap after a short random delay. Swing the sight after it with the arrow keys (it has momentum) and fire ahead of it, because the shot takes time to get there. The further away the clay, the more lead it needs, but the pattern also spreads wider. Six singles then three doubles, two shells per round, scored out of 12. |
 
 ### Competition
 
@@ -53,7 +54,7 @@ src/
   engine/             loop, input (ms-accurate press timestamps), font, audio synth, sprites, gfx helpers
   art/                palette, raster, pose rig (athlete.js), props, sheet packer  (no DOM; shared with Node)
   game/
-    sim/              pure event models (sprint, javelin, lift, archery), scoring, rng (unit tested)
+    sim/              pure event models (sprint, javelin, lift, archery, clay), scoring, rng (unit tested)
     events/           one Scene per event + registry (events/index.js)
     scenes/           title, setup, practice, cards/results/standings/podium
     competition.js    turn order, CPU results, points

@@ -191,3 +191,82 @@ test('archery: CPU totals rise with skill and stay below a perfect 60', () => {
   assert.ok(hi > lo + 4, `lo ${lo} hi ${hi}`);
   assert.ok(lo > 35 && hi < 58, `lo ${lo} hi ${hi}`);
 });
+
+// ---------------------------------------------------------------------------
+// Clay pigeon
+
+import { Clay, Sight, shotTo, breaks, cpuClay, totalClays } from '../src/game/sim/clay.js';
+
+/** Track one clay with the sight and fire once. `lead` = aim where the clay will be when the shot arrives. */
+function shootClay(seed, lead) {
+  const rng = makeRng(seed);
+  const clay = new Clay(rng, rng() < 0.5 ? 'left' : 'right');
+  const s = new Sight(200, 150);
+  const dt = 1 / 60;
+  let shot = null;
+  for (let t = 0; t < 6; t += dt) {
+    clay.update(dt);
+    if (shot && (shot.t -= dt) <= 0) return clay.state === 'flying' && breaks(shot.x, shot.y, shot.r, clay.x, clay.y);
+    if (clay.state !== 'flying') return false;
+    const p = lead ? clay.predict(shotTo(clay.x, clay.y).delay) : { x: clay.x, y: clay.y };
+    const ex = p.x - s.x + (clay.vx - s.vx) * 0.12, ey = p.y - s.y + (clay.vy - s.vy) * 0.12;
+    s.update(dt, Math.abs(ex) > 1 ? Math.sign(ex) : 0, Math.abs(ey) > 1 ? Math.sign(ey) : 0);
+    if (!shot && clay.t > 0.5 && Math.hypot(p.x - s.x, p.y - s.y) < 2) {
+      const { delay, radius } = shotTo(s.x, s.y);
+      shot = { x: s.x, y: s.y, r: radius, t: delay };
+    }
+  }
+  return false;
+}
+
+test('clay: leading the clay breaks it, aiming straight at it misses', () => {
+  let lead = 0, direct = 0;
+  for (let seed = 1; seed <= 60; seed++) {
+    if (shootClay(seed, true)) lead++;
+    if (shootClay(seed, false)) direct++;
+  }
+  assert.ok(lead >= 54, `with lead ${lead}/60`);
+  assert.ok(direct <= 12, `no lead ${direct}/60`);
+});
+
+test('clay: further clays need more lead and get a wider pattern', () => {
+  const near = shotTo(120, 150), far = shotTo(340, 40);
+  assert.ok(far.delay > near.delay * 2, `${near.delay} vs ${far.delay}`);
+  assert.ok(far.radius > near.radius);
+});
+
+test('clay: clays fly up and across from their trap, then land or leave', () => {
+  const rng = makeRng(7);
+  for (const side of ['left', 'right']) {
+    const c = new Clay(rng, side);
+    const x0 = c.x;
+    let top = c.y;
+    for (let i = 0; i < 60 * 8 && c.state === 'flying'; i++) { c.update(1 / 60); top = Math.min(top, c.y); }
+    assert.equal(c.state, 'lost');
+    assert.ok(top < 150, `apex ${top}`); // well above the trap houses
+    assert.ok(side === 'left' ? c.x > x0 : c.x < x0);
+  }
+});
+
+test('clay: the sight has momentum and a top swing speed', () => {
+  const s = new Sight(40, 100);
+  s.update(1 / 60, 1, 0);
+  assert.ok(s.vx > 0 && s.vx < 40, 'it takes time to get the swing going');
+  for (let i = 0; i < 30; i++) s.update(1 / 60, 1, 0);
+  assert.ok(s.vx <= 280);
+  const x = s.x;
+  s.update(1 / 60, 0, 0);
+  assert.ok(s.x > x, 'it keeps moving briefly after you let go');
+});
+
+test('clay: CPU hits rise with skill and stay within the round', () => {
+  const avg = (skill) => {
+    const rng = makeRng(11);
+    let s = 0;
+    for (let i = 0; i < 300; i++) s += cpuClay(skill, rng);
+    return s / 300;
+  };
+  assert.equal(totalClays(), 12);
+  const lo = avg(0.35), hi = avg(0.9);
+  assert.ok(hi > lo + 2 && hi < 12 && lo > 4, `lo ${lo} hi ${hi}`);
+});

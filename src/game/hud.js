@@ -21,6 +21,7 @@ export function banner(ctx, msg, y = 60, color = 'yellow.2', sub = null) {
 export function fmtTime(s) { return s == null ? '--' : `${s.toFixed(2)}S`; }
 export function fmtDist(m) { return m == null ? 'FOUL' : `${m.toFixed(2)}M`; }
 export function fmtKg(kg) { return kg == null ? 'NO LIFT' : `${kg.toFixed(1)}KG`; }
+export function fmtClays(n) { return n == null ? '--' : `${n} CLAYS`; }
 export function fmtPts(n) { return n == null ? '--' : `${n} PTS`; }
 
 /** Wind readout with a striped windsock. + blows to the right. */
