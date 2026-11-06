@@ -6,12 +6,14 @@ import { WeightliftingScene } from './weightlifting.js';
 import { ArcheryScene } from './archery.js';
 import { ClayScene } from './clay.js';
 import { SkiJumpScene } from './skijump.js';
+import { BiathlonScene } from './biathlon.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
 import { cpuArchery } from '../sim/archery.js';
 import { cpuClay, totalClays } from '../sim/clay.js';
 import { cpuSki } from '../sim/ski.js';
+import { cpuBiathlon, fmtRace } from '../sim/biathlon.js';
 import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
@@ -115,6 +117,23 @@ export const EVENTS = [
       'IN THE AIR, KEEP YOUR LEAN IN THE GREEN WITH [ ].',
       'PRESS SPACE JUST BEFORE TOUCHDOWN TO TELEMARK.',
       'TOO EARLY KILLS YOUR LIFT. 2 JUMPS: DISTANCE + STYLE.',
+    ],
+  },
+  {
+    id: 'biathlon',
+    name: 'BIATHLON',
+    skill: 'PACING + STEADY AIM',
+    better: 'lower',
+    format: fmtRace,
+    cpu: cpuBiathlon,
+    Scene: BiathlonScene,
+    baseRecord: 95,
+    help: [
+      'HOLD ] TO PUSH ON THE SKIS. WATCH YOUR HEART RATE:',
+      'IN THE RED YOU BURN OUT AND SLOW DOWN.',
+      'AT THE RANGE, AIM WITH ARROWS AND FIRE WITH SPACE.',
+      'BREATHING AND HEARTBEAT SHAKE THE SIGHT. WAIT TO CALM.',
+      'PRONE THEN STANDING. EACH MISS ADDS 10 SECONDS.',
     ],
   },
 ];

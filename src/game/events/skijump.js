@@ -10,6 +10,7 @@ import { SKI, INRUN, SkiJumper, groundY, slopeAt, xAtDistance, scoreJump } from 
 import { makeRng } from '../sim/rng.js';
 import { assets, playerSheet } from '../assets.js';
 import { topBar, banner, fmtPts } from '../hud.js';
+import { drawWinterSky, pine, hash, Snowfall } from '../winter.js';
 
 const S = 4;            // pixels per metre
 const SX = 150, SY = 92; // where the camera target sits on screen
@@ -17,7 +18,6 @@ const ROUNDS = SKI.rounds;
 const MARKS = [80, 90, 100, 110, 130];
 const LANDINGS = { telemark: 'TELEMARK', early: 'EARLY TELEMARK', late: 'LATE TELEMARK', feet: 'NO TELEMARK', fall: 'FALL' };
 
-const hash = (n) => { let h = Math.imul(n ^ 0x9e3779b9, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 
 export class SkiJumpScene extends Scene {
   constructor(game, o) {
@@ -27,7 +27,7 @@ export class SkiJumpScene extends Scene {
     this.jumps = [];
     this.round = -1;
     this.anim = new Anim(playerSheet(o.player), 'ski_upright');
-    this.flakes = Array.from({ length: 70 }, (_, i) => ({ x: hash(i) * W, y: hash(i + 500) * H, z: 0.4 + hash(i + 900) * 0.8 }));
+    this.snow = new Snowfall();
     this.spray = [];
     this.t = 0;
     this.nextJump();
@@ -111,7 +111,7 @@ export class SkiJumpScene extends Scene {
 
     for (const p of this.spray) { p.t += dt; p.vy += 140 * dt; p.x += p.vx * dt; p.y += p.vy * dt; }
     this.spray = this.spray.filter((p) => p.t < 0.8);
-    for (const f of this.flakes) { f.y += (10 + f.z * 14) * dt; f.x += Math.sin(this.t * 0.8 + f.z * 9) * 6 * dt - this.wind * 4 * f.z * dt; }
+    this.snow.update(dt, this.wind);
     this.anim.update(dt * 1000);
   }
 
@@ -173,11 +173,7 @@ export class SkiJumpScene extends Scene {
     this.drawCrowd(ctx);
     this.drawJumper(ctx);
     for (const p of this.spray) fill(ctx, p.t < 0.4 ? 'grey.6' : 'grey.5', this.sx(p.wx) + p.x, this.sy(p.wy) + p.y - 2, 1, 1);
-    for (const f of this.flakes) {
-      const x = (((f.x - this.camX * S * 0.3 * f.z) % W) + W) % W;
-      const y = (((f.y + this.camY * S * 0.3 * f.z) % H) + H) % H;
-      fill(ctx, f.z > 0.9 ? 'grey.6' : 'grey.5', x, y, 1, 1);
-    }
+    this.snow.draw(ctx, this.camX * S, this.camY * S);
 
     topBar(ctx, 'SKI JUMP', this.o.player.name, `JUMP ${this.round + 1}/${ROUNDS}`);
     this.drawWind(ctx);
@@ -206,30 +202,7 @@ export class SkiJumpScene extends Scene {
     if (this.state === 'score') this.drawScore(ctx);
   }
 
-  drawSky(ctx) {
-    bands(ctx, ['sky.0', 'sky.1', 'sky.2', 'sky.3', 'grey.5'], 0, 0, W, H);
-    // far mountains, slow parallax
-    const px = this.camX * S * 0.12, py = this.camY * S * 0.08;
-    const peak = (u, w) => 1 - Math.abs(((u / w) % 1 + 1) % 1 - 0.5) * 2; // triangle wave 0..1
-    for (let x = 0; x < W; x += 2) {
-      const u = x + px;
-      const h = 40 + peak(u, 120) * 46 + peak(u + 37, 47) * 16 + peak(u + 11, 19) * 5;
-      const top = Math.round(150 - h + py);
-      fill(ctx, 'blue.2', x, top, 2, H - top);
-      if (peak(u + 60, 240) > 0.5) fill(ctx, 'blue.1', x, top + 6, 2, H - top - 6); // shaded faces
-      const cap = Math.max(0, Math.round(h - 62));
-      fill(ctx, 'grey.6', x, top, 2, Math.min(cap, 16));
-      if (cap > 2) dither(ctx, 'grey.6', 'blue.3', x, top + Math.min(cap, 16), 2, 2);
-    }
-    // nearer ridge
-    const qx = this.camX * S * 0.3, qy = this.camY * S * 0.2;
-    for (let x = 0; x < W; x += 2) {
-      const u = x + qx;
-      const top = Math.round(176 - 30 - Math.sin(u / 37) * 12 - Math.sin(u / 11) * 3 + qy);
-      fill(ctx, 'sky.3', x, top, 2, H - top);
-      fill(ctx, 'grey.6', x, top, 2, 1);
-    }
-  }
+  drawSky(ctx) { drawWinterSky(ctx, this.camX * S, this.camY * S); }
 
   drawTrees(ctx) {
     // pines along the hillside behind the landing slope
@@ -238,21 +211,8 @@ export class SkiJumpScene extends Scene {
       const wx = i * 7 + hash(i) * 4;
       const sx = this.sx(wx), base = this.sy(groundY(wx)) + 1;
       const h = 14 + Math.floor(hash(i + 77) * 12);
-      this.pine(ctx, sx, base - 2 - Math.floor(hash(i + 31) * 6), h);
+      pine(ctx, sx, base - 2 - Math.floor(hash(i + 31) * 6), h);
     }
-  }
-
-  pine(ctx, x, base, h) {
-    x = Math.round(x);
-    fill(ctx, 'brown.0', x, base - 3, 1, 3);
-    for (let k = 0; k < h; k++) {
-      const w = Math.max(0, Math.floor(((h - k) / h) * (h / 3)) + ((k % 4) === 0 ? 1 : 0));
-      const y = base - 3 - k;
-      fill(ctx, 'green.0', x - w, y, w * 2 + 1, 1);
-      if (k % 4 === 0 && w > 1) fill(ctx, 'grey.6', x - w, y, 2, 1);
-      if (k % 4 === 1 && w > 1) fill(ctx, 'grey.5', x + w - 1, y, 1, 1);
-    }
-    fill(ctx, 'grey.6', x, base - 3 - h, 1, 1);
   }
 
   drawHill(ctx) {
