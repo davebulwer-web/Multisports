@@ -103,7 +103,7 @@ export function drawPose(p) {
   }
   b.outline(C('grey.1'));
   const r = (pt) => [Math.round(pt[0]), Math.round(pt[1])];
-  return { bmp: b, anchors: { handF: r(s.armF.hand), handB: r(s.armB.hand), head: r(s.head), hip: r(s.hip) } };
+  return { bmp: b, anchors: { handF: r(s.armF.hand), handB: r(s.armB.hand), head: r(s.head), hip: r(s.hip), footF: r(s.legF.ankle), footB: r(s.legB.ankle) } };
 }
 
 // ---------------------------------------------------------------------------
@@ -186,6 +186,20 @@ const CLAY_POSE = {
   mount: { hip: [20, 41], torso: 8, legF: [14, 6], legB: [-8, 2], armF: [112, 40], armB: [84, 100], footFlatF: true, footFlatB: true },
 };
 
+// Ski jump. The scene draws the skis from footF/footB. Flight poses lean the
+// whole body forward over the skis; the frame picked follows the lean error.
+const SKI_POSE = {
+  tuck:    { hip: [16, 50], torso: 76, legF: [72, 128], legB: [64, 124], armF: [-40, 8], armB: [-34, 8], footFlatF: true, footFlatB: true, headTilt: 2 },
+  upright: { hip: [19, 44], torso: 34, legF: [30, 50], legB: [22, 46], armF: [-20, 20], armB: [-14, 20], footFlatF: true, footFlatB: true },
+  takeoff: { hip: [20, 44], torso: 46, legF: [-6, 8], legB: [-12, 8], armF: [-50, 6], armB: [-44, 6], footFlatF: true, footFlatB: true },
+  flyBack: { hip: [18, 46], torso: 38, legF: [-24, 0], legB: [-30, 0], armF: [-36, 0], armB: [-30, 0], footFlatF: true, footFlatB: true },
+  fly:     { hip: [19, 48], torso: 54, legF: [-34, 0], legB: [-40, 0], armF: [-40, 0], armB: [-34, 0], footFlatF: true, footFlatB: true },
+  flyFwd:  { hip: [20, 50], torso: 68, legF: [-44, 0], legB: [-50, 0], armF: [-50, 0], armB: [-44, 0], footFlatF: true, footFlatB: true, headTilt: 2 },
+  land:    { hip: [20, 46], torso: 12, legF: [36, 44], legB: [-14, 78], armF: [72, 14], armB: [-58, 10], footFlatF: true, footFlatB: true },
+  feet:    { hip: [19, 45], torso: 22, legF: [30, 52], legB: [24, 50], armF: [34, 30], armB: [-20, 30], footFlatF: true, footFlatB: true },
+  fall:    { hip: [16, 57], torso: 86, legF: [-78, 14], legB: [-96, 8], armF: [132, 20], armB: [112, 30], headTilt: 3 },
+};
+
 const JAV = {
   withdraw: { hip: [20, 42], torso: -8, legF: [36, 10], legB: [-24, 20], armF: [-112, 6], armB: [70, 40] },
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
@@ -210,6 +224,15 @@ export function animations() {
     { tag: 'arch_loose', frames: [[ARCH.loose, 500]] },
     { tag: 'clay_ready', frames: [[CLAY_POSE.ready, 500]] },
     { tag: 'clay_mount', frames: [[CLAY_POSE.mount, 500]] },
+    { tag: 'ski_tuck', frames: [[SKI_POSE.tuck, 500]] },
+    { tag: 'ski_upright', frames: [[SKI_POSE.upright, 500]] },
+    { tag: 'ski_takeoff', frames: [[SKI_POSE.takeoff, 500]] },
+    { tag: 'ski_fly_back', frames: [[SKI_POSE.flyBack, 500]] },
+    { tag: 'ski_fly', frames: [[SKI_POSE.fly, 500]] },
+    { tag: 'ski_fly_fwd', frames: [[SKI_POSE.flyFwd, 500]] },
+    { tag: 'ski_land', frames: [[lerpPose(SKI_POSE.feet, SKI_POSE.land, 0.5), 80], [SKI_POSE.land, 500]] },
+    { tag: 'ski_feet', frames: [[SKI_POSE.feet, 500]] },
+    { tag: 'ski_fall', frames: [[SKI_POSE.fall, 500]] },
     { tag: 'lift_ready', frames: [[LIFT.ready, 500]] },
     { tag: 'lift_pull', frames: [[lerpPose(LIFT.ready, LIFT.pull, 0.5), 100], [LIFT.pull, 100]] },
     { tag: 'lift_rack', frames: [[LIFT.rack, 400]] },

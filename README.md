@@ -33,6 +33,7 @@ npm start          # serves the folder on http://localhost:8080
 | **Weightlifting** | Timing + balance | Pick the weight, hit the pull gauge, then the drive gauge. After that, keep the bar centred with ← → for 3 seconds. Two of the three judges' lights make a good lift. Heavier bars give tighter windows and more wobble. |
 | **Archery** | Fine control | Hold Space to draw the bow, then keep holding while you steady the sight. It sways with your breathing and has momentum, so nudge it with the arrow keys rather than yanking it. Aim off into the wind and let go to shoot. Hold too long and your arms start to shake. Six arrows, scored 10 (gold) to 1, out of 60. |
 | **Clay Pigeon** | Reaction + tracking | Press Space to call for the clay, which comes from the left or right trap after a short random delay. Swing the sight after it with the arrow keys (it has momentum) and fire ahead of it, because the shot takes time to get there. The further away the clay, the more lead it needs, but the pattern also spreads wider. Six singles then three doubles, two shells per round, scored out of 12. |
+| **Ski Jump** | Timing + balance | Press Space to push off and hold ↓ to tuck down the inrun for speed. Press Space again right on the lip to spring: early or late costs height and leaves you rotating. In the air the flight position is unstable, so keep your lean in the green with ← →. Press Space just before touchdown for a telemark landing, but not too early, because setting it kills your lift. Two jumps, each scored as distance points (60 at the 120 m K-point, 1.8 per metre) plus style from five judges (middle three count). Lean too far forward and you go over; land past the hill size without a telemark and you fall. |
 
 ### Competition
 
@@ -54,7 +55,7 @@ src/
   engine/             loop, input (ms-accurate press timestamps), font, audio synth, sprites, gfx helpers
   art/                palette, raster, pose rig (athlete.js), props, sheet packer  (no DOM; shared with Node)
   game/
-    sim/              pure event models (sprint, javelin, lift, archery, clay), scoring, rng (unit tested)
+    sim/              pure event models (sprint, javelin, lift, archery, clay, ski), scoring, rng (unit tested)
     events/           one Scene per event + registry (events/index.js)
     scenes/           title, setup, practice, cards/results/standings/podium
     competition.js    turn order, CPU results, points

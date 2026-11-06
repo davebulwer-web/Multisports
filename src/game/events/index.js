@@ -5,11 +5,13 @@ import { JavelinScene } from './javelin.js';
 import { WeightliftingScene } from './weightlifting.js';
 import { ArcheryScene } from './archery.js';
 import { ClayScene } from './clay.js';
+import { SkiJumpScene } from './skijump.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
 import { cpuArchery } from '../sim/archery.js';
 import { cpuClay, totalClays } from '../sim/clay.js';
+import { cpuSki } from '../sim/ski.js';
 import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
@@ -96,6 +98,23 @@ export const EVENTS = [
       'THE SHOT TAKES TIME TO ARRIVE: AIM AHEAD OF THE CLAY,',
       'FURTHER AHEAD THE FURTHER AWAY IT IS. SPACE FIRES.',
       '6 SINGLES THEN 3 DOUBLES. 2 SHELLS EACH ROUND.',
+    ],
+  },
+  {
+    id: 'skijump',
+    name: 'SKI JUMP',
+    skill: 'TIMING + BALANCE',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuSki,
+    Scene: SkiJumpScene,
+    baseRecord: 285,
+    help: [
+      'SPACE TO PUSH OFF. HOLD DOWN TO TUCK FOR SPEED.',
+      'PRESS SPACE RIGHT ON THE LIP TO SPRING.',
+      'IN THE AIR, KEEP YOUR LEAN IN THE GREEN WITH [ ].',
+      'PRESS SPACE JUST BEFORE TOUCHDOWN TO TELEMARK.',
+      'TOO EARLY KILLS YOUR LIFT. 2 JUMPS: DISTANCE + STYLE.',
     ],
   },
 ];
