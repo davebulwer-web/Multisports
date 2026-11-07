@@ -141,7 +141,7 @@ export class JavelinScene extends Scene {
     const jp = this.state === 'flight' || this.state === 'landed' ? this.javAt() : null;
     const focus = jp ? toPx(jp.x) - 200 : toPx(this.x) - 150;
     const camX = Math.max(0, Math.min(toPx(110) - W, focus));
-    drawStadium(ctx, camX, { excite: this.excite, t: this.game.time });
+    drawStadium(ctx, camX, { excite: this.excite, t: this.game.time, salt: 'javelin' });
     drawGrass(ctx, camX);
     this.drawField(ctx, camX);
 

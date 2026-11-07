@@ -104,7 +104,7 @@ export class FootbagScene extends Scene {
     const fb = this.fb;
     beachSky(ctx, this.t, 92);
     beachSea(ctx, this.t, 92, 132);
-    beachSand(ctx, this.t, 132, H, { excite: this.excite });
+    beachSand(ctx, this.t, 132, H, { excite: this.excite, boards: 'footbag' });
     // the circle of sand you play in
     const px = this.sx(fb.px);
     fill(ctx, 'orange.2', px - 9, GROUND, 19, 2);

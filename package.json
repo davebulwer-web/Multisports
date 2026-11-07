@@ -8,6 +8,7 @@
     "start": "node tools/serve.mjs",
     "export-sprites": "node tools/export-sprites.mjs",
     "pixellab": "node tools/pixellab-enhance.mjs",
+    "pixellab-logos": "node tools/pixellab-logos.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "engines": { "node": ">=18" }

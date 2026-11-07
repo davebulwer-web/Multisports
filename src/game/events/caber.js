@@ -11,6 +11,7 @@ import { CABER, Caber, fmtClock } from '../sim/caber.js';
 import { makeRng } from '../sim/rng.js';
 import { assets, playerSheet, drawScenery } from '../assets.js';
 import { topBar, banner, fmtPts } from '../hud.js';
+import { drawBoardRow } from '../boards.js';
 import { hash } from '../winter.js';
 
 const PX = 22;          // pixels per metre
@@ -278,11 +279,8 @@ export class CaberScene extends Scene {
         assets.props.draw(ctx, tag.from + frame, Math.round(c * 9 + r * 4 - cam * 0.8), 134 + r * 7);
       }
     }
-    for (let x = 0; x < W; x++) {
-      const wx = x + cam * 0.8;
-      if (Math.floor(wx) % 40 === 0) fill(ctx, 'grey.6', x, 136, 1, 10);
-      fill(ctx, 'grey.6', x, 139 + Math.round(Math.sin((wx % 40) / 40 * Math.PI) * 2), 1, 1);
-    }
+    // advertising hoarding in front of the crowd
+    drawBoardRow(ctx, cam * 0.8, 136, { season: 'world', salt: 'caber' });
     // throwing area: start mark and end of the run
     const s0 = this.sx(0), s1 = this.sx(CABER.runway);
     fill(ctx, 'grey.6', s0, GROUND - 4, 1, 8);

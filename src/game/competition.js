@@ -1,6 +1,7 @@
 // Runs a competition: for each event, every human takes a turn (hot-seat),
 // CPU rivals get simulated results, then points/medals are awarded.
 import { EVENTS } from './events/index.js';
+import { reshuffleBoards } from './boards.js';
 import { rankResults } from './sim/scoring.js';
 import { makeRng } from './sim/rng.js';
 import { getRecord, submitRecord } from './records.js';
@@ -35,6 +36,7 @@ export class Competition {
 
   nextEvent() {
     this.eventIdx++;
+    reshuffleBoards();
     if (this.eventIdx >= this.events.length) {
       if (this.opts.practice) return this.opts.onExit();
       return this.game.setScene(new PodiumScene(this.game, this));

@@ -2,14 +2,15 @@
 import { loadSheet } from '../engine/sprites.js';
 import { recolourMap } from '../art/palette.js';
 
-export const assets = { athlete: null, props: null, scenery: null };
+export const assets = { athlete: null, props: null, scenery: null, boards: null };
 const athleteCache = new Map();
 
 export async function loadAssets() {
-  const [athlete, props, scenery] = await Promise.all([loadSheet('athlete'), loadSheet('props'), loadSheet('scenery')]);
+  const [athlete, props, scenery, boards] = await Promise.all(['athlete', 'props', 'scenery', 'boards'].map((n) => loadSheet(n)));
   assets.athlete = athlete;
   assets.props = props;
   assets.scenery = scenery;
+  assets.boards = boards;
   athleteCache.clear();
 }
 

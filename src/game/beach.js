@@ -3,6 +3,7 @@
 import { fill, dither, bands, circle, W } from '../engine/gfx.js';
 import { assets, drawScenery } from './assets.js';
 import { hash } from './winter.js';
+import { drawBoardRow } from './boards.js';
 
 /** Sky and sun down to the horizon. */
 export function beachSky(ctx, t, horizon) {
@@ -30,9 +31,10 @@ export function beachSea(ctx, t, horizon, y1, camX = 0) {
 
 /**
  * Sand from y0 down, with palms, a lifeguard hut and fans, scrolling with camX
- * at `par` (parallax). excite 0..1 = how many fans are cheering.
+ * at `par` (parallax). excite 0..1 = how many fans are cheering. `boards` (a
+ * salt string) puts a row of beach advertising boards in front of the crowd.
  */
-export function beachSand(ctx, t, y0, y1, { camX = 0, par = 1, excite = 0.2, crowd = true, props = true } = {}) {
+export function beachSand(ctx, t, y0, y1, { camX = 0, par = 1, excite = 0.2, crowd = true, props = true, boards = null } = {}) {
   fill(ctx, 'orange.3', 0, y0, W, y1 - y0);
   fill(ctx, 'grey.6', 0, y0, W, 1); // foam line
   dither(ctx, 'orange.3', 'yellow.2', 0, y0 + 1, W, 3);
@@ -61,4 +63,5 @@ export function beachSand(ctx, t, y0, y1, { camX = 0, par = 1, excite = 0.2, cro
     const tag = assets.props.tags[`fan_${fan}`];
     assets.props.draw(ctx, tag.from + frame, x, y + 1);
   }
+  if (boards != null) drawBoardRow(ctx, cx, y0 + 14, { season: 'beach', salt: boards });
 }

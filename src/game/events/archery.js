@@ -116,7 +116,7 @@ export class ArcheryScene extends Scene {
   }
 
   draw(ctx) {
-    drawStadium(ctx, 0, { excite: this.excite, t: this.game.time });
+    drawStadium(ctx, 0, { excite: this.excite, t: this.game.time, salt: 'archery' });
     drawGrass(ctx, 0);
     this.drawRange(ctx);
     this.drawArcher(ctx);
