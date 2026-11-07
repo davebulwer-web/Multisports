@@ -483,6 +483,72 @@
     "h": 16
    },
    "duration": 300
+  },
+  {
+   "filename": "props torch_0",
+   "frame": {
+    "x": 96,
+    "y": 32,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "duration": 100
+  },
+  {
+   "filename": "props dove_0",
+   "frame": {
+    "x": 112,
+    "y": 32,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "duration": 120
+  },
+  {
+   "filename": "props dove_1",
+   "frame": {
+    "x": 0,
+    "y": 48,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "duration": 120
   }
  ],
  "meta": {
@@ -492,7 +558,7 @@
   "format": "RGBA8888",
   "size": {
    "w": 128,
-   "h": 48
+   "h": 64
   },
   "scale": "1",
   "frameTags": [
@@ -578,6 +644,18 @@
     "name": "fan_7",
     "from": 20,
     "to": 21,
+    "direction": "forward"
+   },
+   {
+    "name": "torch",
+    "from": 22,
+    "to": 22,
+    "direction": "forward"
+   },
+   {
+    "name": "dove",
+    "from": 23,
+    "to": 24,
     "direction": "forward"
    }
   ],

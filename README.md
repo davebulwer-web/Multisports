@@ -51,6 +51,8 @@ npm start          # serves the folder on http://localhost:8080
 
 You can have one to four hot-seat humans plus CPU rivals. Each event scores **10 / 7 / 4 / 2 / 1** for places 1–5, ties share the higher place, and fouls score 0. There are standings after each event and a podium at the end. Records are kept in the browser (localStorage).
 
+Each competitor picks a **nation** on the line-up screen. Full competitions open with an **opening ceremony**: the competitors parade in behind their flags, a torch runner lights the stadium cauldron, then doves and fireworks start the games, all to an original chiptune march. Any button skips it; practice goes straight to the event.
+
 The title menu offers:
 
 - **All events**: every event, season by season (Summer, Winter, World, Beach, Challenge).

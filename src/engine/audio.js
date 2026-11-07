@@ -86,5 +86,96 @@ export const sfx = {
   crowd: (vol = 0.5, dur = 1.2) => noise({ dur, vol, filter: 1200, q: 0.4 }),
   fanfare: () => melody([67, 72, 76, 79, 0, 76, 79, 79, 79], 0.11),
   fail: () => melody([64, 63, 62, 61], 0.16, 'triangle', 0.7),
+  rocket: () => tone({ freq: 500, to: 1800, dur: 0.5, type: 'triangle', vol: 0.18 }),
+  pop: () => { noise({ dur: 0.5, vol: 0.7, filter: 700, q: 0.4 }); noise({ dur: 0.9, vol: 0.25, filter: 4000, q: 0.6, delay: 0.08 }); },
+  ignite: () => { noise({ dur: 1.4, vol: 0.9, filter: 500, q: 0.3 }); tone({ freq: 80, to: 160, dur: 0.6, type: 'triangle', vol: 0.5 }); },
   jingle: () => melody([60, 64, 67, 72, 67, 72], 0.1, 'triangle', 0.7),
 };
+
+// ---------------------------------------------------------------------------
+// Tiny tracker for background tunes. A song is a set of tracks, each a list
+// of steps: a MIDI note, 0 for a rest, or null to hold the previous note.
+// Drum tracks use 'k' (kick), 's' (snare), 'h' (hat) instead of notes.
+
+/**
+ * Start a song. Returns { stop() }. Notes are scheduled a little ahead on a
+ * timer, so the tune can loop and be stopped cleanly at any point.
+ * @param {{bpm:number, stepsPerBeat?:number, loop?:boolean, tracks:{wave?:string, vol?:number, steps:(number|string|null)[]}[]}} song
+ */
+export function playSong(song) {
+  const c = ensure();
+  if (!c || muted) return { stop() {}, playing: false };
+  const bus = c.createGain();
+  bus.gain.value = 1;
+  bus.connect(master);
+  const stepDur = 60 / song.bpm / (song.stepsPerBeat || 2);
+  const len = Math.max(...song.tracks.map((t) => t.steps.length));
+  let step = 0;
+  let next = c.currentTime + 0.08;
+  const nodes = new Set();
+  const voice = (freq, t0, dur, type, vol) => {
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(vol, t0 + 0.005);
+    g.gain.setValueAtTime(vol, t0 + Math.max(0.01, dur - 0.04));
+    g.gain.linearRampToValueAtTime(0, t0 + dur);
+    o.connect(g).connect(bus);
+    o.start(t0); o.stop(t0 + dur + 0.02);
+    nodes.add(o); o.onended = () => nodes.delete(o);
+  };
+  const drum = (kind, t0, vol) => {
+    if (kind === 'k') {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(150, t0);
+      o.frequency.exponentialRampToValueAtTime(45, t0 + 0.12);
+      g.gain.setValueAtTime(vol * 1.4, t0);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.14);
+      o.connect(g).connect(bus); o.start(t0); o.stop(t0 + 0.16);
+      nodes.add(o); o.onended = () => nodes.delete(o);
+      return;
+    }
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = noiseBuf;
+    f.type = kind === 'h' ? 'highpass' : 'bandpass';
+    f.frequency.value = kind === 'h' ? 6000 : 1800;
+    const dur = kind === 'h' ? 0.04 : 0.11;
+    g.gain.setValueAtTime(vol * (kind === 'h' ? 0.5 : 1), t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    s.connect(f).connect(g).connect(bus);
+    s.start(t0, Math.random() * 0.5); s.stop(t0 + dur + 0.02);
+    nodes.add(s); s.onended = () => nodes.delete(s);
+  };
+  const schedule = () => {
+    while (next < c.currentTime + 0.3) {
+      if (step >= len) {
+        if (!song.loop) { clearInterval(timer); return; }
+        step = 0;
+      }
+      for (const tr of song.tracks) {
+        const n = tr.steps[step];
+        if (n === null || n === undefined || n === 0) continue;
+        if (typeof n === 'string') { drum(n, next, tr.vol ?? 0.5); continue; }
+        let hold = 1;
+        while (step + hold < len && tr.steps[step + hold] === null) hold++;
+        voice(NOTE(n), next, hold * stepDur * 0.92, tr.wave || 'square', tr.vol ?? 0.3);
+      }
+      step++;
+      next += stepDur;
+    }
+  };
+  schedule();
+  const timer = setInterval(schedule, 60);
+  return {
+    playing: true,
+    stop(fade = 0.4) {
+      clearInterval(timer);
+      const t = c.currentTime;
+      bus.gain.setValueAtTime(bus.gain.value, t);
+      bus.gain.linearRampToValueAtTime(0, t + fade);
+      setTimeout(() => { for (const n of nodes) { try { n.stop(); } catch { /* already stopped */ } } bus.disconnect(); }, fade * 1000 + 50);
+    },
+  };
+}

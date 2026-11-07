@@ -102,6 +102,26 @@ function lifeguard() {
   return b;
 }
 
+// Ceremony cauldron: a wide bowl on a fluted column, base centred on x=0.
+// The flame is drawn live by the game above the rim (top at y=-34).
+function cauldron() {
+  const { b, put } = canvas(0, 0);
+  const ox = SCENERY.pivot.x, oy = SCENERY.pivot.y + 1;
+  put('grey.3', -9, -4, 19, 4);           // plinth
+  put('grey.4', -7, -6, 15, 2);
+  b.limb(ox, oy - 6, ox, oy - 22, 3.2, C('grey.4'), 2.2); // column
+  put('orange.2', -5, -23, 11, 2);        // collar
+  for (let k = 0; k < 10; k++) {          // bowl, widening upward
+    const w = Math.round(4 + k * 1.3);
+    put(k % 3 ? 'orange.2' : 'orange.1', -w, -24 - k, w * 2 + 1, 1);
+  }
+  put('orange.3', -17, -34, 35, 2);       // rim
+  b.shade();
+  b.outline(C('grey.1'));
+  put('grey.0', -15, -34, 31, 1);         // mouth
+  return b;
+}
+
 export function bakeScenery() {
   const one = (tag, bmp) => ({ tag, frames: [{ bmp, duration: 100 }] });
   return buildSheet('scenery', [
@@ -112,5 +132,6 @@ export function bakeScenery() {
     one('tower', tower()),
     one('palm', palm()),
     one('lifeguard', lifeguard()),
+    one('cauldron', cauldron()),
   ], { ...SCENERY, cols: 4 });
 }

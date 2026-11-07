@@ -3145,6 +3145,380 @@
     "h": 64
    },
    "duration": 800
+  },
+  {
+   "filename": "athlete torch_run_0",
+   "frame": {
+    "x": 280,
+    "y": 1088,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 90
+  },
+  {
+   "filename": "athlete torch_run_1",
+   "frame": {
+    "x": 0,
+    "y": 1152,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 90
+  },
+  {
+   "filename": "athlete torch_run_2",
+   "frame": {
+    "x": 40,
+    "y": 1152,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 90
+  },
+  {
+   "filename": "athlete torch_run_3",
+   "frame": {
+    "x": 80,
+    "y": 1152,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 90
+  },
+  {
+   "filename": "athlete torch_run_4",
+   "frame": {
+    "x": 120,
+    "y": 1152,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 90
+  },
+  {
+   "filename": "athlete torch_run_5",
+   "frame": {
+    "x": 160,
+    "y": 1152,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 90
+  },
+  {
+   "filename": "athlete torch_run_6",
+   "frame": {
+    "x": 200,
+    "y": 1152,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 90
+  },
+  {
+   "filename": "athlete torch_run_7",
+   "frame": {
+    "x": 240,
+    "y": 1152,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 90
+  },
+  {
+   "filename": "athlete torch_raise_0",
+   "frame": {
+    "x": 280,
+    "y": 1152,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete march_0",
+   "frame": {
+    "x": 0,
+    "y": 1216,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 150
+  },
+  {
+   "filename": "athlete march_1",
+   "frame": {
+    "x": 40,
+    "y": 1216,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 150
+  },
+  {
+   "filename": "athlete march_2",
+   "frame": {
+    "x": 80,
+    "y": 1216,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 150
+  },
+  {
+   "filename": "athlete march_3",
+   "frame": {
+    "x": 120,
+    "y": 1216,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 150
+  },
+  {
+   "filename": "athlete march_4",
+   "frame": {
+    "x": 160,
+    "y": 1216,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 150
+  },
+  {
+   "filename": "athlete march_5",
+   "frame": {
+    "x": 200,
+    "y": 1216,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 150
+  },
+  {
+   "filename": "athlete wave_0",
+   "frame": {
+    "x": 240,
+    "y": 1216,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 260
+  },
+  {
+   "filename": "athlete wave_1",
+   "frame": {
+    "x": 280,
+    "y": 1216,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 260
   }
  ],
  "meta": {
@@ -3154,7 +3528,7 @@
   "format": "RGBA8888",
   "size": {
    "w": 320,
-   "h": 1152
+   "h": 1280
   },
   "scale": "1",
   "frameTags": [
@@ -3588,6 +3962,30 @@
     "name": "dejected",
     "from": 142,
     "to": 142,
+    "direction": "forward"
+   },
+   {
+    "name": "torch_run",
+    "from": 143,
+    "to": 150,
+    "direction": "forward"
+   },
+   {
+    "name": "torch_raise",
+    "from": 151,
+    "to": 151,
+    "direction": "forward"
+   },
+   {
+    "name": "march",
+    "from": 152,
+    "to": 157,
+    "direction": "forward"
+   },
+   {
+    "name": "wave",
+    "from": 158,
+    "to": 159,
     "direction": "forward"
    }
   ],
@@ -7313,6 +7711,448 @@
      "footB": [
       18,
       62
+     ]
+    },
+    "143": {
+     "handF": [
+      23,
+      16
+     ],
+     "handB": [
+      29,
+      39
+     ],
+     "head": [
+      22,
+      26
+     ],
+     "hip": [
+      20,
+      42
+     ],
+     "footF": [
+      13,
+      54
+     ],
+     "footB": [
+      23,
+      62
+     ]
+    },
+    "144": {
+     "handF": [
+      23,
+      15
+     ],
+     "handB": [
+      32,
+      31
+     ],
+     "head": [
+      22,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      22,
+      56
+     ],
+     "footB": [
+      12,
+      59
+     ]
+    },
+    "145": {
+     "handF": [
+      23,
+      14
+     ],
+     "handB": [
+      32,
+      28
+     ],
+     "head": [
+      22,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      37,
+      51
+     ],
+     "footB": [
+      8,
+      56
+     ]
+    },
+    "146": {
+     "handF": [
+      23,
+      15
+     ],
+     "handB": [
+      32,
+      31
+     ],
+     "head": [
+      22,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      33,
+      55
+     ],
+     "footB": [
+      8,
+      55
+     ]
+    },
+    "147": {
+     "handF": [
+      23,
+      16
+     ],
+     "handB": [
+      29,
+      39
+     ],
+     "head": [
+      22,
+      26
+     ],
+     "hip": [
+      20,
+      42
+     ],
+     "footF": [
+      23,
+      62
+     ],
+     "footB": [
+      13,
+      54
+     ]
+    },
+    "148": {
+     "handF": [
+      23,
+      15
+     ],
+     "handB": [
+      23,
+      41
+     ],
+     "head": [
+      22,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      12,
+      59
+     ],
+     "footB": [
+      22,
+      56
+     ]
+    },
+    "149": {
+     "handF": [
+      23,
+      14
+     ],
+     "handB": [
+      20,
+      41
+     ],
+     "head": [
+      22,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      8,
+      56
+     ],
+     "footB": [
+      37,
+      51
+     ]
+    },
+    "150": {
+     "handF": [
+      23,
+      15
+     ],
+     "handB": [
+      23,
+      41
+     ],
+     "head": [
+      22,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      8,
+      55
+     ],
+     "footB": [
+      33,
+      55
+     ]
+    },
+    "151": {
+     "handF": [
+      22,
+      15
+     ],
+     "handB": [
+      18,
+      46
+     ],
+     "head": [
+      19,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      22,
+      61
+     ],
+     "footB": [
+      18,
+      61
+     ]
+    },
+    "152": {
+     "handF": [
+      33,
+      28
+     ],
+     "handB": [
+      23,
+      46
+     ],
+     "head": [
+      21,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      18,
+      61
+     ],
+     "footB": [
+      20,
+      61
+     ]
+    },
+    "153": {
+     "handF": [
+      33,
+      28
+     ],
+     "handB": [
+      28,
+      44
+     ],
+     "head": [
+      21,
+      24
+     ],
+     "hip": [
+      20,
+      40
+     ],
+     "footF": [
+      25,
+      59
+     ],
+     "footB": [
+      13,
+      59
+     ]
+    },
+    "154": {
+     "handF": [
+      33,
+      28
+     ],
+     "handB": [
+      28,
+      44
+     ],
+     "head": [
+      21,
+      24
+     ],
+     "hip": [
+      20,
+      40
+     ],
+     "footF": [
+      27,
+      59
+     ],
+     "footB": [
+      13,
+      59
+     ]
+    },
+    "155": {
+     "handF": [
+      33,
+      28
+     ],
+     "handB": [
+      23,
+      46
+     ],
+     "head": [
+      21,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      20,
+      61
+     ],
+     "footB": [
+      18,
+      61
+     ]
+    },
+    "156": {
+     "handF": [
+      33,
+      28
+     ],
+     "handB": [
+      18,
+      45
+     ],
+     "head": [
+      21,
+      24
+     ],
+     "hip": [
+      20,
+      40
+     ],
+     "footF": [
+      13,
+      59
+     ],
+     "footB": [
+      25,
+      59
+     ]
+    },
+    "157": {
+     "handF": [
+      33,
+      28
+     ],
+     "handB": [
+      18,
+      45
+     ],
+     "head": [
+      21,
+      24
+     ],
+     "hip": [
+      20,
+      40
+     ],
+     "footF": [
+      13,
+      59
+     ],
+     "footB": [
+      27,
+      59
+     ]
+    },
+    "158": {
+     "handF": [
+      24,
+      16
+     ],
+     "handB": [
+      20,
+      46
+     ],
+     "head": [
+      20,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      21,
+      61
+     ],
+     "footB": [
+      18,
+      61
+     ]
+    },
+    "159": {
+     "handF": [
+      25,
+      16
+     ],
+     "handB": [
+      20,
+      46
+     ],
+     "head": [
+      20,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      21,
+      61
+     ],
+     "footB": [
+      18,
+      61
      ]
     }
    }
