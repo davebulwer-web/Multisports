@@ -1,6 +1,8 @@
 // Shared winter scenery: sky, parallax mountains, pines and falling snow.
 // Used by the winter events (ski jump, biathlon).
 import { fill, dither, bands, W, H } from '../engine/gfx.js';
+import { assets, drawScenery } from './assets.js';
+import { PINE_SIZES } from '../art/scenery.js';
 
 export const hash = (n) => { let h = Math.imul(n ^ 0x9e3779b9, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 const peak = (u, w) => 1 - Math.abs(((u / w) % 1 + 1) % 1 - 0.5) * 2; // triangle wave 0..1
@@ -34,6 +36,11 @@ export function drawWinterSky(ctx, camPx, camPy = 0, { horizon = 150, ridge = 14
 /** A snow-dusted pine with its base at (x, base). */
 export function pine(ctx, x, base, h) {
   x = Math.round(x);
+  if (h >= 10 && assets.scenery) {
+    const size = PINE_SIZES.reduce((a, b) => (Math.abs(b - h) < Math.abs(a - h) ? b : a));
+    drawScenery(ctx, `pine_${size}`, x, base - 1);
+    return;
+  }
   fill(ctx, 'brown.0', x, base - 3, 1, 3);
   for (let k = 0; k < h; k++) {
     const w = Math.max(0, Math.floor(((h - k) / h) * (h / 3)) + ((k % 4) === 0 ? 1 : 0));

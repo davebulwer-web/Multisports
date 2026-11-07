@@ -1,5 +1,5 @@
 // Parallax stadium backdrop shared by the events.
-import { assets } from './assets.js';
+import { assets, drawScenery } from './assets.js';
 import { fill, dither, bands, text, P, W } from '../engine/gfx.js';
 
 export const GROUND_Y = 112;
@@ -27,10 +27,7 @@ export function drawStadium(ctx, camX, { excite = 0.1, t = 0 } = {}) {
   // distant floodlight towers (slow parallax)
   for (let i = -1; i < 4; i++) {
     const x = Math.round(i * 160 - ((camX * 0.15) % 160));
-    fill(ctx, 'grey.2', x + 20, 6, 2, 30);
-    fill(ctx, 'grey.1', x + 12, 2, 18, 7);
-    for (let k = 0; k < 4; k++) fill(ctx, 'yellow.2', x + 13 + k * 4, 3, 3, 2);
-    for (let k = 0; k < 4; k++) fill(ctx, 'grey.6', x + 13 + k * 4, 6, 3, 2);
+    drawScenery(ctx, 'tower', x + 21, 35);
   }
   // stand
   const sx = camX * 0.5;

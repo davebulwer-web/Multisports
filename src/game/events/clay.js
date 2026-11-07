@@ -9,7 +9,7 @@ import { sfx } from '../../engine/audio.js';
 import { CLAY, Clay, Sight, shotTo, breaks, totalClays } from '../sim/clay.js';
 import { makeRng } from '../sim/rng.js';
 import { drawGrass } from '../stadium.js';
-import { playerSheet } from '../assets.js';
+import { playerSheet, drawScenery } from '../assets.js';
 import { topBar, banner } from '../hud.js';
 
 const GROUND = 202;     // shooter's feet
@@ -183,9 +183,7 @@ export class ClayScene extends Scene {
     // trap houses
     for (const side of ['left', 'right']) {
       const t = CLAY.traps[side];
-      fill(ctx, 'grey.2', t.x - 9, t.y - 4, 18, 12);
-      fill(ctx, 'grey.4', t.x - 10, t.y - 6, 20, 2);
-      fill(ctx, 'grey.0', side === 'left' ? t.x + 3 : t.x - 7, t.y - 2, 4, 3); // throwing slot
+      drawScenery(ctx, `trap_${side}`, t.x, t.y + 7); // throwing slot faces the field
     }
     // shooting stand
     fill(ctx, 'orange.1', SHOOTER_X - 12, GROUND + 1, 26, 3);
