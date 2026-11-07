@@ -49,7 +49,7 @@ export function skeleton(p) {
   };
 }
 
-function drawLeg(b, hip, lg, front, footFlat) {
+function drawLeg(b, hip, lg, front, footFlat, toes) {
   const skin = C(front ? 'skin.1' : 'skin.0');
   const shorts = C(front ? 'kitB.1' : 'kitB.0');
   const shoe = C(front ? 'grey.5' : 'grey.3');
@@ -60,7 +60,7 @@ function drawLeg(b, hip, lg, front, footFlat) {
   const mid = [hip[0] + (lg.knee[0] - hip[0]) * 0.5, hip[1] + (lg.knee[1] - hip[1]) * 0.5];
   b.limb(hip[0], hip[1], mid[0], mid[1], 2.9, shorts, 2.6);
   // foot: perpendicular-ish to shin, pointing forward
-  const fa = footFlat ? 90 : lg.shinA + 90;
+  const fa = footFlat ? 90 : toes ? lg.shinA + 20 : lg.shinA + 90;
   const [fs, fc] = dir(fa);
   const toe = [lg.ankle[0] + fs * 3.5, lg.ankle[1] + fc * 3.5];
   b.limb(lg.ankle[0], lg.ankle[1] + 0.5, toe[0], toe[1] + 0.5, 1.3, shoe);
@@ -81,7 +81,7 @@ export function drawPose(p) {
   const b = new Bitmap(FRAME_W, FRAME_H);
   const s = skeleton(p);
   drawArm(b, s.shoulder, s.armB, false);
-  drawLeg(b, s.hip, s.legB, false, p.footFlatB);
+  drawLeg(b, s.hip, s.legB, false, p.footFlatB, p.toes);
   // torso: vest from hips to shoulders, shorts waistband at the hip
   b.limb(s.hip[0], s.hip[1] - 1, s.shoulder[0], s.shoulder[1], 3.4, C('kitA.1'), 3.6);
   b.disc(s.hip[0], s.hip[1], 3.4, C('kitB.1'));
@@ -91,7 +91,7 @@ export function drawPose(p) {
   const hd = p.headTilt || 0;
   b.disc(hx - 0.6, hy - 0.4, 3.6, C('hair.1'));
   b.disc(hx + 0.7, hy + 0.6 + hd * 0.3, 3.1, C('skin.1'));
-  drawLeg(b, s.hip, s.legF, true, p.footFlatF);
+  drawLeg(b, s.hip, s.legF, true, p.footFlatF, p.toes);
   drawArm(b, s.shoulder, s.armF, true);
   b.shade();
   // small details added after shading so they stay crisp
@@ -221,6 +221,28 @@ const BIA = {
   stand:  { hip: [20, 41], torso: 0, legF: [10, 2], legB: [-10, 2], armF: [96, 50], armB: [40, 110], footFlatF: true, footFlatB: true },
 };
 
+// Caber toss: hands cupped under the base at chest height, the caber resting
+// against the shoulder. The scene draws the caber from handF.
+const CABER_HOLD = { armF: [50, 110], armB: [40, 120] };
+const CABER = {
+  lift: { hip: [18, 50], torso: 34, legF: [76, 104], legB: [44, 96], armF: [30, 90], armB: [20, 100], footFlatF: true, footFlatB: true },
+  hold: { hip: [20, 42], torso: -4, legF: [8, 6], legB: [-6, 4], ...CABER_HOLD, footFlatF: true, footFlatB: true },
+  toss: { hip: [20, 39], torso: -12, legF: [12, 0], legB: [-22, 12], armF: [166, 8], armB: [158, 12] },
+};
+
+// Cliff diving. Drawn upright; the scene rotates the whole frame about the
+// hip anchor as the diver somersaults. Toes pointed in the air.
+const DIVE_POSE = {
+  edgeUp:   { hip: STAND_HIP, torso: 0, legF: [2, 2], legB: [-2, 2], armF: [176, 0], armB: [184, 0], footFlatF: true, footFlatB: true, bib: false },
+  edgeMid:  { hip: [20, 43], torso: 8, legF: [16, 28], legB: [10, 24], armF: [90, 0], armB: [80, 0], footFlatF: true, footFlatB: true, bib: false },
+  edgeLow:  { hip: [19, 46], torso: 26, legF: [42, 72], legB: [34, 66], armF: [-62, 0], armB: [-50, 0], footFlatF: true, footFlatB: true, bib: false },
+  open:     { hip: [20, 41], torso: 0, legF: [1, 0], legB: [-1, 0], armF: [3, 0], armB: [-3, 0], toes: true, bib: false },
+  arms:     { hip: [20, 41], torso: 0, legF: [1, 0], legB: [-1, 0], armF: [112, 0], armB: [68, 0], toes: true, bib: false },
+  pike:     { hip: [20, 41], torso: 6, legF: [146, 0], legB: [150, 0], armF: [150, 0], armB: [156, 0], toes: true, bib: false },
+  tuck:     { hip: [20, 41], torso: 20, legF: [150, 150], legB: [140, 146], armF: [28, 6], armB: [22, 10], toes: true, bib: false },
+  tread:    { hip: [20, 44], torso: 4, legF: [24, 50], legB: [-14, 40], armF: [86, 40], armB: [70, 50], bib: false },
+};
+
 const JAV = {
   withdraw: { hip: [20, 42], torso: -8, legF: [36, 10], legB: [-24, 20], armF: [-112, 6], armB: [70, 40] },
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
@@ -257,6 +279,16 @@ export function animations() {
     { tag: 'xc_stride', frames: Array.from({ length: 8 }, (_, i) => [xcPose(i / 8), 110]) },
     { tag: 'bia_prone', frames: [[BIA.prone, 500]] },
     { tag: 'bia_stand', frames: [[BIA.stand, 500]] },
+    { tag: 'caber_lift', frames: [[CABER.lift, 500]] },
+    { tag: 'caber_hold', frames: [[CABER.hold, 500]] },
+    { tag: 'caber_run', frames: run(8, 90, 4, CABER_HOLD) },
+    { tag: 'caber_toss', frames: [[lerpPose(CABER.hold, CABER.toss, 0.5), 80], [CABER.toss, 500]] },
+    { tag: 'dive_edge', frames: [[DIVE_POSE.edgeLow, 500], [DIVE_POSE.edgeMid, 500], [DIVE_POSE.edgeUp, 500]] },
+    { tag: 'dive_open', frames: [[DIVE_POSE.open, 500]] },
+    { tag: 'dive_arms', frames: [[DIVE_POSE.arms, 500]] },
+    { tag: 'dive_pike', frames: [[DIVE_POSE.pike, 500]] },
+    { tag: 'dive_tuck', frames: [[DIVE_POSE.tuck, 500]] },
+    { tag: 'dive_tread', frames: [[DIVE_POSE.tread, 400], [lerpPose(DIVE_POSE.tread, DIVE_POSE.edgeMid, 0.3), 400]] },
     { tag: 'lift_ready', frames: [[LIFT.ready, 500]] },
     { tag: 'lift_pull', frames: [[lerpPose(LIFT.ready, LIFT.pull, 0.5), 100], [LIFT.pull, 100]] },
     { tag: 'lift_rack', frames: [[LIFT.rack, 400]] },

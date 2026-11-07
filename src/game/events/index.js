@@ -9,6 +9,8 @@ import { SkiJumpScene } from './skijump.js';
 import { BiathlonScene } from './biathlon.js';
 import { CurlingScene } from './curling.js';
 import { BobsleighScene } from './bobsleigh.js';
+import { CaberScene } from './caber.js';
+import { CliffDiveScene } from './cliffdive.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
@@ -18,6 +20,8 @@ import { cpuSki } from '../sim/ski.js';
 import { cpuBiathlon, fmtRace } from '../sim/biathlon.js';
 import { cpuCurling, maxScore } from '../sim/curling.js';
 import { cpuBob, fmtBob } from '../sim/bob.js';
+import { cpuCaber } from '../sim/caber.js';
+import { cpuDive } from '../sim/dive.js';
 import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
@@ -172,6 +176,40 @@ export const EVENTS = [
       'IN THE BENDS THE SLED SWINGS UP THE WALL.',
       'STEER [ ] TO KEEP IT ON THE GREEN MARK.',
       'SWINGING AND STEERING SCRUB SPEED. TOO HIGH: ROLL.',
+    ],
+  },
+  {
+    id: 'caber',
+    name: 'CABER TOSS',
+    skill: 'BALANCE + TIMING',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuCaber,
+    Scene: CaberScene,
+    baseRecord: 270,
+    help: [
+      'HOLD SPACE TO RUN. RUNNING HARDER TIPS THE CABER',
+      'BACK, EASING OFF LETS IT TOPPLE FORWARD.',
+      'KEEP IT FROM FALLING SIDEWAYS WITH [ ].',
+      'LET IT TIP INTO THE GREEN, THEN PRESS UP TO TOSS.',
+      'STRAIGHT AT 12 O\'CLOCK SCORES 100. 3 TOSSES.',
+    ],
+  },
+  {
+    id: 'cliffdive',
+    name: 'CLIFF DIVING',
+    skill: 'TIMING IN THE AIR',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuDive,
+    Scene: CliffDiveScene,
+    baseRecord: 280,
+    help: [
+      'PICK A DIVE. HARDER DIVES SCORE MORE.',
+      'SPACE AT THE TOP OF THE ARM SWING TO JUMP.',
+      'HOLD SPACE TO TUCK OR PIKE AND SPIN FAST.',
+      'LET GO TO OPEN OUT: ENTER FEET FIRST, UPRIGHT.',
+      'HOLD UP TO SLOW THE SPIN. 3 DIVES, 5 JUDGES.',
     ],
   },
 ];
