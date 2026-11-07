@@ -11,6 +11,8 @@ import { EVENTS } from '../events/index.js';
 import { allRecords, getRecord, getRecordHolder } from '../records.js';
 import { groupBySeason, allEventsInOrder, toggleEvent, toggleGroup, programmeEvents } from '../programme.js';
 import { Competition, makePlayer, CPU_NAMES } from '../competition.js';
+import { NATION_CODES } from '../../art/flags.js';
+import { drawFlagIcon } from './ceremony.js';
 
 /** Vertical menu helper. */
 class Menu {
@@ -102,6 +104,7 @@ function defaultSlots() {
     name: i === 0 ? 'PLAYER 1' : CPU_NAMES[(i * 3) % CPU_NAMES.length],
     kit: [0, 1, 2, 3][i],
     skin: [1, 3, 0, 2][i],
+    nation: ['GBR', 'USA', 'JPN', 'KEN'][i],
     skill: 0.35 + Math.random() * 0.45,
   }));
 }
@@ -110,7 +113,7 @@ function defaultSlots() {
 function practicePlayers() {
   let humans = (savedSlots || []).filter((s) => s.type === 'HUMAN');
   if (!humans.length) humans = defaultSlots().slice(0, 1);
-  return humans.map((s) => makePlayer({ name: s.name, kit: s.kit, skin: s.skin }));
+  return humans.map((s) => makePlayer({ name: s.name, kit: s.kit, skin: s.skin, nation: s.nation }));
 }
 
 export class SetupScene extends Scene {
@@ -123,7 +126,7 @@ export class SetupScene extends Scene {
     savedSlots ||= defaultSlots();
     this.slots = savedSlots;
     this.row = 0;
-    this.col = 0; // 0 type, 1 name, 2 kit, 3 skin
+    this.col = 0; // 0 type, 1 name, 2 nation, 3 kit, 4 skin
     this.editing = false;
     this.anims = [];
     this.slots.forEach((_, i) => this.refresh(i));
@@ -149,8 +152,8 @@ export class SetupScene extends Scene {
     const rows = this.slots.length + 1;
     if (input.wasPressed('up')) { this.row = (this.row + rows - 1) % rows; sfx.blip(); }
     if (input.wasPressed('down')) { this.row = (this.row + 1) % rows; sfx.blip(); }
-    if (input.wasPressed('left')) { this.col = (this.col + 3) % 4; sfx.blip(); }
-    if (input.wasPressed('right')) { this.col = (this.col + 1) % 4; sfx.blip(); }
+    if (input.wasPressed('left')) { this.col = (this.col + 4) % 5; sfx.blip(); }
+    if (input.wasPressed('right')) { this.col = (this.col + 1) % 5; sfx.blip(); }
     if (input.wasPressed('b')) { sfx.back(); return this.game.setScene(this.onBack()); }
     if (!input.confirm()) return;
     sfx.select();
@@ -162,7 +165,8 @@ export class SetupScene extends Scene {
       if (s.type === 'CPU' && !CPU_NAMES.includes(s.name)) s.name = CPU_NAMES[(this.row * 3) % CPU_NAMES.length];
     } else if (this.col === 1) {
       if (s.type === 'HUMAN') { this.editing = true; s.name = ''; }
-    } else if (this.col === 2) s.kit = (s.kit + 1) % KITS.length;
+    } else if (this.col === 2) s.nation = NATION_CODES[(NATION_CODES.indexOf(s.nation) + 1) % NATION_CODES.length];
+    else if (this.col === 3) s.kit = (s.kit + 1) % KITS.length;
     else s.skin = (s.skin + 1) % SKINS.length;
     this.refresh(this.row);
   }
@@ -170,7 +174,7 @@ export class SetupScene extends Scene {
   begin() {
     const active = this.slots.filter((s) => s.type !== 'OFF');
     if (!active.some((s) => s.type === 'HUMAN')) { sfx.bad(); this.warn = 'NEED AT LEAST ONE HUMAN'; return; }
-    const players = active.map((s) => makePlayer({ name: s.name, kit: s.kit, skin: s.skin, cpu: s.type === 'CPU', skill: s.skill }));
+    const players = active.map((s) => makePlayer({ name: s.name, kit: s.kit, skin: s.skin, nation: s.nation, cpu: s.type === 'CPU', skill: s.skill }));
     const comp = new Competition(this.game, players, this.events, { onExit: () => this.game.setScene(new TitleScene(this.game)) });
     comp.start();
   }
@@ -179,20 +183,21 @@ export class SetupScene extends Scene {
     backdrop(ctx, this.game.time);
     const n = this.events.length;
     card(ctx, 12, 8, W - 24, 196, n === 1 ? `COMPETITORS - ${this.events[0].name}` : `COMPETITORS - ${n} EVENTS`);
-    const cols = [{ x: 40, label: 'TYPE' }, { x: 110, label: 'NAME' }, { x: 210, label: 'KIT' }, { x: 290, label: 'SKIN' }];
+    const cols = [{ x: 24, label: 'TYPE' }, { x: 80, label: 'NAME' }, { x: 152, label: 'NATION' }, { x: 210, label: 'KIT' }, { x: 272, label: 'SKIN' }];
     cols.forEach((c, i) => text(ctx, c.label, c.x, 28, this.col === i && this.row < 4 ? 'yellow.2' : 'grey.4'));
     this.slots.forEach((s, i) => {
       const y = 40 + i * 36;
       const on = this.row === i;
       fill(ctx, on ? 'blue.1' : 'blue.0', 16, y, W - 32, 34);
-      const val = [s.type, s.name + (this.editing && on && Math.floor(this.t * 3) % 2 ? '_' : ''), KITS[s.kit].name, SKINS[s.skin].name];
+      const val = [s.type, s.name + (this.editing && on && Math.floor(this.t * 3) % 2 ? '_' : ''), s.nation, KITS[s.kit].name, SKINS[s.skin].name];
       val.forEach((v, c) => {
         const hi = on && this.col === c;
-        if (hi) fill(ctx, 'blue.2', cols[c].x - 3, y + 11, Math.max(40, v.length * 6 + 5), 11);
+        if (hi) fill(ctx, 'blue.2', cols[c].x - 3, y + 11, Math.max(c === 2 ? 46 : 40, v.length * 6 + 5), 11);
         text(ctx, v, cols[c].x, y + 13, s.type === 'OFF' && c > 0 ? 'grey.3' : hi ? 'yellow.2' : 'grey.6');
+        if (c === 2 && s.type !== 'OFF') drawFlagIcon(ctx, s.nation, cols[c].x + 22, y + 12 - 2);
       });
       if (s.type !== 'OFF') this.anims[i].draw(ctx, W - 36, y + 33);
-      if (s.type === 'CPU') text(ctx, `SKILL ${Math.round(s.skill * 10)}`, 110, y + 24, 'grey.4', { shadow: null });
+      if (s.type === 'CPU') text(ctx, `SKILL ${Math.round(s.skill * 10)}`, 80, y + 24, 'grey.4', { shadow: null });
     });
     const sy = 40 + 4 * 36 + 2;
     const on = this.row === 4;

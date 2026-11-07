@@ -17,8 +17,8 @@ Multisports also reads two optional extras from `meta.multisports`:
 | Sheet | Frame | Used for |
 |---|---|---|
 | `athlete` | 40×64, pivot (20,62) | Every athlete. Recoloured per player. |
-| `props` | 16×16 | Medals, judges' lights, crowd fans (2 frames each: seated/cheering). |
-| `scenery` | 64×48, pivot (32,47) | Pines (`pine_12/18/26`, picked by size), caber marquee (`tent`), clay trap houses (`trap_left/right`), stadium floodlight (`tower`), beach `palm` and `lifeguard` hut. Drawn by the centre of their base. |
+| `props` | 16×16 | Medals, judges' lights, crowd fans (2 frames each: seated/cheering), the ceremony `torch` and `dove` (2 frames). |
+| `scenery` | 64×48, pivot (32,47) | Pines (`pine_12/18/26`, picked by size), caber marquee (`tent`), clay trap houses (`trap_left/right`), stadium floodlight (`tower`), beach `palm`, `lifeguard` hut and the opening ceremony `cauldron`. Drawn by the centre of their base. |
 | `boards` | 96×16, drawn by the top-left | Advertising boards, one frame per brand, tagged with the brand id (`zapcola`, `sprintex` …). See *Advertising boards* below. |
 
 If a sheet's files are missing, the game bakes it from the rig at startup, so it always runs.
@@ -93,3 +93,8 @@ The trackside hoardings come from the `boards` sheet: one 96×16 frame per inven
   Each logo costs one generation. You can also edit the rows in `logos.js` by hand: `.` is transparent, any other character is a palette index.
 - **Hand-painted boards:** like every sheet, `assets/art/boards/<brand>_0.png` (96×16, palette colours) replaces that board at export.
 - **Where they appear:** `drawBoardRow()` in `src/game/boards.js` draws a scrolling row from a season's pool (its own brands plus the `any` ones). The stadium events use the summer pool, speed skating the winter pool, caber the world pool, the assault course the challenge pool and footbag the beach pool; the title screen cycles through every brand. Each row is shuffled per event and per competition, so no two neighbouring boards repeat. To add a sponsor, add a brand, run the logo tool, then export.
+
+## Opening ceremony
+
+The ceremony (`src/game/scenes/ceremony.js`) uses the athlete tags `march` (flag bearer, pole drawn at `handF`), `torch_run` and `torch_raise` (the `torch` prop is drawn at `handF`), and `wave`, plus the `dove` prop and the `cauldron` scenery frame. Flames, fireworks and the stairs are drawn in code. Flags are shape rules in `src/art/flags.js`, so they scale to any size and stay in the palette; add a nation there and it appears in the setup screen's NATION column.
+

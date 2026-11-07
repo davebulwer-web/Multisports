@@ -326,6 +326,36 @@ const JAV = {
 };
 
 /** Animation definitions: tag -> list of [pose, durationMs]. */
+// Opening ceremony: torch relay, flag-bearer march and waving to the crowd.
+const TORCH_UP = { armF: [172, 4] }; // torch held high, straight arm
+
+/** Walking cycle, phase in [0,1). carry overrides the front arm (flag pole). */
+function walkPose(phase, carry = null) {
+  const a = phase * Math.PI * 2;
+  const leg = (ph) => {
+    const s = Math.sin(ph * Math.PI * 2);
+    const lift = Math.max(0, Math.cos(ph * Math.PI * 2));
+    return [4 + 24 * s, 6 + 26 * lift * (0.5 + 0.5 * s)];
+  };
+  const p = {
+    hip: [20, 41 - 0.8 * Math.abs(Math.sin(a))],
+    torso: 2,
+    legF: leg(phase),
+    legB: leg(phase + 0.5),
+    armF: [-22 * Math.sin(a), 18],
+    armB: [22 * Math.sin(a), 18],
+  };
+  if (carry) Object.assign(p, carry);
+  return p;
+}
+
+const CEREMONY = {
+  raise: { hip: STAND_HIP, torso: -2, legF: [8, 2], legB: [-6, 2], armF: [166, 8], armB: [-12, 14], footFlatF: true, footFlatB: true },
+  waveA: { hip: STAND_HIP, torso: 0, legF: [4, 2], legB: [-4, 2], armF: [146, 34], armB: [-6, 10], footFlatF: true, footFlatB: true },
+  waveB: { hip: STAND_HIP, torso: 0, legF: [4, 2], legB: [-4, 2], armF: [168, -16], armB: [-6, 10], footFlatF: true, footFlatB: true },
+};
+const POLE_CARRY = { armF: [62, 76] }; // hand in front of the chest gripping an upright pole
+
 export function animations() {
   const run = (n, ms, lean, carry) =>
     Array.from({ length: n }, (_, i) => [runPose(i / n, lean, carry), ms]);
@@ -402,6 +432,10 @@ export function animations() {
     { tag: 'lift_drop', frames: [[LIFT.drop, 400]] },
     { tag: 'celebrate', frames: [[POSES.celebrate, 250], [lerpPose(POSES.celebrate, POSES.stand, 0.25), 250]] },
     { tag: 'dejected', frames: [[POSES.dejected, 800]] },
+    { tag: 'torch_run', frames: run(8, 90, 8, TORCH_UP) },
+    { tag: 'torch_raise', frames: [[CEREMONY.raise, 500]] },
+    { tag: 'march', frames: Array.from({ length: 6 }, (_, i) => [walkPose(i / 6, POLE_CARRY), 150]) },
+    { tag: 'wave', frames: [[CEREMONY.waveA, 260], [CEREMONY.waveB, 260]] },
   ];
 }
 

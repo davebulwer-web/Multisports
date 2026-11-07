@@ -6,11 +6,12 @@ import { rankResults } from './sim/scoring.js';
 import { makeRng } from './sim/rng.js';
 import { getRecord, submitRecord } from './records.js';
 import { CardScene, ResultsScene, StandingsScene, PodiumScene } from './scenes/cards.js';
+import { CeremonyScene } from './scenes/ceremony.js';
 
 export const CPU_NAMES = ['ACE', 'BLAZE', 'DYNAMO', 'ROCKET', 'VIPER', 'TITAN', 'COMET', 'FLASH'];
 
-export function makePlayer({ name, kit, skin, cpu = false, skill = 0.6 }) {
-  return { name, kit, skin, cpu, skill, points: 0, golds: 0, silvers: 0, bronzes: 0, results: {} };
+export function makePlayer({ name, kit, skin, nation = 'GBR', cpu = false, skill = 0.6 }) {
+  return { name, kit, skin, nation, cpu, skill, points: 0, golds: 0, silvers: 0, bronzes: 0, results: {} };
 }
 
 export class Competition {
@@ -18,7 +19,7 @@ export class Competition {
    * @param {import('../engine/game.js').Game} game
    * @param {object[]} players from makePlayer
    * @param {object[]} events subset of EVENTS
-   * @param {{practice?:boolean, onExit:()=>void}} opts
+   * @param {{practice?:boolean, ceremony?:boolean, onExit:()=>void}} opts
    */
   constructor(game, players, events = EVENTS, opts) {
     this.game = game;
@@ -32,7 +33,11 @@ export class Competition {
   get event() { return this.events[this.eventIdx]; }
   get humans() { return this.players.filter((p) => !p.cpu); }
 
-  start() { this.nextEvent(); }
+  /** Full competitions open with the (skippable) ceremony; practice goes straight in. */
+  start() {
+    if (this.opts.practice || this.opts.ceremony === false) return this.nextEvent();
+    this.game.setScene(new CeremonyScene(this.game, this.players, () => this.nextEvent()));
+  }
 
   nextEvent() {
     this.eventIdx++;

@@ -48,6 +48,35 @@ function spectator(i, armsUp) {
   return b;
 }
 
+// Ceremonial torch, handle at the bottom centre, cup at the top (the flame
+// is drawn live by the game so it can flicker).
+function torch() {
+  const b = new Bitmap(S, S);
+  b.limb(8, 15, 8, 6, 1.1, C('orange.2'), 1.8);
+  b.rect(7, 9, 3, 1, C('orange.3'));
+  b.disc(8, 5, 2.6, C('orange.3'));
+  b.rect(5, 3, 7, 2, C('orange.2'));
+  b.shade();
+  b.set(7, 4, C('yellow.2'));
+  b.outline(C('grey.1'));
+  return b;
+}
+
+// Dove in flight, facing right: wings up / wings down.
+function dove(up) {
+  const b = new Bitmap(S, S);
+  b.limb(3, 10, 11, 9, 1.8, C('grey.6'), 1.4); // body
+  b.disc(12, 8, 1.6, C('grey.6'));             // head
+  b.set(14, 8, C('orange.3'));                  // beak
+  b.limb(2, 10, 0, 9, 1, C('grey.5'));          // tail
+  if (up) { b.limb(6, 9, 4, 2, 1.4, C('grey.5'), 0.8); b.limb(8, 9, 7, 3, 1.2, C('grey.6'), 0.6); }
+  else { b.limb(6, 10, 3, 14, 1.4, C('grey.5'), 0.8); b.limb(8, 10, 8, 14, 1.2, C('grey.6'), 0.6); }
+  b.shade();
+  b.set(12, 7, C('grey.0'));
+  b.outline(C('grey.2'));
+  return b;
+}
+
 export function bakeProps() {
   const one = (tag, bmp, duration = 100) => ({ tag, frames: [{ bmp, duration }] });
   const anims = [
@@ -67,5 +96,7 @@ export function bakeProps() {
       ],
     });
   }
+  anims.push(one('torch', torch()));
+  anims.push({ tag: 'dove', frames: [{ bmp: dove(true), duration: 120 }, { bmp: dove(false), duration: 120 }] });
   return buildSheet('props', anims, { w: S, h: S, pivot: { x: 8, y: 15 }, cols: 8 });
 }
