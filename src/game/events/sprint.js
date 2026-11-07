@@ -159,7 +159,7 @@ export class SprintScene extends Scene {
     const r = this.runner;
     const px = START_X + r.x * PX;
     const camX = Math.max(0, Math.min(START_X + 112 * PX - W, px - 130));
-    drawStadium(ctx, camX, { excite: this.excite, t: this.game.time });
+    drawStadium(ctx, camX, { excite: this.excite, t: this.game.time, salt: 'sprint' });
     drawGrass(ctx, camX);
     this.drawTrack(ctx, camX);
 

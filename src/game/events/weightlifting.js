@@ -157,7 +157,7 @@ export class WeightliftingScene extends Scene {
   }
 
   draw(ctx) {
-    drawStadium(ctx, 40, { excite: this.excite, t: this.game.time });
+    drawStadium(ctx, 40, { excite: this.excite, t: this.game.time, salt: 'weightlifting' });
     // stage
     fill(ctx, 'grey.1', 0, 112, W, H - 112);
     fill(ctx, 'blue.0', 0, 112, W, 40);

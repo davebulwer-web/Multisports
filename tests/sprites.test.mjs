@@ -75,3 +75,32 @@ test('PNG decoder round-trips the encoder', async () => {
   assert.equal(out.width, 3);
   assert.deepEqual([...out.rgba], [...rgba]);
 });
+
+test('advertising boards: one per brand, every season has a varied pool', async () => {
+  const { BRANDS, brandsFor } = await import('../src/art/brands.js');
+  const { LOGOS } = await import('../src/art/logos.js');
+  const { LOGO_SIZE, LOGO_CHARS } = await import('../src/art/boards.js');
+  const { json } = SHEETS.boards.bake(); // throws if any lettering doesn't fit
+  const tags = json.meta.frameTags.map((t) => t.name);
+  assert.equal(new Set(BRANDS.map((b) => b.id)).size, BRANDS.length, 'brand ids are unique');
+  for (const b of BRANDS) assert.ok(tags.includes(b.id), `missing board ${b.id}`);
+  for (const s of ['summer', 'winter', 'world', 'beach', 'challenge']) {
+    const pool = brandsFor(s);
+    assert.ok(pool.length >= 16, `${s} has ${pool.length} boards`);
+    assert.ok(pool.some((b) => b.seasons.includes(s)), `${s} has its own boards`);
+  }
+  for (const [id, rows] of Object.entries(LOGOS)) {
+    assert.ok(BRANDS.some((b) => b.id === id), `logo ${id} has no brand`);
+    assert.equal(rows.length, LOGO_SIZE);
+    for (const r of rows) assert.ok(r.length === LOGO_SIZE && [...r].every((ch) => ch === '.' || LOGO_CHARS.slice(0, COLORS.length - 1).includes(ch)), id);
+  }
+});
+
+test('board rows shuffle without neighbours repeating', async () => {
+  const { boardOrder } = await import('../src/game/boards.js');
+  const { brandsFor } = await import('../src/art/brands.js');
+  for (const s of ['summer', 'winter', 'beach', 'all']) {
+    const o = boardOrder(s, 'x');
+    assert.equal(new Set(o).size, brandsFor(s).length);
+  }
+});

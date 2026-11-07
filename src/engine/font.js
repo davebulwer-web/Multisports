@@ -1,7 +1,7 @@
 // 5x7 bitmap font in the spirit of 8-bit home computer character ROMs.
 // Glyphs are drawn once per colour into a cached atlas, then blitted.
 
-const G = {
+export const GLYPHS = {
   A: '.###.,#...#,#...#,#####,#...#,#...#,#...#',
   B: '####.,#...#,#...#,####.,#...#,#...#,####.',
   C: '.###.,#...#,#....,#....,#....,#...#,.###.',
@@ -71,7 +71,7 @@ export const GLYPH_H = 7;
 export const ADVANCE = 6;
 
 const atlasCache = new Map();
-const CHARS = Object.keys(G);
+const CHARS = Object.keys(GLYPHS);
 
 function atlasFor(color) {
   if (atlasCache.has(color)) return atlasCache.get(color);
@@ -81,7 +81,7 @@ function atlasFor(color) {
   const x = c.getContext('2d');
   x.fillStyle = color;
   CHARS.forEach((ch, i) => {
-    G[ch].split(',').forEach((row, y) => {
+    GLYPHS[ch].split(',').forEach((row, y) => {
       for (let px = 0; px < 5; px++) if (row[px] === '#') x.fillRect(i * GLYPH_W + px, y, 1, 1);
     });
   });

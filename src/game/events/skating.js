@@ -10,6 +10,7 @@ import { SKATE, SKATE_LEN, Skater, pushQuality, fmtSkate } from '../sim/skate.js
 import { playerSheet, assets } from '../assets.js';
 import { topBar, banner } from '../hud.js';
 import { drawWinterSky, hash } from '../winter.js';
+import { drawBoardRow } from '../boards.js';
 
 const PX = 8;          // pixels per metre along the track
 const ICE = 150;       // top of the ice
@@ -136,14 +137,16 @@ export class SkatingScene extends Scene {
         assets.props.draw(ctx, tag.from + (cheer && Math.floor(this.t * 4 + h * 4) % 2 ? 1 : 0), Math.round(c * 9 + r * 4 - sx), 114 + r * 8);
       }
     }
-    fill(ctx, 'grey.6', 0, 140, W, 8);
-    fill(ctx, 'blue.2', 0, 141, W, 2);
-    // distance boards every 100m
+    // advertising boards along the rink wall, scrolling with the ice
+    fill(ctx, 'grey.6', 0, 131, W, 1);
+    drawBoardRow(ctx, cam - AX, 132, { season: 'winter', salt: 'skating' });
+    // distance markers every 100m, standing on the boards
     for (let m = 100; m < SKATE_LEN; m += 100) {
       const x = Math.round(AX + (m - this.sk.d) * PX);
       if (x < -20 || x > W + 20) continue;
-      fill(ctx, 'blue.1', x - 12, 140, 24, 8);
-      text(ctx, `${m}M`, x, 141, 'grey.6', { align: 'center', shadow: null });
+      fill(ctx, 'grey.0', x - 13, 122, 26, 10);
+      fill(ctx, 'blue.1', x - 12, 123, 24, 8);
+      text(ctx, `${m}M`, x, 124, 'grey.6', { align: 'center', shadow: null });
     }
   }
 
