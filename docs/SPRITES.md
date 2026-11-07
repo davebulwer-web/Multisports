@@ -72,4 +72,4 @@ PIXELLAB_API_KEY=... npm run pixellab -- --seed 3 --desc "barefoot cliff diver .
 
 Arguments are tags or single frames. Existing overrides are skipped unless `--force`. Each frame costs one generation. Check every result (compact poses like a pike or tuck sometimes come back in the wrong pose; try another `--seed`), then export. Keep the key in the environment, never in a file. Behind an HTTPS proxy, run Node with `NODE_USE_ENV_PROXY=1`.
 
-The Caber Toss and Cliff Diving frames were made this way.
+Every athlete frame was made this way (the diving pike was also trimmed to the rig outline).
