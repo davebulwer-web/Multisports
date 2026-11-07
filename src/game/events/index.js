@@ -1,5 +1,8 @@
 // Event registry. Add a new event by writing a Scene + sim module and
 // listing it here; menus, competition flow and scoring pick it up.
+// `season` files it under a tab in the event menus (summer, winter, world,
+// beach — see SEASONS in ../programme.js). An unknown season gets its own
+// tab automatically, and an event with no season goes under OTHER.
 import { SprintScene } from './sprint.js';
 import { JavelinScene } from './javelin.js';
 import { WeightliftingScene } from './weightlifting.js';
@@ -33,6 +36,7 @@ import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 export const EVENTS = [
   {
     id: 'sprint',
+    season: 'summer',
     name: '100M SPRINT',
     skill: 'RHYTHM',
     better: 'lower',
@@ -50,6 +54,7 @@ export const EVENTS = [
   },
   {
     id: 'javelin',
+    season: 'summer',
     name: 'JAVELIN',
     skill: 'POWER + ANGLE',
     better: 'higher',
@@ -67,6 +72,7 @@ export const EVENTS = [
   },
   {
     id: 'lift',
+    season: 'summer',
     name: 'WEIGHTLIFTING',
     skill: 'TIMING + BALANCE',
     better: 'higher',
@@ -84,6 +90,7 @@ export const EVENTS = [
   },
   {
     id: 'archery',
+    season: 'summer',
     name: 'ARCHERY',
     skill: 'FINE CONTROL',
     better: 'higher',
@@ -101,6 +108,7 @@ export const EVENTS = [
   },
   {
     id: 'clay',
+    season: 'summer',
     name: 'CLAY PIGEON',
     skill: 'REACTION + TRACKING',
     better: 'higher',
@@ -118,6 +126,7 @@ export const EVENTS = [
   },
   {
     id: 'skijump',
+    season: 'winter',
     name: 'SKI JUMP',
     skill: 'TIMING + BALANCE',
     better: 'higher',
@@ -135,6 +144,7 @@ export const EVENTS = [
   },
   {
     id: 'biathlon',
+    season: 'winter',
     name: 'BIATHLON',
     skill: 'PACING + STEADY AIM',
     better: 'lower',
@@ -152,6 +162,7 @@ export const EVENTS = [
   },
   {
     id: 'curling',
+    season: 'winter',
     name: 'CURLING',
     skill: 'JUDGEMENT + SWEEPING',
     better: 'higher',
@@ -169,6 +180,7 @@ export const EVENTS = [
   },
   {
     id: 'bobsleigh',
+    season: 'winter',
     name: 'BOBSLEIGH',
     skill: 'PUSH + LINE',
     better: 'lower',
@@ -186,6 +198,7 @@ export const EVENTS = [
   },
   {
     id: 'caber',
+    season: 'world',
     name: 'CABER TOSS',
     skill: 'BALANCE + TIMING',
     better: 'higher',
@@ -203,6 +216,7 @@ export const EVENTS = [
   },
   {
     id: 'cliffdive',
+    season: 'world',
     name: 'CLIFF DIVING',
     skill: 'TIMING IN THE AIR',
     better: 'higher',
@@ -220,6 +234,7 @@ export const EVENTS = [
   },
   {
     id: 'footbag',
+    season: 'beach',
     name: 'FOOTBAG',
     skill: 'TIMING + RHYTHM',
     better: 'higher',
@@ -237,6 +252,7 @@ export const EVENTS = [
   },
   {
     id: 'surfing',
+    season: 'beach',
     name: 'SURFING',
     skill: 'BALANCE + LINE',
     better: 'higher',
@@ -254,6 +270,7 @@ export const EVENTS = [
   },
   {
     id: 'halfpipe',
+    season: 'beach',
     name: 'HALF-PIPE',
     skill: 'PUMPING + AIR CONTROL',
     better: 'higher',

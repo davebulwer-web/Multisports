@@ -45,7 +45,14 @@ npm start          # serves the folder on http://localhost:8080
 
 ### Competition
 
-You can have one to four hot-seat humans plus CPU rivals. Each event scores **10 / 7 / 4 / 2 / 1** for places 1–5, ties share the higher place, and fouls score 0. There are standings after each event and a podium at the end. **Practice** mode plays a single event. Records are kept in the browser (localStorage).
+You can have one to four hot-seat humans plus CPU rivals. Each event scores **10 / 7 / 4 / 2 / 1** for places 1–5, ties share the higher place, and fouls score 0. There are standings after each event and a podium at the end. Records are kept in the browser (localStorage).
+
+The title menu offers:
+
+- **All events**: every event, season by season (Summer, Winter, World, Beach).
+- **Choose events**: build your own programme. Pick events from any season tab and they run in the order you picked them; *Add all* takes a whole season in one go. Your programme and line-up are remembered until you reload.
+- **Practice**: pick one event and play it with the humans from your last line-up, no points.
+- **World records**: the record and holder for every event, by season.
 
 ## Art and animation
 
@@ -65,7 +72,8 @@ src/
   game/
     sim/              pure event models (sprint, javelin, lift, archery, clay, ski, biathlon, curling, bob, caber, dive, footbag, surf, halfpipe), scoring, rng (unit tested)
     events/           one Scene per event + registry (events/index.js)
-    scenes/           title, setup, practice, cards/results/standings/podium
+    scenes/           title, setup, event picker, records, cards/results/standings/podium
+    programme.js      season tabs and custom event order
     winter.js         shared winter scenery (sky, mountains, pines, snowfall)
     beach.js          shared beach scenery (sky, sea, sand, palms, lifeguard hut, crowd)
     competition.js    turn order, CPU results, points
@@ -73,7 +81,7 @@ tools/                export-sprites.mjs, png.mjs, serve.mjs
 tests/                node --test
 ```
 
-**Adding an event:** write a pure model in `src/game/sim/`, a Scene in `src/game/events/` that calls `onDone(value|null)`, and register it in `src/game/events/index.js`. Menus, competition, scoring and records will pick it up automatically.
+**Adding an event:** write a pure model in `src/game/sim/`, a Scene in `src/game/events/` that calls `onDone(value|null)`, and register it in `src/game/events/index.js` with a `season` (`summer`, `winter`, `world`, `beach`, or a new name, which gets its own tab). Menus, competition, scoring and records will pick it up automatically.
 
 ```sh
 npm test
