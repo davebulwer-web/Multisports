@@ -465,3 +465,43 @@ test('curling: CPU scores scale with skill', () => {
   const avg = (sk) => { let t = 0; for (let i = 0; i < 200; i++) t += cpuCurling(sk, rng); return t / 200; };
   assert.ok(avg(0.9) > avg(0.3) + 8);
 });
+
+// Bobsleigh
+import { Bob, BOB, curveAt, idealAngle, cpuBob } from '../src/game/sim/bob.js';
+
+/** One run. loadAt = where (m, 0 = the line) to jump in; steer = controller or null. */
+function bobRun({ loadAt = -2, steer = true } = {}) {
+  const b = new Bob();
+  while (b.phase === 'push') b.push(1 / 60, true, b.s > loadAt);
+  while (b.phase === 'run' && b.t < 200) {
+    const ahead = idealAngle(b.v, curveAt(b.s + b.v * 0.4));
+    b.run(1 / 60, steer ? (ahead - b.angle) * 1.2 - b.spin * 0.5 : 0);
+  }
+  return b;
+}
+
+test('bobsleigh: holding the line is much faster than letting it swing', () => {
+  const good = bobRun(), loose = bobRun({ steer: false });
+  assert.ok(good.finish < loose.finish - 5, `${good.finish} vs ${loose.finish}`);
+  assert.equal(good.crashes, 0);
+  assert.ok(loose.crashes > 0, 'an unsteered sled should roll somewhere');
+});
+
+test('bobsleigh: loading in late costs time', () => {
+  const late = bobRun({ loadAt: 5 });
+  assert.ok(late.lateLoad);
+  assert.ok(late.finish > bobRun().finish + 1);
+});
+
+test('bobsleigh: bends throw the sled up the outside wall', () => {
+  assert.ok(idealAngle(30, 0.015) < -0.5, 'right-hand bend: up the left wall');
+  assert.ok(idealAngle(30, -0.015) > 0.5);
+  assert.equal(idealAngle(30, 0), -0);
+});
+
+test('bobsleigh: CPU times scale with skill', () => {
+  const rng = makeRng(8);
+  const avg = (sk) => { let t = 0; for (let i = 0; i < 100; i++) t += cpuBob(sk, rng); return t / 100; };
+  assert.ok(avg(0.9) < avg(0.3) - 4);
+  assert.ok(avg(1) > bobRun().finish - 3, 'a perfect run should be competitive with the best CPU');
+});

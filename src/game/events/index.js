@@ -8,6 +8,7 @@ import { ClayScene } from './clay.js';
 import { SkiJumpScene } from './skijump.js';
 import { BiathlonScene } from './biathlon.js';
 import { CurlingScene } from './curling.js';
+import { BobsleighScene } from './bobsleigh.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
@@ -16,6 +17,7 @@ import { cpuClay, totalClays } from '../sim/clay.js';
 import { cpuSki } from '../sim/ski.js';
 import { cpuBiathlon, fmtRace } from '../sim/biathlon.js';
 import { cpuCurling, maxScore } from '../sim/curling.js';
+import { cpuBob, fmtBob } from '../sim/bob.js';
 import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
@@ -153,6 +155,23 @@ export const EVENTS = [
       'HOLD SPACE TO SWEEP: FURTHER AND STRAIGHTER.',
       'YOUR STONES CLOSER THAN ALL OF THEIRS SCORE.',
       `BUTTON 4 DOWN TO 12-FOOT 1. 4 ENDS, MAX ${maxScore()}.`,
+    ],
+  },
+  {
+    id: 'bobsleigh',
+    name: 'BOBSLEIGH',
+    skill: 'PUSH + LINE',
+    better: 'lower',
+    format: fmtBob,
+    cpu: cpuBob,
+    Scene: BobsleighScene,
+    baseRecord: 52.5,
+    help: [
+      'HOLD SPACE TO PUSH. PRESS DOWN TO JUMP IN',
+      'JUST BEFORE THE RED LINE. LATE COSTS SPEED.',
+      'IN THE BENDS THE SLED SWINGS UP THE WALL.',
+      'STEER [ ] TO KEEP IT ON THE GREEN MARK.',
+      'SWINGING AND STEERING SCRUB SPEED. TOO HIGH: ROLL.',
     ],
   },
 ];
