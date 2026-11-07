@@ -65,6 +65,43 @@ function tower() {
   return b;
 }
 
+// Beach palm, base at x=0: a leaning trunk and drooping fronds.
+function palm() {
+  const { b, put } = canvas(0, -1);
+  const ox = SCENERY.pivot.x, oy = SCENERY.pivot.y + 1;
+  const pts = [];
+  for (let k = 0; k <= 36; k++) pts.push([Math.round(Math.sin(k / 36 * 1.3) * 9), -1 - k]);
+  pts.forEach(([x, y], k) => {
+    put(k % 4 < 2 ? 'orange.1' : 'orange.0', x - 1, y, 3, 1);
+    if (k % 4 === 0) put('orange.2', x - 1, y, 1, 1);
+  });
+  const [tx, ty] = pts[pts.length - 1];
+  const fronds = [[-16, 6], [-11, 10], [-5, 12], [4, 12], [11, 10], [17, 5], [-2, -6], [8, -5]];
+  for (const [fx, fy] of fronds) b.limb(ox + tx, oy + ty, ox + tx + fx, oy + ty + fy, 1.3, C(fy < 0 ? 'green.2' : 'green.1'), 0.6);
+  b.disc(ox + tx, oy + ty + 1, 2, C('orange.0'));
+  b.shade();
+  b.outline(C('grey.1'));
+  put('brown.1', tx - 1, ty + 2, 2, 2); // coconuts
+  return b;
+}
+
+// Lifeguard hut on stilts, centred on x=0.
+function lifeguard() {
+  const { b, put } = canvas(0, 0);
+  for (const x of [-9, 8]) put('grey.5', x, -18, 2, 18);
+  put('grey.4', -8, -10, 16, 1);
+  put('grey.4', -11, -19, 23, 2);
+  put('yellow.2', -10, -31, 21, 12);
+  put('yellow.1', -10, -22, 21, 3);
+  put('grey.1', -6, -29, 13, 5);
+  put('lamp.1', -12, -35, 25, 4);
+  put('lamp.2', -12, -35, 25, 1);
+  for (let k = 0; k < 6; k++) put('grey.6', 3 + k, -1 - k * 3, 2, 1); // ladder
+  put('grey.4', 12, -45, 1, 10);
+  put('lamp.1', 13, -45, 6, 4);
+  return b;
+}
+
 export function bakeScenery() {
   const one = (tag, bmp) => ({ tag, frames: [{ bmp, duration: 100 }] });
   return buildSheet('scenery', [
@@ -73,5 +110,7 @@ export function bakeScenery() {
     one('trap_left', trap('left')),
     one('trap_right', trap('right')),
     one('tower', tower()),
+    one('palm', palm()),
+    one('lifeguard', lifeguard()),
   ], { ...SCENERY, cols: 4 });
 }

@@ -153,6 +153,50 @@
     "h": 48
    },
    "duration": 100
+  },
+  {
+   "filename": "scenery palm_0",
+   "frame": {
+    "x": 192,
+    "y": 48,
+    "w": 64,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 48
+   },
+   "duration": 100
+  },
+  {
+   "filename": "scenery lifeguard_0",
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 64,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 48
+   },
+   "duration": 100
   }
  ],
  "meta": {
@@ -162,7 +206,7 @@
   "format": "RGBA8888",
   "size": {
    "w": 256,
-   "h": 96
+   "h": 144
   },
   "scale": "1",
   "frameTags": [
@@ -206,6 +250,18 @@
     "name": "tower",
     "from": 6,
     "to": 6,
+    "direction": "forward"
+   },
+   {
+    "name": "palm",
+    "from": 7,
+    "to": 7,
+    "direction": "forward"
+   },
+   {
+    "name": "lifeguard",
+    "from": 8,
+    "to": 8,
     "direction": "forward"
    }
   ],

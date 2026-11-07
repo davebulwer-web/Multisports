@@ -5,6 +5,7 @@
 //
 //   PIXELLAB_API_KEY=... node tools/pixellab-enhance.mjs caber_hold dive_edge_1
 //   PIXELLAB_API_KEY=... node tools/pixellab-enhance.mjs --desc "barefoot diver" --seed 3 dive_tuck
+//   PIXELLAB_API_KEY=... node tools/pixellab-enhance.mjs --sheet scenery --desc "palm tree" palm
 //
 // Arguments are tags (every frame) or frame labels (tag_n). Existing override
 // files are skipped unless --force. Each frame costs one PixelLab generation.
@@ -14,7 +15,7 @@ import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SHEETS } from '../src/art/index.js';
-import { RAMPS, hexToRgb } from '../src/art/palette.js';
+import { RAMPS, COLORS, hexToRgb } from '../src/art/palette.js';
 import { encodePNG, decodePNG } from './png.mjs';
 
 const API = 'https://api.pixellab.ai/v2';
@@ -26,17 +27,19 @@ const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf(name); return i < 0 ? def : args.splice(i, 2)[1]; };
 const desc = opt('--desc', DEFAULT_DESC);
 const seed = Number(opt('--seed', 1));
+const sheet = opt('--sheet', 'athlete');
 const force = args.includes('--force');
 const wanted = args.filter((a) => !a.startsWith('--'));
 const key = process.env.PIXELLAB_API_KEY;
 if (!key || !wanted.length) {
-  console.error('usage: PIXELLAB_API_KEY=... node tools/pixellab-enhance.mjs [--desc text] [--seed n] [--force] <tag|tag_n>...');
+  console.error('usage: PIXELLAB_API_KEY=... node tools/pixellab-enhance.mjs [--sheet name] [--desc text] [--seed n] [--force] <tag|tag_n>...');
   process.exit(1);
 }
 
 // Colours an athlete frame may use: outline, greys for shoes, and the key ramps.
-const ALLOWED = ['#000000', '#1c1a22', '#444444', '#6c6c6c', '#959595', '#c4c4c4', '#ffffff',
-  ...RAMPS.kitA, ...RAMPS.kitB, ...RAMPS.skin, ...RAMPS.hair].map(hexToRgb);
+// Other sheets (props, scenery) don't recolour, so they snap to the full palette.
+const ALLOWED = (sheet !== 'athlete' ? COLORS.slice(1) : ['#000000', '#1c1a22', '#444444', '#6c6c6c', '#959595', '#c4c4c4', '#ffffff',
+  ...RAMPS.kitA, ...RAMPS.kitB, ...RAMPS.skin, ...RAMPS.hair]).map(hexToRgb);
 const lin = (c) => ((c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
 function lab([r, g, b]) {
   [r, g, b] = [r, g, b].map(lin);
@@ -62,7 +65,6 @@ async function call(method, path, body) {
   return res.json();
 }
 
-const sheet = 'athlete';
 const { bitmap, json } = SHEETS[sheet].bake();
 const rgba = bitmap.toRGBA();
 const outDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'art', sheet);

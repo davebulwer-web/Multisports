@@ -1783,7 +1783,7 @@
    "duration": 400
   },
   {
-   "filename": "athlete lift_ready_0",
+   "filename": "athlete hack_ready_0",
    "frame": {
     "x": 40,
     "y": 640,
@@ -1805,10 +1805,340 @@
    "duration": 500
   },
   {
-   "filename": "athlete lift_pull_0",
+   "filename": "athlete hack_toe_0",
    "frame": {
     "x": 80,
     "y": 640,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete hack_knee_0",
+   "frame": {
+    "x": 120,
+    "y": 640,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete hack_head_0",
+   "frame": {
+    "x": 160,
+    "y": 640,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete hack_spin_0",
+   "frame": {
+    "x": 200,
+    "y": 640,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 120
+  },
+  {
+   "filename": "athlete hack_spin_1",
+   "frame": {
+    "x": 240,
+    "y": 640,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 120
+  },
+  {
+   "filename": "athlete surf_paddle_0",
+   "frame": {
+    "x": 280,
+    "y": 640,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 300
+  },
+  {
+   "filename": "athlete surf_paddle_1",
+   "frame": {
+    "x": 0,
+    "y": 704,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 300
+  },
+  {
+   "filename": "athlete surf_ride_0",
+   "frame": {
+    "x": 40,
+    "y": 704,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete surf_carve_0",
+   "frame": {
+    "x": 80,
+    "y": 704,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete surf_air_0",
+   "frame": {
+    "x": 120,
+    "y": 704,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete skate_ride_0",
+   "frame": {
+    "x": 160,
+    "y": 704,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete skate_pump_0",
+   "frame": {
+    "x": 200,
+    "y": 704,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete skate_air_0",
+   "frame": {
+    "x": 240,
+    "y": 704,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete skate_grab_0",
+   "frame": {
+    "x": 280,
+    "y": 704,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete lift_ready_0",
+   "frame": {
+    "x": 0,
+    "y": 768,
+    "w": 40,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 64
+   },
+   "duration": 500
+  },
+  {
+   "filename": "athlete lift_pull_0",
+   "frame": {
+    "x": 40,
+    "y": 768,
     "w": 40,
     "h": 64
    },
@@ -1829,8 +2159,8 @@
   {
    "filename": "athlete lift_pull_1",
    "frame": {
-    "x": 120,
-    "y": 640,
+    "x": 80,
+    "y": 768,
     "w": 40,
     "h": 64
    },
@@ -1851,8 +2181,8 @@
   {
    "filename": "athlete lift_rack_0",
    "frame": {
-    "x": 160,
-    "y": 640,
+    "x": 120,
+    "y": 768,
     "w": 40,
     "h": 64
    },
@@ -1873,8 +2203,8 @@
   {
    "filename": "athlete lift_dip_0",
    "frame": {
-    "x": 200,
-    "y": 640,
+    "x": 160,
+    "y": 768,
     "w": 40,
     "h": 64
    },
@@ -1895,8 +2225,8 @@
   {
    "filename": "athlete lift_jerk_0",
    "frame": {
-    "x": 240,
-    "y": 640,
+    "x": 200,
+    "y": 768,
     "w": 40,
     "h": 64
    },
@@ -1917,8 +2247,8 @@
   {
    "filename": "athlete lift_hold_0",
    "frame": {
-    "x": 280,
-    "y": 640,
+    "x": 240,
+    "y": 768,
     "w": 40,
     "h": 64
    },
@@ -1939,8 +2269,8 @@
   {
    "filename": "athlete lift_wobble_l_0",
    "frame": {
-    "x": 0,
-    "y": 704,
+    "x": 280,
+    "y": 768,
     "w": 40,
     "h": 64
    },
@@ -1961,8 +2291,8 @@
   {
    "filename": "athlete lift_wobble_r_0",
    "frame": {
-    "x": 40,
-    "y": 704,
+    "x": 0,
+    "y": 832,
     "w": 40,
     "h": 64
    },
@@ -1983,8 +2313,8 @@
   {
    "filename": "athlete lift_drop_0",
    "frame": {
-    "x": 80,
-    "y": 704,
+    "x": 40,
+    "y": 832,
     "w": 40,
     "h": 64
    },
@@ -2005,8 +2335,8 @@
   {
    "filename": "athlete celebrate_0",
    "frame": {
-    "x": 120,
-    "y": 704,
+    "x": 80,
+    "y": 832,
     "w": 40,
     "h": 64
    },
@@ -2027,8 +2357,8 @@
   {
    "filename": "athlete celebrate_1",
    "frame": {
-    "x": 160,
-    "y": 704,
+    "x": 120,
+    "y": 832,
     "w": 40,
     "h": 64
    },
@@ -2049,8 +2379,8 @@
   {
    "filename": "athlete dejected_0",
    "frame": {
-    "x": 200,
-    "y": 704,
+    "x": 160,
+    "y": 832,
     "w": 40,
     "h": 64
    },
@@ -2076,7 +2406,7 @@
   "format": "RGBA8888",
   "size": {
    "w": 320,
-   "h": 768
+   "h": 896
   },
   "scale": "1",
   "frameTags": [
@@ -2285,69 +2615,147 @@
     "direction": "forward"
    },
    {
-    "name": "lift_ready",
+    "name": "hack_ready",
     "from": 81,
     "to": 81,
     "direction": "forward"
    },
    {
-    "name": "lift_pull",
+    "name": "hack_toe",
     "from": 82,
+    "to": 82,
+    "direction": "forward"
+   },
+   {
+    "name": "hack_knee",
+    "from": 83,
     "to": 83,
     "direction": "forward"
    },
    {
-    "name": "lift_rack",
+    "name": "hack_head",
     "from": 84,
     "to": 84,
     "direction": "forward"
    },
    {
-    "name": "lift_dip",
+    "name": "hack_spin",
     "from": 85,
-    "to": 85,
-    "direction": "forward"
-   },
-   {
-    "name": "lift_jerk",
-    "from": 86,
     "to": 86,
     "direction": "forward"
    },
    {
-    "name": "lift_hold",
+    "name": "surf_paddle",
     "from": 87,
-    "to": 87,
-    "direction": "forward"
-   },
-   {
-    "name": "lift_wobble_l",
-    "from": 88,
     "to": 88,
     "direction": "forward"
    },
    {
-    "name": "lift_wobble_r",
+    "name": "surf_ride",
     "from": 89,
     "to": 89,
     "direction": "forward"
    },
    {
-    "name": "lift_drop",
+    "name": "surf_carve",
     "from": 90,
     "to": 90,
     "direction": "forward"
    },
    {
-    "name": "celebrate",
+    "name": "surf_air",
     "from": 91,
+    "to": 91,
+    "direction": "forward"
+   },
+   {
+    "name": "skate_ride",
+    "from": 92,
     "to": 92,
     "direction": "forward"
    },
    {
-    "name": "dejected",
+    "name": "skate_pump",
     "from": 93,
     "to": 93,
+    "direction": "forward"
+   },
+   {
+    "name": "skate_air",
+    "from": 94,
+    "to": 94,
+    "direction": "forward"
+   },
+   {
+    "name": "skate_grab",
+    "from": 95,
+    "to": 95,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_ready",
+    "from": 96,
+    "to": 96,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_pull",
+    "from": 97,
+    "to": 98,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_rack",
+    "from": 99,
+    "to": 99,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_dip",
+    "from": 100,
+    "to": 100,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_jerk",
+    "from": 101,
+    "to": 101,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_hold",
+    "from": 102,
+    "to": 102,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_wobble_l",
+    "from": 103,
+    "to": 103,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_wobble_r",
+    "from": 104,
+    "to": 104,
+    "direction": "forward"
+   },
+   {
+    "name": "lift_drop",
+    "from": 105,
+    "to": 105,
+    "direction": "forward"
+   },
+   {
+    "name": "celebrate",
+    "from": 106,
+    "to": 107,
+    "direction": "forward"
+   },
+   {
+    "name": "dejected",
+    "from": 108,
+    "to": 108,
     "direction": "forward"
    }
   ],
@@ -4465,6 +4873,396 @@
     },
     "81": {
      "handF": [
+      36,
+      35
+     ],
+     "handB": [
+      12,
+      44
+     ],
+     "head": [
+      22,
+      26
+     ],
+     "hip": [
+      20,
+      42
+     ],
+     "footF": [
+      21,
+      62
+     ],
+     "footB": [
+      16,
+      61
+     ]
+    },
+    "82": {
+     "handF": [
+      35,
+      34
+     ],
+     "handB": [
+      11,
+      43
+     ],
+     "head": [
+      21,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      32,
+      56
+     ],
+     "footB": [
+      18,
+      61
+     ]
+    },
+    "83": {
+     "handF": [
+      35,
+      31
+     ],
+     "handB": [
+      8,
+      40
+     ],
+     "head": [
+      20,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      31,
+      50
+     ],
+     "footB": [
+      19,
+      61
+     ]
+    },
+    "84": {
+     "handF": [
+      33,
+      32
+     ],
+     "handB": [
+      6,
+      40
+     ],
+     "head": [
+      17,
+      24
+     ],
+     "hip": [
+      20,
+      40
+     ],
+     "footF": [
+      22,
+      60
+     ],
+     "footB": [
+      16,
+      60
+     ]
+    },
+    "85": {
+     "handF": [
+      36,
+      29
+     ],
+     "handB": [
+      4,
+      29
+     ],
+     "head": [
+      20,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      21,
+      61
+     ],
+     "footB": [
+      18,
+      61
+     ]
+    },
+    "86": {
+     "handF": [
+      33,
+      35
+     ],
+     "handB": [
+      18,
+      44
+     ],
+     "head": [
+      20,
+      25
+     ],
+     "hip": [
+      20,
+      41
+     ],
+     "footF": [
+      16,
+      61
+     ],
+     "footB": [
+      22,
+      61
+     ]
+    },
+    "87": {
+     "handF": [
+      47,
+      51
+     ],
+     "handB": [
+      36,
+      70
+     ],
+     "head": [
+      37,
+      54
+     ],
+     "hip": [
+      21,
+      55
+     ],
+     "footF": [
+      1,
+      56
+     ],
+     "footB": [
+      1,
+      55
+     ]
+    },
+    "88": {
+     "handF": [
+      36,
+      70
+     ],
+     "handB": [
+      47,
+      51
+     ],
+     "head": [
+      37,
+      54
+     ],
+     "hip": [
+      21,
+      55
+     ],
+     "footF": [
+      1,
+      56
+     ],
+     "footB": [
+      1,
+      55
+     ]
+    },
+    "89": {
+     "handF": [
+      39,
+      37
+     ],
+     "handB": [
+      11,
+      46
+     ],
+     "head": [
+      25,
+      31
+     ],
+     "hip": [
+      20,
+      46
+     ],
+     "footF": [
+      24,
+      63
+     ],
+     "footB": [
+      6,
+      58
+     ]
+    },
+    "90": {
+     "handF": [
+      40,
+      34
+     ],
+     "handB": [
+      22,
+      55
+     ],
+     "head": [
+      28,
+      35
+     ],
+     "hip": [
+      20,
+      49
+     ],
+     "footF": [
+      24,
+      62
+     ],
+     "footB": [
+      6,
+      58
+     ]
+    },
+    "91": {
+     "handF": [
+      38,
+      43
+     ],
+     "handB": [
+      40,
+      30
+     ],
+     "head": [
+      28,
+      32
+     ],
+     "hip": [
+      20,
+      46
+     ],
+     "footF": [
+      25,
+      56
+     ],
+     "footB": [
+      17,
+      57
+     ]
+    },
+    "92": {
+     "handF": [
+      36,
+      39
+     ],
+     "handB": [
+      16,
+      47
+     ],
+     "head": [
+      22,
+      27
+     ],
+     "hip": [
+      20,
+      43
+     ],
+     "footF": [
+      24,
+      62
+     ],
+     "footB": [
+      12,
+      61
+     ]
+    },
+    "93": {
+     "handF": [
+      37,
+      46
+     ],
+     "handB": [
+      24,
+      53
+     ],
+     "head": [
+      27,
+      33
+     ],
+     "hip": [
+      20,
+      48
+     ],
+     "footF": [
+      22,
+      62
+     ],
+     "footB": [
+      12,
+      61
+     ]
+    },
+    "94": {
+     "handF": [
+      35,
+      43
+     ],
+     "handB": [
+      17,
+      48
+     ],
+     "head": [
+      25,
+      29
+     ],
+     "hip": [
+      20,
+      44
+     ],
+     "footF": [
+      23,
+      55
+     ],
+     "footB": [
+      17,
+      55
+     ]
+    },
+    "95": {
+     "handF": [
+      38,
+      45
+     ],
+     "handB": [
+      32,
+      21
+     ],
+     "head": [
+      28,
+      31
+     ],
+     "hip": [
+      20,
+      45
+     ],
+     "footF": [
+      24,
+      55
+     ],
+     "footB": [
+      18,
+      55
+     ]
+    },
+    "96": {
+     "handF": [
       23,
       59
      ],
@@ -4489,7 +5287,7 @@
       60
      ]
     },
-    "82": {
+    "97": {
      "handF": [
       23,
       53
@@ -4515,7 +5313,7 @@
       62
      ]
     },
-    "83": {
+    "98": {
      "handF": [
       22,
       48
@@ -4541,7 +5339,7 @@
       62
      ]
     },
-    "84": {
+    "99": {
      "handF": [
       21,
       28
@@ -4567,7 +5365,7 @@
       63
      ]
     },
-    "85": {
+    "100": {
      "handF": [
       21,
       30
@@ -4593,7 +5391,7 @@
       64
      ]
     },
-    "86": {
+    "101": {
      "handF": [
       20,
       20
@@ -4619,7 +5417,7 @@
       58
      ]
     },
-    "87": {
+    "102": {
      "handF": [
       21,
       15
@@ -4645,7 +5443,7 @@
       61
      ]
     },
-    "88": {
+    "103": {
      "handF": [
       20,
       15
@@ -4671,7 +5469,7 @@
       61
      ]
     },
-    "89": {
+    "104": {
      "handF": [
       21,
       15
@@ -4697,7 +5495,7 @@
       61
      ]
     },
-    "90": {
+    "105": {
      "handF": [
       38,
       38
@@ -4723,7 +5521,7 @@
       63
      ]
     },
-    "91": {
+    "106": {
      "handF": [
       23,
       15
@@ -4749,7 +5547,7 @@
       61
      ]
     },
-    "92": {
+    "107": {
      "handF": [
       32,
       21
@@ -4775,7 +5573,7 @@
       61
      ]
     },
-    "93": {
+    "108": {
      "handF": [
       26,
       48

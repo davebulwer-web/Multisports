@@ -594,3 +594,143 @@ test('cliff diving: judges reward clean entries and multiply by DD', () => {
   const avg = (sk) => { let t = 0; for (let i = 0; i < 100; i++) t += cpuDive(sk, rng); return t / 100; };
   assert.ok(avg(0.9) > avg(0.3) + 60);
 });
+
+// ---- Beach events -----------------------------------------------------------
+import { Footbag, FOOTBAG, playFootbag, varietyMult, stringMult } from '../src/game/sim/footbag.js';
+
+test('footbag: a clean kick at the contact height pops it straight up, a stretch sends it wide', () => {
+  const fb = new Footbag(makeRng(1));
+  Object.assign(fb.bag, { x: 0, h: FOOTBAG.surfaces.knee.h, vx: 0, vy: -3 });
+  const [k] = fb.update(1e-6, { kick: 'knee' });
+  assert.equal(k.type, 'kick');
+  assert.equal(k.grade, 'PERFECT');
+  assert.ok(Math.abs(fb.bag.vx) < 0.1 && fb.bag.vy > 4);
+  const wide = new Footbag(makeRng(1));
+  Object.assign(wide.bag, { x: 0.24, h: FOOTBAG.surfaces.knee.h + 0.1, vx: 0, vy: -3 });
+  const [w] = wide.update(1e-6, { kick: 'knee' });
+  assert.equal(w.type, 'kick');
+  assert.ok(Math.abs(wide.bag.vx) > 0.6);
+});
+
+test('footbag: whiffs leave you off balance, so mashing drops the bag', () => {
+  const fb = new Footbag(makeRng(2));
+  let drops = 0;
+  for (let i = 0; i < 600; i++) {
+    for (const e of fb.update(1 / 60, { kick: ['toe', 'knee', 'head'][i % 3] })) if (e.type === 'drop') drops++;
+  }
+  assert.ok(drops >= 3, `mashing dropped it ${drops} times`);
+  assert.ok(fb.score < playFootbag(0.8, makeRng(2)).score / 3);
+});
+
+test('footbag: mixing surfaces and long strings multiply the score; skill beats no skill', () => {
+  assert.equal(varietyMult(['toe', 'toe', 'toe']), 1);
+  assert.equal(varietyMult(['toe', 'knee', 'head']), 2);
+  assert.ok(stringMult(30) === 3 && stringMult(0) === 1);
+  const avg = (s) => [1, 2, 3, 4].reduce((a, k) => a + playFootbag(s, makeRng(k)).score, 0) / 4;
+  const lo = avg(0.1), hi = avg(1);
+  assert.ok(hi > lo * 1.8, `lo ${lo} hi ${hi}`);
+  assert.ok(hi < 1600, `bot shouldn't beat the record by much: ${hi}`);
+});
+
+test('footbag: a spin followed by a clean kick scores the spin bonus', () => {
+  const fb = new Footbag(makeRng(3));
+  Object.assign(fb.bag, { x: 0, h: 0.22, vx: 0, vy: -1 });
+  fb.update(1e-6, { kick: 'toe' });
+  fb.update(FOOTBAG.kickPose + 0.01, {});
+  fb.update(1 / 60, { spin: true });
+  let ev = [];
+  for (let i = 0; i < 300 && !ev.some((e) => e.type === 'kick'); i++) {
+    const b = fb.bag;
+    const kick = !fb.spinning && b.vy < 0 && b.h <= FOOTBAG.surfaces.knee.h ? 'knee' : null;
+    ev = fb.update(1 / 60, { kick, move: (b.x - fb.px) * 5 });
+  }
+  const k = ev.find((e) => e.type === 'kick');
+  assert.ok(k && k.spun, JSON.stringify(ev));
+});
+
+import { Surfer, SURF, steepness, cpuSurf, playSurf } from '../src/game/sim/surf.js';
+
+test('surfing: the push fades on the shoulder', () => {
+  assert.equal(steepness(2), 1);
+  assert.ok(steepness(20) < 0.6);
+  assert.equal(steepness(100), SURF.fade);
+});
+
+test('surfing: S-turns survive the wave and score turns; sitting still gets caught', () => {
+  const { rides } = playSurf(1, makeRng(5));
+  for (const r of rides) {
+    assert.equal(r.wipeout, null);
+    assert.ok(r.moves.some((m) => m.move === 'bottom'));
+    assert.ok(r.score > 100, `score ${r.score}`);
+  }
+  const lazy = new Surfer(makeRng(1));
+  lazy.heading = 90;
+  while (!lazy.done) lazy.update(1 / 60, { dx: 0, dy: 1 });
+  assert.ok(lazy.wipeout, 'pointing at the lip all ride should end in a wipeout');
+});
+
+test('surfing: letting the curl catch you mid-face is a tube ride', () => {
+  const t = new Surfer(makeRng(2));
+  Object.assign(t, { x: 0.2, y: 1.6, v: 1, heading: 0 });
+  const ev = [];
+  while (!t.done && t.t < 6) ev.push(...t.update(1 / 60, { dx: 1, dy: 1.6 - t.y }));
+  const tube = ev.find((e) => e.move === 'tube');
+  assert.ok(tube && tube.secs > 0.3, JSON.stringify(ev));
+});
+
+test('surfing: repeated manoeuvres are worth less; airs must land facing down', () => {
+  const s = new Surfer(makeRng(1));
+  const a = s.award('bottom', 10), b = s.award('bottom', 10);
+  assert.ok(b.pts < a.pts);
+  const air = new Surfer(makeRng(1));
+  Object.assign(air, { y: SURF.face, heading: 60, air: { vy: 2, rot: 0, h0: 60, peak: 0.3 } });
+  let ev = [];
+  while (!air.done && air.air) ev = air.update(1 / 60, {});
+  assert.equal(air.wipeout, 'LANDED FLAT');
+  for (let k = 0; k < 20; k++) {
+    const r = cpuSurf(0.8, makeRng(k));
+    assert.ok(r >= 0 && r < 700);
+  }
+});
+
+import { Skater, PIPE, surface, geom, playPipe, airName } from '../src/game/sim/halfpipe.js';
+
+test('half-pipe: the ramp profile is continuous from the flat to the coping', () => {
+  const { sMax, hc } = geom();
+  let prev = surface(0);
+  for (let s = 0.05; s <= sMax; s += 0.05) {
+    const p = surface(s);
+    assert.ok(Math.hypot(p.x - prev.x, p.h - prev.h) < 0.06);
+    prev = p;
+  }
+  assert.ok(Math.abs(surface(sMax).h - hc) < 1e-9);
+});
+
+test('half-pipe: good pumping builds big airs, no pumping dies away', () => {
+  const lazy = new Skater(makeRng(1));
+  let airs = 0;
+  while (!lazy.over) if (lazy.update(1 / 60, {}).some((e) => e.type === 'launch')) airs++;
+  assert.equal(airs, 0, 'no pumps: never clears the coping');
+  const pro = playPipe(1, makeRng(2)).runs[0];
+  assert.ok(pro.tricks.length >= 8);
+  assert.ok(Math.max(...pro.tricks.map((t) => t.height)) > 1.5);
+  assert.ok(playPipe(1, makeRng(3)).total > playPipe(0.1, makeRng(3)).total * 2);
+});
+
+test('half-pipe: land sideways or still grabbing and you slam', () => {
+  const jump = (spin, grabAll) => {
+    const sk = new Skater(makeRng(1));
+    sk.s = geom().sMax - 0.01; sk.u = 5;
+    const ev = [];
+    for (let i = 0; i < 200 && !ev.some((e) => e.type === 'land' || e.type === 'slam'); i++) {
+      const air = sk.air;
+      ev.push(...sk.update(1 / 60, { spin: air && Math.abs(air.rot) < spin ? 1 : 0, grab: grabAll && !!air }));
+    }
+    return ev.find((e) => e.type === 'land' || e.type === 'slam');
+  };
+  assert.equal(jump(180, false).type, 'land');
+  assert.equal(jump(180, false).name, '180');
+  assert.equal(jump(90, false).type, 'slam');
+  assert.equal(jump(180, true).why, 'STILL GRABBING');
+  assert.equal(airName(3, true), '540 GRAB');
+});
