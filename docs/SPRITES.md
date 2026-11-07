@@ -54,3 +54,22 @@ Paint kit and skin with these exact colours and every player variant will work. 
 ## The pose rig
 
 `src/art/athlete.js` describes poses as joint angles (0° = limb pointing down, +90° = forward, 180° = up) and rasterises them with automatic shading and a dark outline. It's a quick way to block out new animations: add a pose, add a tag in `animations()`, then export and paint over it.
+
+## Finished frames (`assets/art/`)
+
+A PNG at `assets/art/<sheet>/<tag>_<n>.png` replaces that one frame of the rig when the sheet is exported (the name matches the frame's `filename` in the JSON, without the sheet name). Each file must be exactly one frame (40×64 for athletes) and use only palette colours, keeping the key ramps for kit, skin and hair. Then run `npm run export-sprites`.
+
+This is the best place for finished art: the rest of the sheet still bakes from the rig, so adding a new event's animations doesn't clash with hand-finished frames, and the exporter doesn't have to skip `athlete.png`.
+
+### PixelLab
+
+`tools/pixellab-enhance.mjs` sends rig frames to PixelLab's *edit image* model, which redraws them with more detail in the same pose, then snaps the colours to the athlete palette and writes the overrides:
+
+```
+PIXELLAB_API_KEY=... npm run pixellab -- caber_hold dive_edge_1
+PIXELLAB_API_KEY=... npm run pixellab -- --seed 3 --desc "barefoot cliff diver ..." dive_tuck
+```
+
+Arguments are tags or single frames. Existing overrides are skipped unless `--force`. Each frame costs one generation. Check every result (compact poses like a pike or tuck sometimes come back in the wrong pose; try another `--seed`), then export. Keep the key in the environment, never in a file. Behind an HTTPS proxy, run Node with `NODE_USE_ENV_PROXY=1`.
+
+The Caber Toss and Cliff Diving frames were made this way.
