@@ -1,7 +1,7 @@
 // Event registry. Add a new event by writing a Scene + sim module and
 // listing it here; menus, competition flow and scoring pick it up.
 // `season` files it under a tab in the event menus (summer, winter, world,
-// beach — see SEASONS in ../programme.js). An unknown season gets its own
+// beach, challenge — see SEASONS in ../programme.js). An unknown season gets its own
 // tab automatically, and an event with no season goes under OTHER.
 import { SprintScene } from './sprint.js';
 import { JavelinScene } from './javelin.js';
@@ -17,6 +17,10 @@ import { CliffDiveScene } from './cliffdive.js';
 import { FootbagScene } from './footbag.js';
 import { SurfScene } from './surfing.js';
 import { HalfPipeScene } from './halfpipe.js';
+import { PoleVaultScene } from './polevault.js';
+import { SlalomScene } from './slalom.js';
+import { SkatingScene } from './skating.js';
+import { AssaultScene } from './assault.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
@@ -31,6 +35,10 @@ import { cpuDive } from '../sim/dive.js';
 import { cpuFootbag } from '../sim/footbag.js';
 import { cpuSurf } from '../sim/surf.js';
 import { cpuPipe } from '../sim/halfpipe.js';
+import { cpuVault } from '../sim/vault.js';
+import { cpuSlalom, fmtSlalom } from '../sim/slalom.js';
+import { cpuSkate, fmtSkate } from '../sim/skate.js';
+import { cpuAssault, fmtAssault } from '../sim/assault.js';
 import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
@@ -123,7 +131,25 @@ export const EVENTS = [
       'FURTHER AHEAD THE FURTHER AWAY IT IS. SPACE FIRES.',
       '6 SINGLES THEN 3 DOUBLES. 2 SHELLS EACH ROUND.',
     ],
+  },  {
+    id: 'polevault',
+    season: 'summer',
+    name: 'POLE VAULT',
+    skill: 'SPEED CONTROL + TIMING',
+    better: 'higher',
+    format: fmtDist,
+    cpu: cpuVault,
+    Scene: PoleVaultScene,
+    baseRecord: 5.9,
+    help: [
+      'PICK A POLE (LEFT/RIGHT) AND A HEIGHT (UP/DOWN).',
+      'HOLD SPACE TO RUN, EASE OFF TO HIT THE POLE\'S SPEED.',
+      'PRESS DOWN AT THE WHITE MARK TO PLANT THE POLE.',
+      'SPACE AT FULL BEND TO ROCK BACK, UP TO PUSH OFF.',
+      '6 JUMPS, OUT AFTER 3 FAILURES IN A ROW.',
+    ],
   },
+
   {
     id: 'skijump',
     season: 'winter',
@@ -195,7 +221,25 @@ export const EVENTS = [
       'STEER [ ] TO KEEP IT ON THE GREEN MARK.',
       'SWINGING AND STEERING SCRUB SPEED. TOO HIGH: ROLL.',
     ],
+  },  {
+    id: 'skating',
+    season: 'winter',
+    name: 'SPEED SKATING',
+    skill: 'RHYTHM + LEAN',
+    better: 'lower',
+    format: fmtSkate,
+    cpu: cpuSkate,
+    Scene: SkatingScene,
+    baseRecord: 37.2,
+    help: [
+      '500 METRES. PUSH OFF WITH SPACE ON THE GUN.',
+      'PUSH AGAIN AT THE END OF EACH GLIDE (THE GREEN).',
+      'EARLY PUSHES ARE WEAK. LATE ONES WASTE SPEED.',
+      'IN THE BENDS HOLD LEFT TO LEAN. KEEP IT IN THE GREEN:',
+      'TOO LITTLE AND YOU GO WIDE, TOO MUCH AND YOU SLIP.',
+    ],
   },
+
   {
     id: 'caber',
     season: 'world',
@@ -231,7 +275,25 @@ export const EVENTS = [
       'LET GO TO OPEN OUT: ENTER FEET FIRST, UPRIGHT.',
       'HOLD UP TO SLOW THE SPIN. 3 DIVES, 5 JUDGES.',
     ],
+  },  {
+    id: 'slalom',
+    season: 'world',
+    name: 'CANOE SLALOM',
+    skill: 'STEERING + CURRENT',
+    better: 'lower',
+    format: fmtSlalom,
+    cpu: cpuSlalom,
+    Scene: SlalomScene,
+    baseRecord: 95,
+    help: [
+      'EACH STROKE PUSHES YOU ON AND TURNS YOU: LEFT OR',
+      'RIGHT TURNS THAT WAY, ALTERNATE TO GO STRAIGHT.',
+      'DOWN BACK-PADDLES. GREEN GATES GOING DOWNSTREAM,',
+      'RED GATES GOING BACK UP FROM THE EDDY BELOW A ROCK.',
+      'TOUCH A POLE +2S. MISS A GATE +50S.',
+    ],
   },
+
   {
     id: 'footbag',
     season: 'beach',
@@ -285,7 +347,25 @@ export const EVENTS = [
       'LET GO AND LAND FACING ALONG THE RAMP OR SLAM.',
       'BIGGER, NEW TRICKS SCORE MORE. 2 RUNS OF 35S.',
     ],
+  },  {
+    id: 'assault',
+    season: 'challenge',
+    name: 'ASSAULT COURSE',
+    skill: 'TIMING ON EVERY OBSTACLE',
+    better: 'lower',
+    format: fmtAssault,
+    cpu: cpuAssault,
+    Scene: AssaultScene,
+    baseRecord: 30.5,
+    help: [
+      'HOLD SPACE TO RUN. UP JUMPS THE WALL FROM THE ZONE.',
+      'UP CLIMBS THE NET AS IT SWINGS IN TOWARDS YOU.',
+      'BEAM: HOLD SPACE TO WALK, LEFT/RIGHT TO BALANCE.',
+      'ROPE: UP AS IT SWINGS BACK, SPACE TO LET GO',
+      'AT THE FAR END OF THE SWING TO CLEAR THE WATER.',
+    ],
   },
+
 ];
 
 export const eventById = (id) => EVENTS.find((e) => e.id === id);

@@ -7,6 +7,7 @@ export const SEASONS = [
   { id: 'winter', name: 'WINTER', color: 'cyan.2', tab: 'cyan.0' },
   { id: 'world', name: 'WORLD', color: 'green.3', tab: 'green.0' },
   { id: 'beach', name: 'BEACH', color: 'orange.3', tab: 'orange.1' },
+  { id: 'challenge', name: 'CHALLENGE', color: 'purple.2', tab: 'purple.0' },
 ];
 
 const FALLBACK = { color: 'grey.6', tab: 'grey.2' };
