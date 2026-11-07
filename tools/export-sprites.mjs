@@ -9,6 +9,8 @@
 //
 // Hand-edited sheets are protected: a sheet is only overwritten if its PNG
 // still matches the last rig export (tracked in assets/sprites/.rig-hashes.json).
+// Finished frames in assets/art/<sheet>/<tag>_<n>.png replace rig frames at
+// export (see tools/overrides.mjs), so they survive re-exports.
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
@@ -16,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { SHEETS } from '../src/art/index.js';
 import { RAMPS, COLORS, hexToRgb } from '../src/art/palette.js';
 import { encodePNG } from './png.mjs';
+import { applyOverrides } from './overrides.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'assets', 'sprites');
@@ -31,6 +34,7 @@ const sha = (buf) => createHash('sha1').update(buf).digest('hex');
 for (const [name, def] of Object.entries(SHEETS)) {
   if (only.length && !only.includes(name)) continue;
   const { bitmap, json } = def.bake();
+  const replaced = applyOverrides(name, bitmap, json, join(root, 'assets', 'art'));
   const png = encodePNG(bitmap.w, bitmap.h, bitmap.toRGBA());
   const pngPath = join(outDir, `${name}.png`);
   if (existsSync(pngPath) && !force) {
@@ -43,7 +47,7 @@ for (const [name, def] of Object.entries(SHEETS)) {
   writeFileSync(pngPath, png);
   writeFileSync(join(outDir, `${name}.json`), JSON.stringify(json, null, 1) + '\n');
   hashes[name] = sha(png);
-  console.log(`wrote ${name}.png ${bitmap.w}x${bitmap.h}, ${json.frames.length} frames, tags: ${json.meta.frameTags.map((t) => t.name).join(', ')}`);
+  console.log(`wrote ${name}.png ${bitmap.w}x${bitmap.h}, ${json.frames.length} frames, tags: ${json.meta.frameTags.map((t) => t.name).join(', ')}${replaced.length ? `, ${replaced.length} frames from assets/art/${name}/` : ''}`);
 }
 writeFileSync(hashFile, JSON.stringify(hashes, null, 1) + '\n');
 

@@ -55,3 +55,22 @@ test('committed assets match their JSON', () => {
     assert.equal(png.readUInt32BE(20), json.meta.size.h);
   }
 });
+
+test('art overrides decode, fit their frames and use palette colours', async () => {
+  const { applyOverrides } = await import('../tools/overrides.mjs');
+  const { join, dirname } = await import('node:path');
+  const { fileURLToPath } = await import('node:url');
+  const artDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'art');
+  for (const [name, def] of Object.entries(SHEETS)) {
+    const { bitmap, json } = def.bake();
+    applyOverrides(name, bitmap, json, artDir); // throws on a bad file
+  }
+});
+
+test('PNG decoder round-trips the encoder', async () => {
+  const { decodePNG } = await import('../tools/png.mjs');
+  const rgba = new Uint8ClampedArray(3 * 2 * 4).map((_, i) => (i * 37) & 255);
+  const out = decodePNG(encodePNG(3, 2, rgba));
+  assert.equal(out.width, 3);
+  assert.deepEqual([...out.rgba], [...rgba]);
+});
