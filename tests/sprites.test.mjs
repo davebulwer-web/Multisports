@@ -20,7 +20,7 @@ test('every sheet bakes with Aseprite-style JSON', () => {
 test('athlete sheet has the animations the events use', () => {
   const { json } = SHEETS.athlete.bake();
   const tags = json.meta.frameTags.map((t) => t.name);
-  for (const t of ['idle', 'set', 'run', 'stumble', 'jog', 'jav_run', 'jav_throw', 'arch_draw', 'arch_hold', 'arch_loose', 'clay_ready', 'clay_mount', 'ski_tuck', 'ski_upright', 'ski_takeoff', 'ski_fly_back', 'ski_fly', 'ski_fly_fwd', 'ski_land', 'ski_feet', 'ski_fall', 'xc_stride', 'bia_prone', 'bia_stand', 'caber_lift', 'caber_hold', 'caber_run', 'caber_toss', 'dive_edge', 'dive_open', 'dive_arms', 'dive_pike', 'dive_tuck', 'dive_tread', 'lift_ready', 'lift_pull', 'lift_rack',
+  for (const t of ['idle', 'set', 'run', 'stumble', 'jog', 'jav_run', 'jav_throw', 'arch_draw', 'arch_hold', 'arch_loose', 'clay_ready', 'clay_mount', 'ski_tuck', 'ski_upright', 'ski_takeoff', 'ski_fly_back', 'ski_fly', 'ski_fly_fwd', 'ski_land', 'ski_feet', 'ski_fall', 'xc_stride', 'bia_prone', 'bia_stand', 'caber_lift', 'caber_hold', 'caber_run', 'caber_toss', 'dive_edge', 'dive_open', 'dive_arms', 'dive_pike', 'dive_tuck', 'dive_tread', 'hack_ready', 'hack_toe', 'hack_knee', 'hack_head', 'hack_spin', 'surf_paddle', 'surf_ride', 'surf_carve', 'surf_air', 'skate_ride', 'skate_pump', 'skate_air', 'skate_grab', 'lift_ready', 'lift_pull', 'lift_rack',
     'lift_dip', 'lift_jerk', 'lift_hold', 'lift_wobble_l', 'lift_wobble_r', 'lift_drop', 'celebrate', 'dejected']) {
     assert.ok(tags.includes(t), `missing ${t}`);
   }

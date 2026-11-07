@@ -11,6 +11,9 @@ import { CurlingScene } from './curling.js';
 import { BobsleighScene } from './bobsleigh.js';
 import { CaberScene } from './caber.js';
 import { CliffDiveScene } from './cliffdive.js';
+import { FootbagScene } from './footbag.js';
+import { SurfScene } from './surfing.js';
+import { HalfPipeScene } from './halfpipe.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
@@ -22,6 +25,9 @@ import { cpuCurling, maxScore } from '../sim/curling.js';
 import { cpuBob, fmtBob } from '../sim/bob.js';
 import { cpuCaber } from '../sim/caber.js';
 import { cpuDive } from '../sim/dive.js';
+import { cpuFootbag } from '../sim/footbag.js';
+import { cpuSurf } from '../sim/surf.js';
+import { cpuPipe } from '../sim/halfpipe.js';
 import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
@@ -210,6 +216,57 @@ export const EVENTS = [
       'HOLD SPACE TO TUCK OR PIKE AND SPIN FAST.',
       'LET GO TO OPEN OUT: ENTER FEET FIRST, UPRIGHT.',
       'HOLD UP TO SLOW THE SPIN. 3 DIVES, 5 JUDGES.',
+    ],
+  },
+  {
+    id: 'footbag',
+    name: 'FOOTBAG',
+    skill: 'TIMING + RHYTHM',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuFootbag,
+    Scene: FootbagScene,
+    baseRecord: 1400,
+    help: [
+      'KEEP THE BAG UP FOR 60 SECONDS. KICK AS IT FALLS',
+      'PAST: DOWN = FOOT, SPACE = KNEE, UP = HEAD.',
+      'STEP WITH [ ] TO STAY UNDER IT. MISSES COST TIME.',
+      'MIX THEM UP AND KEEP THE STRING GOING FOR MORE.',
+      'X SPINS WHILE IT\'S HIGH: KICK CLEAN AFTER FOR A BONUS.',
+    ],
+  },
+  {
+    id: 'surfing',
+    name: 'SURFING',
+    skill: 'BALANCE + LINE',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuSurf,
+    Scene: SurfScene,
+    baseRecord: 600,
+    help: [
+      'SPACE TO POP UP AS THE WAVE LIFTS YOU.',
+      'THE BOARD TURNS TOWARDS THE ARROWS YOU HOLD.',
+      'DROP FOR SPEED. TURN OFF THE BOTTOM AND THE LIP.',
+      'CUT BACK ON THE SHOULDER. LET THE CURL CATCH YOU',
+      'FOR A TUBE. LAND AIRS FACING DOWN. 2 WAVES.',
+    ],
+  },
+  {
+    id: 'halfpipe',
+    name: 'HALF-PIPE',
+    skill: 'PUMPING + AIR CONTROL',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuPipe,
+    Scene: HalfPipeScene,
+    baseRecord: 2100,
+    help: [
+      'PRESS SPACE AS YOU ROLL OFF THE FLAT INTO EACH',
+      'WALL (THE YELLOW MARKS) TO PUMP UP SPEED.',
+      'IN THE AIR HOLD [ ] TO SPIN, UP TO GRAB.',
+      'LET GO AND LAND FACING ALONG THE RAMP OR SLAM.',
+      'BIGGER, NEW TRICKS SCORE MORE. 2 RUNS OF 35S.',
     ],
   },
 ];

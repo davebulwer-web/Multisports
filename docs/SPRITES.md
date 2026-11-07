@@ -18,7 +18,7 @@ Multisports also reads two optional extras from `meta.multisports`:
 |---|---|---|
 | `athlete` | 40×64, pivot (20,62) | Every athlete. Recoloured per player. |
 | `props` | 16×16 | Medals, judges' lights, crowd fans (2 frames each: seated/cheering). |
-| `scenery` | 64×48, pivot (32,47) | Pines (`pine_12/18/26`, picked by size), caber marquee (`tent`), clay trap houses (`trap_left/right`), stadium floodlight (`tower`). Drawn by the centre of their base. |
+| `scenery` | 64×48, pivot (32,47) | Pines (`pine_12/18/26`, picked by size), caber marquee (`tent`), clay trap houses (`trap_left/right`), stadium floodlight (`tower`), beach `palm` and `lifeguard` hut. Drawn by the centre of their base. |
 
 If a sheet's files are missing, the game bakes it from the rig at startup, so it always runs.
 
@@ -69,8 +69,9 @@ This is the best place for finished art: the rest of the sheet still bakes from 
 ```
 PIXELLAB_API_KEY=... npm run pixellab -- caber_hold dive_edge_1
 PIXELLAB_API_KEY=... npm run pixellab -- --seed 3 --desc "barefoot cliff diver ..." dive_tuck
+PIXELLAB_API_KEY=... npm run pixellab -- --sheet scenery --desc "palm tree ..." palm
 ```
 
 Arguments are tags or single frames. Existing overrides are skipped unless `--force`. Each frame costs one generation. Check every result (compact poses like a pike or tuck sometimes come back in the wrong pose; try another `--seed`), then export. Keep the key in the environment, never in a file. Behind an HTTPS proxy, run Node with `NODE_USE_ENV_PROXY=1`.
 
-Every athlete, props and scenery frame was made this way (the diving pike was also trimmed to the rig outline). The script handles the athlete sheet; props and scenery were snapped to the full palette instead of the athlete colours.
+Every athlete, props and scenery frame was made this way (the diving pike was also trimmed to the rig outline). Athlete frames snap to the athlete colours; `--sheet props` or `--sheet scenery` snaps to the full palette instead.

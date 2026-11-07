@@ -243,6 +243,36 @@ const DIVE_POSE = {
   tread:    { hip: [20, 44], torso: 4, legF: [24, 50], legB: [-14, 40], armF: [86, 40], armB: [70, 50], bib: false },
 };
 
+// Footbag: light on the feet with the arms out for balance. Kicks with the
+// inside of the foot, the knee and the forehead; the scene draws the bag.
+const HACK_ARMS = { armF: [62, 28], armB: [-52, 28] };
+const HACK = {
+  ready: { hip: [20, 42], torso: 6, legF: [12, 18], legB: [-6, 14], ...HACK_ARMS, footFlatF: true, footFlatB: true },
+  toe:   { hip: [20, 41], torso: 2, legF: [52, 30], legB: [-4, 6], ...HACK_ARMS, footFlatF: true, footFlatB: true },
+  knee:  { hip: [20, 41], torso: 0, legF: [96, 92], legB: [-2, 4], armF: [74, 30], armB: [-64, 24], footFlatB: true },
+  head:  { hip: [20, 40], torso: -12, legF: [8, 6], legB: [-8, 6], armF: [70, 22], armB: [-60, 22], toes: true, headTilt: -2 },
+  spinA: { hip: [20, 41], torso: 0, legF: [4, 4], legB: [-4, 4], armF: [96, 0], armB: [-96, 0], footFlatF: true, footFlatB: true },
+  spinB: { hip: [20, 41], torso: 0, legF: [-6, 10], legB: [10, 10], armF: [40, 60], armB: [-40, 60], footFlatF: true, footFlatB: true },
+};
+
+// Surfing: side-on stance on the board (drawn by the scene under the feet).
+const SURF_POSE = {
+  paddle: { hip: [21, 55], torso: 86, legF: [-84, 4], legB: [-88, 4], armF: [96, 10], armB: [10, 10], footFlatF: true, footFlatB: true, headTilt: 2, bib: false },
+  paddle2:{ hip: [21, 55], torso: 86, legF: [-84, 4], legB: [-88, 4], armF: [10, 10], armB: [96, 10], footFlatF: true, footFlatB: true, headTilt: 2, bib: false },
+  ride:   { hip: [20, 46], torso: 20, legF: [40, 52], legB: [-30, 40], armF: [82, 12], armB: [-62, 20], footFlatF: true, footFlatB: true, bib: false },
+  carve:  { hip: [20, 49], torso: 32, legF: [62, 92], legB: [-22, 70], armF: [104, 20], armB: [-30, 34], footFlatF: true, footFlatB: true, bib: false },
+  air:    { hip: [20, 46], torso: 30, legF: [82, 112], legB: [42, 112], armF: [34, 60], armB: [110, 10], footFlatF: true, footFlatB: true, bib: false },
+};
+
+// Half-pipe skateboarding. The scene draws the deck under the feet and tilts
+// the whole frame to the ramp.
+const SKATE = {
+  ride:  { hip: [20, 43], torso: 8, legF: [22, 22], legB: [-16, 18], armF: [52, 30], armB: [-34, 30], footFlatF: true, footFlatB: true },
+  pump:  { hip: [20, 48], torso: 24, legF: [56, 92], legB: [8, 80], armF: [40, 40], armB: [-20, 40], footFlatF: true, footFlatB: true },
+  air:   { hip: [20, 44], torso: 18, legF: [72, 110], legB: [40, 110], armF: [34, 40], armB: [-44, 40], footFlatF: true, footFlatB: true },
+  grab:  { hip: [20, 45], torso: 30, legF: [80, 118], legB: [48, 118], armF: [48, 10], armB: [150, 10], footFlatF: true, footFlatB: true },
+};
+
 const JAV = {
   withdraw: { hip: [20, 42], torso: -8, legF: [36, 10], legB: [-24, 20], armF: [-112, 6], armB: [70, 40] },
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
@@ -289,6 +319,19 @@ export function animations() {
     { tag: 'dive_pike', frames: [[DIVE_POSE.pike, 500]] },
     { tag: 'dive_tuck', frames: [[DIVE_POSE.tuck, 500]] },
     { tag: 'dive_tread', frames: [[DIVE_POSE.tread, 400], [lerpPose(DIVE_POSE.tread, DIVE_POSE.edgeMid, 0.3), 400]] },
+    { tag: 'hack_ready', frames: [[HACK.ready, 500]] },
+    { tag: 'hack_toe', frames: [[HACK.toe, 500]] },
+    { tag: 'hack_knee', frames: [[HACK.knee, 500]] },
+    { tag: 'hack_head', frames: [[HACK.head, 500]] },
+    { tag: 'hack_spin', frames: [[HACK.spinA, 120], [HACK.spinB, 120]] },
+    { tag: 'surf_paddle', frames: [[SURF_POSE.paddle, 300], [SURF_POSE.paddle2, 300]] },
+    { tag: 'surf_ride', frames: [[SURF_POSE.ride, 500]] },
+    { tag: 'surf_carve', frames: [[SURF_POSE.carve, 500]] },
+    { tag: 'surf_air', frames: [[SURF_POSE.air, 500]] },
+    { tag: 'skate_ride', frames: [[SKATE.ride, 500]] },
+    { tag: 'skate_pump', frames: [[SKATE.pump, 500]] },
+    { tag: 'skate_air', frames: [[SKATE.air, 500]] },
+    { tag: 'skate_grab', frames: [[SKATE.grab, 500]] },
     { tag: 'lift_ready', frames: [[LIFT.ready, 500]] },
     { tag: 'lift_pull', frames: [[lerpPose(LIFT.ready, LIFT.pull, 0.5), 100], [LIFT.pull, 100]] },
     { tag: 'lift_rack', frames: [[LIFT.rack, 400]] },
