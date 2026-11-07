@@ -273,6 +273,51 @@ const SKATE = {
   grab:  { hip: [20, 45], torso: 30, legF: [80, 118], legB: [48, 118], armF: [48, 10], armB: [150, 10], footFlatF: true, footFlatB: true },
 };
 
+// Pole vault. Both hands on the pole: the scene draws it through handF and
+// handB on the run-up, then from the box to handF. In the air the scene
+// rotates the frame about handF as the vaulter swings, rocks back and turns.
+const PV_CARRY = { armF: [62, 60], armB: [-14, 118] };
+const PV = {
+  plant: { hip: [20, 40], torso: 2, legF: [78, 88], legB: [-26, 12], armF: [168, 0], armB: [152, 8] },
+  hang:  { hip: [20, 42], torso: 0, legF: [-14, 16], legB: [-24, 22], armF: [176, 0], armB: [184, 0], toes: true },
+  rock:  { hip: [20, 44], torso: -8, legF: [150, 36], legB: [140, 46], armF: [172, 0], armB: [180, 4], toes: true },
+  push:  { hip: [20, 42], torso: 0, legF: [2, 0], legB: [-2, 0], armF: [178, 0], armB: [182, 0], toes: true },
+  arch:  { hip: [20, 42], torso: -18, legF: [-30, 34], legB: [-38, 30], armF: [120, 10], armB: [110, 14], toes: true },
+};
+
+// Speed skating: deep crouch, back flat. On the straights the hands rest on
+// the back; in the bends the outside arm swings with the crossovers.
+function skatePose(phase, swing = false) {
+  const a = phase * Math.PI * 2;
+  const leg = (ph) => {
+    const s = Math.sin(ph * Math.PI * 2), c = Math.cos(ph * Math.PI * 2);
+    // push: the leg extends behind; recovery: it folds under the hip
+    return [28 - 62 * Math.max(0, s) + 12 * Math.max(0, -s), 96 - 80 * Math.max(0, s) + 16 * Math.max(0, c)];
+  };
+  return {
+    hip: [19, 47 - 0.8 * Math.abs(Math.sin(a))],
+    torso: 68,
+    legF: leg(phase), legB: leg(phase + 0.5),
+    armF: swing ? [-60 + 140 * (0.5 + 0.5 * Math.sin(a)), 30] : [-112, 40],
+    armB: swing ? [-60 + 140 * (0.5 - 0.5 * Math.sin(a)), 30] : [-104, 46],
+    footFlatF: true, footFlatB: true,
+  };
+}
+const SK = {
+  ready: { hip: [18, 47], torso: 56, legF: [56, 92], legB: [-20, 30], armF: [84, 20], armB: [-70, 20], footFlatF: true, footFlatB: true, headTilt: 1 },
+};
+
+// Assault course.
+const AC = {
+  jump:   { hip: [20, 39], torso: 10, legF: [84, 104], legB: [6, 56], armF: [160, 10], armB: [150, 12] },
+  climbA: { hip: [21, 42], torso: 8, legF: [72, 112], legB: [-4, 24], armF: [178, 0], armB: [148, 44], footFlatF: true },
+  climbB: { hip: [21, 41], torso: 8, legF: [-2, 22], legB: [76, 110], armF: [146, 46], armB: [180, 0], footFlatB: true },
+  beamA:  { hip: [20, 41], torso: 4, legF: [22, 6], legB: [-16, 12], armF: [94, 6], armB: [-96, 6], footFlatF: true, footFlatB: true },
+  beamB:  { hip: [20, 41], torso: 4, legF: [-10, 12], legB: [16, 6], armF: [90, 6], armB: [-90, 6], footFlatF: true, footFlatB: true },
+  hang:   { hip: [20, 43], torso: 0, legF: [34, 40], legB: [24, 46], armF: [176, 0], armB: [184, 0], toes: true },
+  swim:   { hip: [20, 52], torso: 76, legF: [-80, 10], legB: [-92, 14], armF: [150, 10], armB: [40, 20], headTilt: 2, bib: false },
+};
+
 const JAV = {
   withdraw: { hip: [20, 42], torso: -8, legF: [36, 10], legB: [-24, 20], armF: [-112, 6], armB: [70, 40] },
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
@@ -332,6 +377,20 @@ export function animations() {
     { tag: 'skate_pump', frames: [[SKATE.pump, 500]] },
     { tag: 'skate_air', frames: [[SKATE.air, 500]] },
     { tag: 'skate_grab', frames: [[SKATE.grab, 500]] },
+    { tag: 'pv_run', frames: run(8, 85, 8, PV_CARRY) },
+    { tag: 'pv_plant', frames: [[PV.plant, 500]] },
+    { tag: 'pv_hang', frames: [[PV.hang, 500]] },
+    { tag: 'pv_rock', frames: [[PV.rock, 500]] },
+    { tag: 'pv_push', frames: [[PV.push, 500]] },
+    { tag: 'pv_arch', frames: [[PV.arch, 500]] },
+    { tag: 'sk_ready', frames: [[SK.ready, 500]] },
+    { tag: 'sk_stride', frames: Array.from({ length: 6 }, (_, i) => [skatePose(i / 6), 110]) },
+    { tag: 'sk_cross', frames: Array.from({ length: 6 }, (_, i) => [skatePose(i / 6, true), 90]) },
+    { tag: 'ac_jump', frames: [[AC.jump, 500]] },
+    { tag: 'ac_climb', frames: [[AC.climbA, 220], [AC.climbB, 220]] },
+    { tag: 'ac_beam', frames: [[AC.beamA, 300], [AC.beamB, 300]] },
+    { tag: 'ac_hang', frames: [[AC.hang, 500]] },
+    { tag: 'ac_swim', frames: [[AC.swim, 300], [{ ...AC.swim, armF: [40, 20], armB: [150, 10] }, 300]] },
     { tag: 'lift_ready', frames: [[LIFT.ready, 500]] },
     { tag: 'lift_pull', frames: [[lerpPose(LIFT.ready, LIFT.pull, 0.5), 100], [LIFT.pull, 100]] },
     { tag: 'lift_rack', frames: [[LIFT.rack, 400]] },

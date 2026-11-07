@@ -734,3 +734,162 @@ test('half-pipe: land sideways or still grabbing and you slam', () => {
   assert.equal(jump(180, true).why, 'STILL GRABBING');
   assert.equal(airName(3, true), '540 GRAB');
 });
+
+// ---- pole vault -----------------------------------------------------------
+import { VAULT, VaultComp, vaultResult, runStep, cpuVault } from '../src/game/sim/vault.js';
+
+test('pole vault: the right speed for the pole and clean timing go highest', () => {
+  const good = vaultResult({ speed: 9.3, pole: 2, takeoffErr: 0, rockErr: 0, pushErr: 0 });
+  assert.ok(good.peak > 5.5 && good.peak < 6.3, `peak ${good.peak}`);
+  const tooFast = vaultResult({ speed: 10.3, pole: 2, takeoffErr: 0, rockErr: 0, pushErr: 0 });
+  assert.ok(tooFast.peak < good.peak, 'over-bending the pole wastes energy');
+  const soft = vaultResult({ speed: 7.4, pole: 0, takeoffErr: 0, rockErr: 0, pushErr: 0 });
+  assert.ok(soft.peak < good.peak && soft.peak > 3.8);
+  assert.equal(vaultResult({ speed: 7.4, pole: 2, takeoffErr: 0 }).fail, 'POLE WON\'T BEND');
+  const late = vaultResult({ speed: 9.3, pole: 2, takeoffErr: 0, rockErr: 0.3, pushErr: 0.2 });
+  const noRock = vaultResult({ speed: 9.3, pole: 2, takeoffErr: 0, rockErr: null, pushErr: null });
+  assert.ok(late.peak < good.peak - 0.4 && noRock.peak < late.peak);
+});
+
+test('pole vault: planting too close or too far fails', () => {
+  assert.equal(vaultResult({ speed: 9.3, pole: 2, takeoffErr: 1.2 }).fail, 'RAN UNDER');
+  assert.equal(vaultResult({ speed: 9.3, pole: 2, takeoffErr: -1.6 }).fail, 'TOO FAR OUT');
+  const off = vaultResult({ speed: 9.3, pole: 2, takeoffErr: 0.6, rockErr: 0, pushErr: 0 });
+  assert.ok(off.fail == null && off.peak < 5.5);
+});
+
+test('pole vault: holding the run flat out overshoots the stiff pole', () => {
+  let v = 0, x = 0;
+  while (x < VAULT.runway - VAULT.takeoff) { v = runStep(v, true, 1 / 120); x += v / 120; }
+  assert.ok(v > VAULT.poles[2].band[1], `flat out ${v}`);
+});
+
+test('pole vault: competition goes up after a clearance, out after three failures', () => {
+  const c = new VaultComp();
+  c.setBar(5.0);
+  c.record(true);
+  assert.equal(c.best, 5.0);
+  assert.ok(c.bar > 5.0);
+  c.setBar(4.8);
+  assert.ok(c.bar >= 5.05, 'cannot go back down');
+  c.record(false); c.record(false); c.record(false);
+  assert.ok(c.over);
+  const rng = makeRng(4);
+  const lo = [], hi = [];
+  for (let i = 0; i < 40; i++) { lo.push(cpuVault(0.2, rng) ?? 0); hi.push(cpuVault(0.95, rng) ?? 0); }
+  const avg = (a) => a.reduce((s, x) => s + x, 0) / a.length;
+  assert.ok(avg(hi) > avg(lo) + 0.4);
+});
+
+// ---- canoe slalom ---------------------------------------------------------
+import { SLALOM, Kayak, flowAt, runPilot, cpuSlalom } from '../src/game/sim/slalom.js';
+
+test('canoe slalom: alternate strokes go straight, one side turns', () => {
+  const run = (sides) => {
+    const k = new Kayak();
+    k.x = 9; k.s = 30;
+    let i = 0;
+    for (let t = 0; t < 3; t += 1 / 60) { if (!k.stroke) k.paddle(sides(i++)); k.update(1 / 60); }
+    return k;
+  };
+  const straight = run((i) => (i % 2 ? 1 : -1));
+  const right = run(() => 1);
+  assert.ok(Math.abs(straight.h) < 0.5, `straight heading ${straight.h}`);
+  assert.ok(right.h > 1.5, `turning heading ${right.h}`);
+});
+
+test('canoe slalom: mashing does not paddle faster than stroking', () => {
+  const k = new Kayak();
+  let ok = 0;
+  for (let i = 0; i < 10; i++) { if (k.paddle(i % 2 ? 1 : -1)) ok++; k.update(0.02); }
+  assert.ok(ok <= 2, `${ok} strokes accepted in 0.2s`);
+});
+
+test('canoe slalom: eddies below rocks flow back upstream', () => {
+  const r = SLALOM.rocks[0];
+  assert.ok(flowAt(r.x, r.s + 4).s < 0);
+  assert.ok(flowAt(SLALOM.width / 2, r.s + 4).s > 1);
+});
+
+test('canoe slalom: drifting misses gates, a pilot gets round', () => {
+  const drift = new Kayak();
+  while (!drift.finished && drift.t < 300) drift.update(1 / 60);
+  assert.ok(drift.gates.filter((g) => g.missed).length >= 3, 'drifting misses gates (or sits in an eddy)');
+  let best = Infinity;
+  for (let seed = 1; seed <= 8; seed++) {
+    const k = runPilot(0.2, makeRng(seed));
+    if (k.gates.every((g) => g.done)) best = Math.min(best, k.time);
+  }
+  assert.ok(best < 130, `best pilot run ${best}`);
+  const rng = makeRng(2);
+  assert.ok(cpuSlalom(0.95, rng) < cpuSlalom(0.1, makeRng(2)));
+});
+
+// ---- speed skating ---------------------------------------------------------
+import { Skater as IceSkater, runSkater, pushQuality, cpuSkate } from '../src/game/sim/skate.js';
+
+test('speed skating: pushing at the end of the glide is fastest; mashing is slow', () => {
+  const good = runSkater({ at: 0.9 });
+  const early = runSkater({ at: 0.6 });
+  const mash = runSkater({ at: 0.3 });
+  const late = runSkater({ at: 1.4 });
+  assert.ok(good.t > 35 && good.t < 39, `good ${good.t}`);
+  assert.ok(early.t > good.t + 3 && mash.t > good.t + 10 && late.t > good.t + 3);
+  assert.equal(pushQuality(0.95), 1);
+});
+
+test('speed skating: too little lean drifts wide, too much slips', () => {
+  const ok = runSkater({});
+  const under = runSkater({ leanErr: -12 });
+  const over = runSkater({ leanErr: 16 });
+  assert.ok(under.stats.wide > 0 && under.t > ok.t + 2);
+  assert.ok(over.stats.falls > 0 && over.t > ok.t + 5);
+  const s = new IceSkater();
+  s.v = 14; s.d = 120; // in the first bend
+  assert.ok(s.need > 30 && s.need < 45, `need ${s.need}`);
+  const rng = makeRng(3);
+  assert.ok(cpuSkate(1, rng) < cpuSkate(0, makeRng(3)));
+});
+
+// ---- assault course --------------------------------------------------------
+import { ASSAULT, Assault, runAssault, cpuAssault } from '../src/game/sim/assault.js';
+
+test('assault course: a clean run takes about half a minute; mistakes cost time', () => {
+  const clean = runAssault(0, makeRng(1));
+  assert.ok(clean.finished && clean.t > 27 && clean.t < 33, `clean ${clean.t}`);
+  const sloppy = runAssault(0.45, makeRng(5));
+  assert.ok(sloppy.t > clean.t);
+  assert.ok(cpuAssault(1, makeRng(1)) < cpuAssault(0, makeRng(1)));
+});
+
+test('assault course: jumping the wall needs the zone and the speed', () => {
+  const at = (x, v) => { const a = new Assault(makeRng(1)); a.x = x; a.v = v; return a.update(1 / 120, { run: true, up: true })[0]; };
+  assert.equal(at(ASSAULT.wall.x - 1.7, 6).type, 'jump');
+  assert.equal(at(ASSAULT.wall.x - 3, 6).why, 'SHORT');
+  assert.equal(at(ASSAULT.wall.x - 1.7, 2).why, 'TOO SLOW');
+});
+
+test('assault course: climbing the net out of time slips back', () => {
+  const a = new Assault(makeRng(1));
+  a.x = ASSAULT.net.x - 0.5; a.set('net'); a.rung = 2; a.stateT = 1;
+  while (a.netSway > 0) a.update(1 / 120);
+  a.stateT = 1;
+  const ev = a.update(1 / 120, { up: true });
+  assert.equal(ev[0].type, 'slip');
+  assert.equal(a.rung, 1);
+});
+
+test('assault course: let go of the rope too soon and you land in the water', () => {
+  const release = (deg) => {
+    const a = new Assault(makeRng(1));
+    a.x = ASSAULT.rope.edge - 0.4; a.set('edge');
+    while (a.state === 'edge' && a.t < 20) a.update(1 / 120, { up: a.ropeEnd.x <= ASSAULT.rope.reach - 0.2 });
+    while (a.t < 30) {
+      const ev = a.update(1 / 120, { act: a.state === 'rope' && a.ropeW > 0 && a.ropeA * 180 / Math.PI >= deg });
+      const end = ev.find((e) => e.type === 'land' || e.type === 'splash');
+      if (end) return end.type;
+    }
+  };
+  assert.equal(release(2), 'splash');
+  assert.equal(release(24), 'land');
+});
