@@ -4,7 +4,7 @@ import { drawStadium, drawGrass } from './stadium.js';
 
 export function backdrop(ctx, t, excite = 0.2) {
   const camX = (t * 12) % 960;
-  drawStadium(ctx, camX, { excite, t });
+  drawStadium(ctx, camX, { excite, t, season: 'all' });
   drawGrass(ctx, camX);
 }
 

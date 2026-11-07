@@ -11,6 +11,7 @@ import { ASSAULT, Assault, fmtAssault } from '../sim/assault.js';
 import { makeRng } from '../sim/rng.js';
 import { assets, playerSheet, drawScenery } from '../assets.js';
 import { topBar, banner } from '../hud.js';
+import { drawBoardRow } from '../boards.js';
 import { hash } from '../winter.js';
 
 const PX = 22;
@@ -163,7 +164,8 @@ export class AssaultScene extends Scene {
       const cheer = hash(c + 55) < this.excite;
       assets.props.draw(ctx, tag.from + (cheer && Math.floor(this.t * 4 + h * 4) % 2 ? 1 : 0), Math.round(c * 9 - cam * 0.8), 140);
     }
-    for (let x = 0; x < W; x++) if (Math.floor(x + cam) % 6 < 3) fill(ctx, 'lamp.1', x, 150, 1, 1);
+    // advertising hoarding in front of the crowd
+    drawBoardRow(ctx, cam * 0.8, 136, { season: 'challenge', salt: 'assault' });
     // running track of packed earth
     fill(ctx, 'orange.1', 0, GROUND - 4, W, 8);
     fill(ctx, 'orange.0', 0, GROUND + 4, W, 1);

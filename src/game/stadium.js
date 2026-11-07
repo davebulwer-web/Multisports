@@ -1,6 +1,7 @@
 // Parallax stadium backdrop shared by the events.
 import { assets, drawScenery } from './assets.js';
-import { fill, dither, bands, text, P, W } from '../engine/gfx.js';
+import { fill, dither, bands, P, W } from '../engine/gfx.js';
+import { drawBoardRow } from './boards.js';
 
 export const GROUND_Y = 112;
 
@@ -10,19 +11,12 @@ const hash = (a, b) => {
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 };
 
-const BOARDS = [
-  ['MULTISPORTS', 'grey.6', 'blue.1'],
-  ['GO FOR GOLD', 'yellow.2', 'red.1'],
-  ['TV SPORT 86', 'grey.6', 'green.0'],
-  ['FAIR PLAY', 'grey.0', 'yellow.1'],
-  ['CHAMPIONS', 'cyan.2', 'purple.1'],
-];
-
 /**
  * @param {number} camX camera x in world pixels (ground layer scrolls 1:1)
- * @param {{excite?:number, t?:number}} o excite 0..1 = how many fans cheer
+ * @param {{excite?:number, t?:number, season?:string, salt?:string}} o excite 0..1 = how many
+ *   fans cheer; season/salt pick and shuffle the advertising boards
  */
-export function drawStadium(ctx, camX, { excite = 0.1, t = 0 } = {}) {
+export function drawStadium(ctx, camX, { excite = 0.1, t = 0, season = 'summer', salt = '' } = {}) {
   bands(ctx, ['sky.0', 'sky.1', 'sky.2', 'sky.3'], 0, 0, W, 34);
   // distant floodlight towers (slow parallax)
   for (let i = -1; i < 4; i++) {
@@ -49,17 +43,8 @@ export function drawStadium(ctx, camX, { excite = 0.1, t = 0 } = {}) {
     }
   }
   // front wall + advertising boards (scroll with the ground)
-  fill(ctx, 'grey.1', 0, 97, W, 3);
-  const bw = 96;
-  const b0 = Math.floor(camX / bw) - 1;
-  for (let b = b0; b < b0 + W / bw + 3; b++) {
-    const [label, fg, bg] = BOARDS[((b % BOARDS.length) + BOARDS.length) % BOARDS.length];
-    const x = Math.round(b * bw - camX);
-    fill(ctx, bg, x, 100, bw - 1, 12);
-    fill(ctx, 'grey.0', x + bw - 1, 100, 1, 12);
-    text(ctx, label, x + bw / 2, 102, fg, { align: 'center', shadow: null });
-  }
-  fill(ctx, 'grey.0', 0, 111, W, 1);
+  fill(ctx, 'grey.1', 0, 95, W, 1);
+  drawBoardRow(ctx, camX, 96, { season, salt });
 }
 
 /** Striped grass between y0 and y1 that scrolls with the camera. */

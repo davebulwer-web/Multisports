@@ -197,7 +197,7 @@ export class PoleVaultScene extends Scene {
   sy(m) { return GROUND - m * PX; }
 
   draw(ctx) {
-    drawStadium(ctx, this.camX, { excite: this.excite, t: this.t });
+    drawStadium(ctx, this.camX, { excite: this.excite, t: this.t, salt: 'polevault' });
     drawGrass(ctx, this.camX);
     this.drawField(ctx);
 
