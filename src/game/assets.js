@@ -2,13 +2,14 @@
 import { loadSheet } from '../engine/sprites.js';
 import { recolourMap } from '../art/palette.js';
 
-export const assets = { athlete: null, props: null };
+export const assets = { athlete: null, props: null, scenery: null };
 const athleteCache = new Map();
 
 export async function loadAssets() {
-  const [athlete, props] = await Promise.all([loadSheet('athlete'), loadSheet('props')]);
+  const [athlete, props, scenery] = await Promise.all([loadSheet('athlete'), loadSheet('props'), loadSheet('scenery')]);
   assets.athlete = athlete;
   assets.props = props;
+  assets.scenery = scenery;
   athleteCache.clear();
 }
 
@@ -26,4 +27,9 @@ export function drawProp(ctx, tag, x, y, frameOffset = 0) {
   const t = assets.props.tag(tag);
   const idx = Math.min(t.to, t.from + frameOffset);
   assets.props.draw(ctx, idx, x, y);
+}
+
+/** Draw a scenery object (src/art/scenery.js) by the centre of its base. */
+export function drawScenery(ctx, tag, x, y) {
+  assets.scenery.draw(ctx, assets.scenery.tag(tag).from, x, y);
 }

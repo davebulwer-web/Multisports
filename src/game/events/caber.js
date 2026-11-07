@@ -9,7 +9,7 @@ import { fill, dither, bands, panel, text, meter, pixLine, circle, W, H } from '
 import { sfx } from '../../engine/audio.js';
 import { CABER, Caber, fmtClock } from '../sim/caber.js';
 import { makeRng } from '../sim/rng.js';
-import { assets, playerSheet } from '../assets.js';
+import { assets, playerSheet, drawScenery } from '../assets.js';
 import { topBar, banner, fmtPts } from '../hud.js';
 import { hash } from '../winter.js';
 
@@ -256,13 +256,7 @@ export class CaberScene extends Scene {
     // marquee tents
     for (let i = -1; i < 4; i++) {
       const x = Math.round(i * 230 - ((cam * 0.6) % 230)) + 40;
-      fill(ctx, 'grey.5', x, 104, 56, 18);
-      for (let k = 0; k < 56; k += 8) fill(ctx, 'lamp.1', x + k, 104, 4, 18);
-      for (let k = 0; k < 28; k++) fill(ctx, k % 8 < 4 ? 'lamp.1' : 'grey.6', x + 28 - k, 96 + k * 0.3, 1, 8 - k * 0.28);
-      for (let k = 0; k < 28; k++) fill(ctx, k % 8 < 4 ? 'lamp.1' : 'grey.6', x + 28 + k, 96 + k * 0.3, 1, 8 - k * 0.28);
-      fill(ctx, 'grey.1', x + 24, 110, 8, 12);
-      fill(ctx, 'grey.2', x + 28, 90, 1, 6);
-      fill(ctx, 'yellow.1', x + 29, 90, 4, 3);
+      drawScenery(ctx, 'tent', x + 28, 121);
     }
     // field
     fill(ctx, 'grass.1', 0, 122, W, H - 122);
