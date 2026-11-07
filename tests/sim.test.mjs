@@ -505,3 +505,92 @@ test('bobsleigh: CPU times scale with skill', () => {
   assert.ok(avg(0.9) < avg(0.3) - 4);
   assert.ok(avg(1) > bobRun().finish - 3, 'a perfect run should be competitive with the best CPU');
 });
+
+import { Caber, CABER, tossResult, tossPoints, fmtClock, cpuCaber } from '../src/game/sim/caber.js';
+
+/** Run with the caber: balance on `target` lean, ease off near the end and toss at 13°. */
+function caberRun(seed, { balance = true, toss = true } = {}) {
+  const c = new Caber(makeRng(seed));
+  let tipping = false;
+  while (!c.dropped && c.t < 20 && c.x < CABER.runway) {
+    if (c.x > CABER.runway - 4) tipping = true;
+    if (toss && tipping && c.pitch > 13) return { c, r: c.toss() };
+    const steer = balance ? -Math.sign(c.roll + 0.5 * c.rollV) * (Math.abs(c.roll + 0.5 * c.rollV) > 1 ? 1 : 0) : 0;
+    c.update(1 / 60, { run: balance ? !tipping && c.pitch + 0.35 * c.pitchV > 5 : true, steer });
+  }
+  return { c, r: null };
+}
+
+test('caber: balancing by running and tossing in the zone lands near 12 o\'clock', () => {
+  for (let s = 1; s <= 5; s++) {
+    const { c, r } = caberRun(s);
+    assert.equal(c.dropped, null);
+    assert.ok(r.turned && r.points >= 80, `seed ${s}: ${JSON.stringify(r)}`);
+  }
+});
+
+test('caber: running flat out tips it back, standing still lets it fall forward', () => {
+  assert.equal(caberRun(1, { balance: false }).c.dropped, 'BACK');
+  const c = new Caber(makeRng(2));
+  while (!c.dropped && c.t < 10) c.update(1 / 60, { run: false });
+  assert.equal(c.dropped, 'FORWARD');
+});
+
+test('caber: slow or leaning-back tosses do not turn; sideways lean costs points', () => {
+  const rng = makeRng(4);
+  assert.equal(tossResult({ v: 2, pitch: 10 }, rng).turned, false);
+  assert.equal(tossResult({ v: 5, pitch: -10 }, rng).turned, false);
+  const straight = tossResult({ v: 5, pitch: 14, roll: 0 }, makeRng(5));
+  const leaning = tossResult({ v: 5, pitch: 14, roll: 12 }, makeRng(5));
+  assert.ok(straight.points > leaning.points);
+});
+
+test('caber: clock face scoring', () => {
+  assert.equal(fmtClock(0), '12:00');
+  assert.equal(fmtClock(-15), '11:45');
+  assert.equal(fmtClock(70), '1:10');
+  assert.equal(tossPoints(0), 100);
+  assert.equal(tossPoints(-180), 0);
+  const rng = makeRng(6);
+  const avg = (sk) => { let t = 0; for (let i = 0; i < 200; i++) t += cpuCaber(sk, rng); return t / 200; };
+  assert.ok(avg(0.9) > avg(0.3) + 40);
+  assert.ok(avg(1) <= 300);
+});
+
+import { DIVE, Diver, flightTime, judge, entryWord, cpuDive } from '../src/game/sim/dive.js';
+
+/** One dive: hold the position from take-off until `openAt` seconds before the water. */
+function dive(id, { openLead = DIVE.openLead, q = 1, arms = false, tuck = true } = {}) {
+  const d = new Diver(DIVE.dives.find((x) => x.id === id));
+  d.takeoff(q);
+  const T = flightTime(q);
+  while (d.phase === 'air') d.update(1 / 120, { tuck: tuck && d.t < T - openLead, arms });
+  return d.result;
+}
+
+test('cliff diving: opening out at the right time enters upright for every dive', () => {
+  for (const dv of DIVE.dives) {
+    const r = dive(dv.id);
+    assert.ok(Math.abs(r.error) < 10, `${dv.id}: ${r.error}`);
+    assert.ok(['RIP ENTRY', 'CLEAN'].includes(entryWord(r)));
+  }
+});
+
+test('cliff diving: opening late over-rotates, early is short, arms out slow the spin', () => {
+  const late = dive('b3t', { openLead: 0.6 }), early = dive('b3t', { openLead: 0.9 });
+  assert.ok(late.error > 30 && early.error < -30);
+  assert.ok(Math.abs(dive('b3t', { openLead: 0.6, arms: true }).error) < Math.abs(late.error));
+  assert.ok(dive('f2p', { tuck: false }).error < -135, 'never pulling in fails the dive');
+});
+
+test('cliff diving: judges reward clean entries and multiply by DD', () => {
+  const rng = makeRng(3);
+  const clean = judge({ error: 2, q: 1, openT: 0.6, tucked: false, breaks: 0 }, 3, rng);
+  const slap = judge({ error: 80, q: 1, openT: 0.6, tucked: false, breaks: 0 }, 3, rng);
+  const failed = judge({ error: 200, q: 1, openT: 0.6, tucked: false, breaks: 0 }, 3, rng);
+  assert.ok(clean.sum >= 27 && Math.abs(clean.points - clean.sum * 3) < 0.11);
+  assert.ok(slap.sum <= 7.5);
+  assert.equal(failed.points, 0);
+  const avg = (sk) => { let t = 0; for (let i = 0; i < 100; i++) t += cpuDive(sk, rng); return t / 100; };
+  assert.ok(avg(0.9) > avg(0.3) + 60);
+});

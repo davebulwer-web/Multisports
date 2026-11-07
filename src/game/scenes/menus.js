@@ -198,9 +198,12 @@ export class PracticeScene extends Scene {
   }
   draw(ctx) {
     backdrop(ctx, this.game.time);
-    const skillY = 56 + 14 * (EVENTS.length + 1) + 2; // below the last menu row (BACK)
-    card(ctx, W / 2 - 110, 30, 220, skillY - 30 + 16, 'PRACTICE');
-    this.menu.draw(ctx, W / 2, 56, 14);
+    // rows shrink as events are added so the list always fits on screen
+    const row = Math.min(14, Math.floor(150 / (EVENTS.length + 1)));
+    const top = row < 14 ? 18 : 30, y0 = top + (row < 14 ? 22 : 26);
+    const skillY = y0 + row * (EVENTS.length + 1) + 2; // below the last menu row (BACK)
+    card(ctx, W / 2 - 110, top, 220, skillY - top + 16, 'PRACTICE');
+    this.menu.draw(ctx, W / 2, y0, row);
     const ev = EVENTS[this.menu.sel];
     if (ev) text(ctx, `SKILL: ${ev.skill}`, W / 2, skillY, 'cyan.2', { align: 'center' });
   }
