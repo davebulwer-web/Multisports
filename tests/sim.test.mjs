@@ -893,3 +893,123 @@ test('assault course: let go of the rope too soon and you land in the water', ()
   assert.equal(release(2), 'splash');
   assert.equal(release(24), 'land');
 });
+
+// ---- hammer throw ----------------------------------------------------------
+import { HAMMER, runHammer, turnQuality, cpuHammer } from '../src/game/sim/hammer.js';
+
+test('hammer: on-time turns throw furthest; more turns, more speed', () => {
+  const four = runHammer({ turns: 4 }), five = runHammer({ turns: 5 });
+  assert.ok(four.result.distance > 70 && five.result.distance > four.result.distance, `${four.result.distance} ${five.result.distance}`);
+  assert.ok(five.result.distance < 90);
+  const late = runHammer({ turns: 5, err: 0.3 });
+  assert.ok(late.result.distance < five.result.distance - 10);
+  assert.equal(turnQuality(0), 1);
+  assert.equal(turnQuality(HAMMER.window + 0.01), 0);
+});
+
+test('hammer: release outside the sector or a sixth turn is a foul', () => {
+  assert.match(runHammer({ rel: -0.4 }).result.why, /CAGE/);
+  assert.match(runHammer({ rel: 0.4 }).result.why, /SECTOR/);
+  assert.equal(runHammer({ turns: 7 }).result.why, 'TOO MANY TURNS');
+  assert.ok(cpuHammer(1, makeRng(4)) > cpuHammer(0, makeRng(4)) || cpuHammer(0, makeRng(4)) == null);
+});
+
+// ---- rowing ------------------------------------------------------------------
+import { runRower, RowBot, cpuRow } from '../src/game/sim/row.js';
+
+test('rowing: clean strokes with a late sprint are fastest', () => {
+  const steady = runRower({ powerFrom: 9999 });
+  const sprint = runRower({ powerFrom: 250 });
+  const allOut = runRower({ powerFrom: 0 });
+  assert.ok(steady.t > 78 && steady.t < 90, `steady ${steady.t}`);
+  assert.ok(sprint.t < steady.t - 2, `sprint ${sprint.t}`);
+  assert.ok(allOut.t > sprint.t + 2, 'going flat out from the start runs out of stamina');
+});
+
+test('rowing: rushing, short strokes and sitting at the front are slow', () => {
+  const clean = runRower({});
+  assert.ok(runRower({ early: 0.4 }).t > clean.t + 4);
+  assert.ok(runRower({ finish: 0.75 }).t > clean.t + 3);
+  assert.ok(runRower({ wait: 0.4 }).t > clean.t + 10);
+  const b = new RowBot(0.65, makeRng(1));
+  while (!b.r.finished) b.update(1 / 60);
+  assert.ok(b.r.t > 80 && b.r.t < 87, `rival ${b.r.t}`);
+  assert.ok(cpuRow(1, makeRng(2)) < cpuRow(0, makeRng(2)));
+});
+
+// ---- figure skating ------------------------------------------------------------
+import { FIG, FigureSkater, runFigure, timing, beatLen, routineStart } from '../src/game/sim/figure.js';
+
+test('figure skating: moves on the beat score; off the beat they do not', () => {
+  assert.equal(timing(beatLen() * 7), 1);
+  assert.equal(timing(beatLen() * 7 + 0.15), 0.6);
+  assert.equal(timing(beatLen() * 7.5), 0);
+  const good = runFigure({});
+  const sloppy = runFigure({ strokeErr: 0.15 });
+  assert.ok(good.total > 150 && good.falls === 0, `good ${good.total}`);
+  assert.ok(sloppy.total < good.total - 50, `sloppy ${sloppy.total}`);
+});
+
+test('figure skating: speed sets the rotations; landing late is a fall', () => {
+  const s = new FigureSkater();
+  s.t = routineStart() + beatLen() * 4; s.v = 1;
+  s.takeoff();
+  for (let i = 0; i < 60 && s.t < routineStart() + beatLen() * 5; i++) s.update(beatLen() / 60);
+  const el = s.land();
+  assert.equal(el.n, 4);
+  const late = runFigure({ landErr: 0.3 });
+  assert.ok(late.falls > 2);
+  const slow = new FigureSkater();
+  slow.t = routineStart(); slow.v = FIG.minJump - 0.05;
+  assert.ok(slow.takeoff().slow);
+});
+
+// ---- log rolling -------------------------------------------------------------
+import { LogRoll, runLogRoll, cpuLog } from '../src/game/sim/logroll.js';
+
+test('log rolling: nobody balancing falls in within seconds', () => {
+  const g = new LogRoll({ skill: 0.5, rng: makeRng(1) });
+  let t = 0;
+  while (!g.over && t < 20) { g.update(1 / 120, {}); t += 1 / 120; }
+  assert.equal(g.over, 'rival');
+  assert.ok(t < 8);
+});
+
+test('log rolling: pace changes while the rival wobbles win; just balancing does not', () => {
+  let attackWins = 0, passiveWins = 0;
+  for (let i = 0; i < 10; i++) {
+    if (runLogRoll({ skill: 0.5, rng: makeRng(i + 1) }).g.score[0] >= 2) attackWins++;
+    if (runLogRoll({ skill: 0.5, attack: 0, rng: makeRng(i + 1) }).g.score[0] >= 2) passiveWins++;
+  }
+  assert.ok(attackWins >= 7, `attack ${attackWins}`);
+  assert.ok(passiveWins < attackWins);
+  assert.ok(cpuLog(1, makeRng(3)) >= cpuLog(0, makeRng(3)));
+});
+
+// ---- bmx -------------------------------------------------------------------------
+import { runBmx, groundY, TRACK } from '../src/game/sim/bmx.js';
+
+test('bmx: pumping and popping clear the jumps; coasting cases them', () => {
+  const good = runBmx({});
+  assert.ok(good.finished && !good.timeUp && good.stats.clean === 4, JSON.stringify(good.stats));
+  const lazy = runBmx({ pump: false });
+  assert.ok(lazy.stats.cased >= 3 && lazy.score < good.score / 3);
+  assert.ok(runBmx({ pop: false }).score < good.score);
+  assert.ok(runBmx({ level: false }).stats.crashes >= 3);
+  assert.ok(runBmx({ hold: 1 }).score > good.score, 'tricks add points');
+  for (let x = 0; x < TRACK.finish; x += 0.25) assert.ok(Math.abs(groundY(x + 0.25) - groundY(x)) < 0.6, `step at ${x}`);
+});
+
+// ---- gym tests ---------------------------------------------------------------
+import { runExercise, cpuGym } from '../src/game/sim/gym.js';
+
+test('gym tests: springing off each end beats waiting; turning early is no rep', () => {
+  for (const kind of ['squat', 'dips']) {
+    const spring = runExercise(kind, { lag: 0.05 }), slow = runExercise(kind, { lag: 0.25 });
+    assert.ok(spring.reps > slow.reps + 4, `${kind} ${spring.reps} vs ${slow.reps}`);
+    const early = runExercise(kind, { lag: -0.2 });
+    assert.equal(early.reps, 0);
+    assert.ok(early.noReps > 10);
+  }
+  assert.ok(cpuGym(1, makeRng(1)) > cpuGym(0, makeRng(1)));
+});
