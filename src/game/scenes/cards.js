@@ -2,10 +2,13 @@
 import { Scene } from '../../engine/game.js';
 import { Anim } from '../../engine/sprites.js';
 import { fill, text, W, H } from '../../engine/gfx.js';
-import { sfx } from '../../engine/audio.js';
+import { sfx, playSong } from '../../engine/audio.js';
 import { backdrop, card, prompt } from '../ui.js';
 import { playerSheet, drawProp } from '../assets.js';
 import { standings } from '../sim/scoring.js';
+import { anthemFor, anthemSong } from '../anthems.js';
+import { drawFlagIcon } from './ceremony.js';
+import { nationByCode } from '../../art/flags.js';
 
 const MEDAL = { 1: 'medal_gold', 2: 'medal_silver', 3: 'medal_bronze' };
 
@@ -103,9 +106,12 @@ export class PodiumScene extends Scene {
     this.list = standings(comp.players);
     this.anims = this.list.map((p, i) => new Anim(playerSheet(p), i === 0 ? 'celebrate' : 'idle'));
   }
-  enter() { sfx.fanfare(); sfx.crowd(1, 3); }
+  enter() { sfx.crowd(1, 3); }
+  exit() { this.song?.stop(); }
   update(dt, input) {
     this.t += dt;
+    // The champion's anthem strikes up once the cheering dies down.
+    if (!this.song && this.t > 1.2) this.song = playSong(anthemSong(this.list[0].nation));
     this.anims.forEach((a) => a.update(dt * 1000));
     if (this.t > 1.5 && input.confirm()) { sfx.select(); this.comp.opts.onExit(); }
   }
@@ -132,6 +138,15 @@ export class PodiumScene extends Scene {
       text(ctx, p.name, b.x + 22, base + 3, 'grey.6', { align: 'center' });
       text(ctx, `${p.points}`, b.x + 22, base - b.h + 4, 'blue.1', { align: 'center', shadow: null });
     }
+    // whose anthem is playing
+    const nation = nationByCode(champ.nation);
+    const anthem = anthemFor(nation.code);
+    const line = anthem.fanfare ? `VICTORY FANFARE FOR ${nation.name}` : `${nation.name}: ${anthem.title}`;
+    const lw = line.length * 6 + 26;
+    fill(ctx, 'grey.0', W / 2 - lw / 2 - 5, 50, lw + 10, 15);
+    fill(ctx, 'blue.0', W / 2 - lw / 2 - 4, 51, lw + 8, 13);
+    drawFlagIcon(ctx, nation.code, W / 2 - lw / 2, 52);
+    text(ctx, line, W / 2 - lw / 2 + 26, 54, 'cyan.2');
     // others
     this.list.slice(3).forEach((p, i) => text(ctx, `${i + 4}. ${p.name} ${p.points}`, 12, 120 + i * 10, 'grey.5'));
     if (this.t > 1.5) prompt(ctx, this.t, 'PRESS SPACE');

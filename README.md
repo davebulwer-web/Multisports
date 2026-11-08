@@ -53,6 +53,8 @@ You can have one to four hot-seat humans plus CPU rivals. Each event scores **10
 
 Each competitor picks a **nation** on the line-up screen. Full competitions open with an **opening ceremony**: the competitors parade in behind their flags, a torch runner lights the stadium cauldron, then doves and fireworks start the games, all to an original chiptune march. Any button skips it; practice goes straight to the event.
 
+**Anthems.** Picking a nation on the line-up screen plays the opening phrase of its anthem, and the overall champion's anthem plays in full (a 10 to 25 second chiptune clip) on the medal podium. Only melodies long out of copyright are used. Nations whose anthem is still in copyright, or hasn't been transcribed yet, get an original victory fanfare instead; the list is in `FANFARE_REASONS` in `src/game/anthems.js`. To add an anthem, write its melody and bass in the note notation described at the top of that file; `npm test` checks every bar adds up.
+
 The title menu offers:
 
 - **All events**: every event, season by season (Summer, Winter, World, Beach, Challenge).

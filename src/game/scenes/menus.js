@@ -3,7 +3,8 @@ import { Scene } from '../../engine/game.js';
 import { Anim } from '../../engine/sprites.js';
 import { fill, panel, text, W, H } from '../../engine/gfx.js';
 import { textWidth } from '../../engine/font.js';
-import { sfx, toggleMute, isMuted } from '../../engine/audio.js';
+import { sfx, toggleMute, isMuted, playSong } from '../../engine/audio.js';
+import { anthemSong } from '../anthems.js';
 import { KITS, SKINS } from '../../art/palette.js';
 import { backdrop, card, prompt } from '../ui.js';
 import { athleteSheet } from '../assets.js';
@@ -137,8 +138,22 @@ export class SetupScene extends Scene {
     this.anims[i] = new Anim(athleteSheet(s.kit, s.skin), s.type === 'OFF' ? 'dejected' : 'idle');
   }
 
+  exit() { this.anthem?.stop(0.1); }
+
+  /** Play a nation's anthem once the player stops flicking through nations. */
+  queueAnthem(code) {
+    this.anthem?.stop(0.1);
+    this.anthem = null;
+    this.anthemAt = this.t + 0.45;
+    this.anthemCode = code;
+  }
+
   update(dt, input) {
     this.t += dt;
+    if (this.anthemCode && this.t >= this.anthemAt) {
+      this.anthem = playSong(anthemSong(this.anthemCode, { short: true }));
+      this.anthemCode = null;
+    }
     this.anims.forEach((a) => a.update(dt * 1000));
     if (this.editing) {
       const s = this.slots[this.row];
@@ -165,7 +180,10 @@ export class SetupScene extends Scene {
       if (s.type === 'CPU' && !CPU_NAMES.includes(s.name)) s.name = CPU_NAMES[(this.row * 3) % CPU_NAMES.length];
     } else if (this.col === 1) {
       if (s.type === 'HUMAN') { this.editing = true; s.name = ''; }
-    } else if (this.col === 2) s.nation = NATION_CODES[(NATION_CODES.indexOf(s.nation) + 1) % NATION_CODES.length];
+    } else if (this.col === 2) {
+      s.nation = NATION_CODES[(NATION_CODES.indexOf(s.nation) + 1) % NATION_CODES.length];
+      this.queueAnthem(s.nation);
+    }
     else if (this.col === 3) s.kit = (s.kit + 1) % KITS.length;
     else s.skin = (s.skin + 1) % SKINS.length;
     this.refresh(this.row);
