@@ -106,3 +106,33 @@ export const PODIUM_THEME = {
     { vol: 0.32, steps: parseSteps(THEME_DRUMS) },
   ],
 };
+
+// "Silver Blades Waltz": the figure skating free skate. 3/4 at 132 bpm, six
+// eighth-note steps a bar: two bars of oom-pah-pah to skate in, then a
+// 16-bar tune. It plays once; the routine ends with the last bar.
+const WALTZ_LEAD = `
+  . . . . . .            . . . . . .
+  E5 - - - G5 -          C6 - - - B5 -          A5 - - - G5 -          E5 - - - - -
+  F5 - - - A5 -          D6 - - - C6 -          B5 - - - A5 -          G5 - - - - -
+  E5 - G5 - C6 -         E6 - - - D6 -          C6 - A5 - F5 -         A5 - - - - -
+  G5 - F5 - E5 -         D5 - - - G5 -          E5 - D5 - B4 -         C5 - - - - -
+`;
+const WALTZ_CHORDS = ['C', 'G', 'C', 'C', 'F', 'C', 'F', 'Dm', 'G', 'G', 'C', 'C', 'F', 'F', 'C', 'G', 'G', 'C'];
+const WCH = {
+  C: ['C3', 'E4', 'G4'], F: ['F2', 'A3', 'C4'], G: ['G2', 'B3', 'D4'], Dm: ['D3', 'F4', 'A4'],
+};
+const WALTZ_BASS = WALTZ_CHORDS.map((ch, i) => (i === WALTZ_CHORDS.length - 1 ? `${WCH[ch][0]} - - - - -` : `${WCH[ch][0]} - . . . .`)).join(' ');
+const WALTZ_PAH = WALTZ_CHORDS.map((ch, i) => (i === WALTZ_CHORDS.length - 1 ? '. . . . . .' : `. . ${WCH[ch][1]} . ${WCH[ch][1]} .`)).join(' ');
+const WALTZ_PAH2 = WALTZ_CHORDS.map((ch, i) => (i === WALTZ_CHORDS.length - 1 ? '. . . . . .' : `. . ${WCH[ch][2]} . ${WCH[ch][2]} .`)).join(' ');
+
+export const SKATE_WALTZ = {
+  bpm: 132,
+  stepsPerBeat: 2,
+  loop: false,
+  tracks: [
+    { wave: 'square', vol: 0.26, steps: parseSteps(WALTZ_LEAD) },
+    { wave: 'triangle', vol: 0.55, steps: parseSteps(WALTZ_BASS) },
+    { wave: 'square', vol: 0.07, steps: parseSteps(WALTZ_PAH) },
+    { wave: 'square', vol: 0.07, steps: parseSteps(WALTZ_PAH2) },
+  ],
+};

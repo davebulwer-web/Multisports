@@ -318,6 +318,74 @@ const AC = {
   swim:   { hip: [20, 52], torso: 76, legF: [-80, 10], legB: [-92, 14], armF: [150, 10], armB: [40, 20], headTilt: 2, bib: false },
 };
 
+// Hammer throw. The scene draws the chain and ball from handF, swinging round
+// an ellipse; the spin is two frames (arms out front, arms across the body)
+// played forwards and then mirrored as the thrower turns.
+const HM = {
+  wind:    { hip: [20, 42], torso: -6, legF: [14, 14], legB: [-14, 14], armF: [164, 16], armB: [154, 24], footFlatF: true, footFlatB: true },
+  out:     { hip: [19, 43], torso: -12, legF: [22, 26], legB: [-12, 22], armF: [76, 0], armB: [70, 4], footFlatF: true, footFlatB: true },
+  across:  { hip: [20, 43], torso: -4, legF: [12, 28], legB: [-6, 24], armF: [34, 0], armB: [28, 6], footFlatF: true, footFlatB: true },
+  release: { hip: [20, 41], torso: -18, legF: [10, 4], legB: [-20, 10], armF: [142, 0], armB: [132, 6], footFlatF: true },
+};
+
+// Rowing (single scull, seen side-on): the scene picks the frame from the
+// slide position and draws the boat, seat and oar from handF.
+const RW = {
+  catch:   { hip: [12, 51], torso: 34, legF: [148, 150], legB: [144, 146], armF: [100, 0], armB: [96, 0], footFlatF: true, footFlatB: true },
+  drive:   { hip: [12, 51], torso: 10, legF: [118, 84], legB: [114, 80], armF: [86, 12], armB: [82, 14], footFlatF: true, footFlatB: true },
+  finish:  { hip: [12, 51], torso: -24, legF: [94, 8], legB: [92, 6], armF: [-34, 124], armB: [-30, 120], footFlatF: true, footFlatB: true },
+  recover: { hip: [12, 51], torso: 22, legF: [100, 26], legB: [98, 24], armF: [94, 0], armB: [90, 0], footFlatF: true, footFlatB: true },
+};
+
+// Figure skating. Air and spin frames are played forwards then mirrored to
+// turn the skater round; the scene draws the blades under the feet.
+const FS = {
+  glideA:  { hip: [20, 41], torso: 12, legF: [6, 6], legB: [-46, 6], armF: [84, 12], armB: [-84, 12], footFlatF: true, footFlatB: true },
+  glideB:  { hip: [20, 43], torso: 20, legF: [16, 30], legB: [-24, 8], armF: [62, 24], armB: [-62, 24], footFlatF: true, footFlatB: true },
+  tuckA:   { hip: [20, 41], torso: 0, legF: [4, 0], legB: [-3, 0], armF: [52, 128], armB: [44, 132], toes: true },
+  tuckB:   { hip: [20, 41], torso: 0, legF: [1, 0], legB: [-1, 0], armF: [8, 40], armB: [-8, 40], toes: true },
+  spinA:   { hip: [20, 42], torso: -6, legF: [4, 4], legB: [-30, 110], armF: [172, 10], armB: [184, 10], footFlatF: true },
+  spinB:   { hip: [20, 42], torso: -2, legF: [2, 4], legB: [18, 100], armF: [164, 30], armB: [-164, 30], footFlatF: true },
+  land:    { hip: [20, 43], torso: 16, legF: [14, 26], legB: [-66, 6], armF: [100, 0], armB: [-100, 0], footFlatF: true, footFlatB: true },
+};
+
+// Log rolling: quick little steps on top of the log, arms out for balance.
+function logPose(phase) {
+  const a = phase * Math.PI * 2;
+  const leg = (ph) => {
+    const s = Math.sin(ph * Math.PI * 2);
+    return [10 + 22 * s, 30 + 30 * Math.max(0, Math.cos(ph * Math.PI * 2))];
+  };
+  return {
+    hip: [20, 43 - Math.abs(Math.sin(a))],
+    torso: 10,
+    legF: leg(phase), legB: leg(phase + 0.5),
+    armF: [96 + 18 * Math.sin(a), 24], armB: [-84 + 18 * Math.sin(a), 24],
+    footFlatF: true, footFlatB: true,
+  };
+}
+
+// BMX: standing on the pedals, hands on the bars (the scene draws the bike
+// from handF and the feet, and tilts the frame with the bike).
+const BMX = {
+  ride:  { hip: [16, 45], torso: 46, legF: [62, 92], legB: [36, 74], armF: [104, 22], armB: [98, 26], footFlatF: true, footFlatB: true },
+  pump:  { hip: [16, 50], torso: 62, legF: [88, 128], legB: [66, 120], armF: [118, 34], armB: [112, 36], footFlatF: true, footFlatB: true, headTilt: 1 },
+  air:   { hip: [17, 43], torso: 36, legF: [52, 72], legB: [30, 60], armF: [100, 14], armB: [94, 18], footFlatF: true, footFlatB: true },
+  super: { hip: [17, 41], torso: 76, legF: [-62, 0], legB: [-70, 4], armF: [112, 0], armB: [108, 0], toes: true },
+  cancan:{ hip: [17, 44], torso: 34, legF: [126, 10], legB: [34, 70], armF: [100, 14], armB: [94, 18], footFlatB: true, toes: true },
+};
+
+// Gym tests: squat thrusts (hands on the floor, legs kicked back and in)
+// and parallel bar dips (the scene hangs the frame from handF on the bars).
+const GYM = {
+  sqIn:  { hip: [24, 49], torso: 50, legF: [120, 154], legB: [112, 150], armF: [-4, 0], armB: [0, 0], footFlatF: true, footFlatB: true, headTilt: 1 },
+  sqMid: { hip: [20, 51], torso: 62, legF: [30, 70], legB: [24, 66], armF: [-6, 0], armB: [-2, 0], toes: true, headTilt: 1 },
+  sqOut: { hip: [17, 54], torso: 76, legF: [-66, 0], legB: [-70, 0], armF: [-14, 0], armB: [-10, 0], toes: true, headTilt: 2 },
+  dipUp:  { hip: [20, 40], torso: 4, legF: [14, 96], legB: [8, 104], armF: [-2, 0], armB: [2, 0], toes: true },
+  dipMid: { hip: [20, 44], torso: 14, legF: [16, 96], legB: [10, 104], armF: [-50, 52], armB: [-46, 52], toes: true },
+  dipLow: { hip: [20, 48], torso: 24, legF: [20, 96], legB: [14, 104], armF: [-92, 92], armB: [-88, 92], toes: true },
+};
+
 const JAV = {
   withdraw: { hip: [20, 42], torso: -8, legF: [36, 10], legB: [-24, 20], armF: [-112, 6], armB: [70, 40] },
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
@@ -421,6 +489,22 @@ export function animations() {
     { tag: 'ac_beam', frames: [[AC.beamA, 300], [AC.beamB, 300]] },
     { tag: 'ac_hang', frames: [[AC.hang, 500]] },
     { tag: 'ac_swim', frames: [[AC.swim, 300], [{ ...AC.swim, armF: [40, 20], armB: [150, 10] }, 300]] },
+    { tag: 'hm_wind', frames: [[HM.wind, 500]] },
+    { tag: 'hm_spin', frames: [[HM.out, 100], [HM.across, 100]] },
+    { tag: 'hm_release', frames: [[HM.release, 500]] },
+    { tag: 'rw_stroke', frames: [[RW.catch, 150], [RW.drive, 150], [RW.finish, 150], [RW.recover, 150]] },
+    { tag: 'fs_glide', frames: [[FS.glideA, 400], [FS.glideB, 400]] },
+    { tag: 'fs_air', frames: [[FS.tuckA, 80], [FS.tuckB, 80]] },
+    { tag: 'fs_spin', frames: [[FS.spinA, 100], [FS.spinB, 100]] },
+    { tag: 'fs_land', frames: [[FS.land, 500]] },
+    { tag: 'lr_run', frames: Array.from({ length: 4 }, (_, i) => [logPose(i / 4), 120]) },
+    { tag: 'bmx_ride', frames: [[BMX.ride, 500]] },
+    { tag: 'bmx_pump', frames: [[BMX.pump, 500]] },
+    { tag: 'bmx_air', frames: [[BMX.air, 500]] },
+    { tag: 'bmx_super', frames: [[BMX.super, 500]] },
+    { tag: 'bmx_cancan', frames: [[BMX.cancan, 500]] },
+    { tag: 'gym_sq', frames: [[GYM.sqIn, 200], [GYM.sqMid, 200], [GYM.sqOut, 200]] },
+    { tag: 'gym_dip', frames: [[GYM.dipUp, 200], [GYM.dipMid, 200], [GYM.dipLow, 200]] },
     { tag: 'lift_ready', frames: [[LIFT.ready, 500]] },
     { tag: 'lift_pull', frames: [[lerpPose(LIFT.ready, LIFT.pull, 0.5), 100], [LIFT.pull, 100]] },
     { tag: 'lift_rack', frames: [[LIFT.rack, 400]] },
