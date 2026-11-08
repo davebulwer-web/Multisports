@@ -60,3 +60,49 @@ export const TORCHLIGHT_MARCH = {
     { vol: 0.35, steps: parseSteps(DRUMS) },
   ],
 };
+
+// "Podium Theme": the title screen tune. An upbeat 80s sports-show anthem in
+// D major, 16 bars of eighth notes (8 steps a bar), looping. The lead sings
+// over a pumping octave bass and a fast chip arpeggio of each bar's chord.
+const THEME_LEAD = `
+  A4 - D5 - F#5 - A5 -    B5 A5 - F#5 - D5 E5 -
+  F#5 - - - D5 - B4 -     C#5 D5 - B4 - - . .
+  G5 - - F#5 G5 - B5 -    A5 - - G5 F#5 - E5 -
+  F#5 - D5 - A5 - D6 -    C#6 - - - - - . .
+  B5 - - A5 G5 - B5 -     A5 - - G5 E5 - C#5 -
+  F#5 - - E5 C#5 - A4 -   B4 - D5 - F#5 - B5 -
+  D6 - - B5 G5 - B5 -     C#6 - - B5 A5 - G5 -
+  F#5 - A5 - D6 - - -     D6 - - - . . . .
+`;
+const THEME_CHORDS = ['D', 'D', 'Bm', 'Bm', 'G', 'A', 'D', 'A', 'G', 'A', 'F#m', 'Bm', 'G', 'A', 'D', 'D'];
+const CHORD = {
+  D: { root: 'D3', arp: ['D4', 'F#4', 'A4'] },
+  Bm: { root: 'B2', arp: ['B3', 'D4', 'F#4'] },
+  G: { root: 'G2', arp: ['G3', 'B3', 'D4'] },
+  A: { root: 'A2', arp: ['A3', 'C#4', 'E4'] },
+  'F#m': { root: 'F#2', arp: ['F#3', 'A3', 'C#4'] },
+};
+const up = (n) => n.replace(/\d$/, (o) => String(Number(o) + 1));
+const THEME_BASS = THEME_CHORDS.map((ch, i) => {
+  const r = CHORD[ch].root;
+  return i === THEME_CHORDS.length - 1 ? `${r} - - - ${r} . ${up(r)} .` : `${r} ${up(r)} ${r} ${up(r)} ${r} ${up(r)} ${r} ${up(r)}`;
+}).join(' ');
+const THEME_ARP = THEME_CHORDS.map((ch) => {
+  const [a, b, c] = CHORD[ch].arp;
+  return `${a} ${b} ${c} ${b} ${a} ${b} ${c} ${up(a)}`;
+}).join(' ');
+const THEME_DRUMS = THEME_CHORDS.map((_, i) => (i % 8 === 7
+  ? 'k h s h s s s s'          // snare fill into each half
+  : 'k h s h k k s h')).join(' ');
+
+export const PODIUM_THEME = {
+  bpm: 144,
+  stepsPerBeat: 2,
+  loop: true,
+  tracks: [
+    { wave: 'square', vol: 0.3, steps: parseSteps(THEME_LEAD) },
+    { wave: 'square', vol: 0.08, steps: parseSteps(THEME_ARP) },
+    { wave: 'triangle', vol: 0.55, steps: parseSteps(THEME_BASS) },
+    { vol: 0.32, steps: parseSteps(THEME_DRUMS) },
+  ],
+};

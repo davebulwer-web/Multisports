@@ -2,7 +2,7 @@
 import { loadSheet } from '../engine/sprites.js';
 import { recolourMap } from '../art/palette.js';
 
-export const assets = { athlete: null, props: null, scenery: null, boards: null };
+export const assets = { athlete: null, props: null, scenery: null, boards: null, titleBackground: null };
 const athleteCache = new Map();
 
 export async function loadAssets() {
@@ -11,7 +11,18 @@ export async function loadAssets() {
   assets.props = props;
   assets.scenery = scenery;
   assets.boards = boards;
+  assets.titleBackground = await loadImage('assets/title/background.png');
   athleteCache.clear();
+}
+
+/** A plain image (resolves to null if it is missing, so the game still runs). */
+function loadImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
 }
 
 /** Athlete sheet in a player's kit and skin tone. */

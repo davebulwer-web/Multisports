@@ -7,7 +7,10 @@ import { sfx, toggleMute, isMuted, playSong } from '../../engine/audio.js';
 import { anthemSong } from '../anthems.js';
 import { KITS, SKINS } from '../../art/palette.js';
 import { backdrop, card, prompt } from '../ui.js';
-import { athleteSheet } from '../assets.js';
+import { assets, athleteSheet } from '../assets.js';
+import { PODIUM_THEME } from '../music.js';
+import { BRAND } from '../brand.js';
+import { drawLogo } from '../logo.js';
 import { EVENTS } from '../events/index.js';
 import { allRecords, getRecord, getRecordHolder } from '../records.js';
 import { groupBySeason, allEventsInOrder, toggleEvent, toggleGroup, programmeEvents } from '../programme.js';
@@ -33,10 +36,31 @@ class Menu {
   }
 }
 
+// The title theme keeps playing while you move between the title menu, the
+// event picker and the records, and stops when the line-up (with its
+// anthems) or a practice event starts.
+let theme = null;
+function startTheme() { if (!theme?.playing) theme = playSong(PODIUM_THEME); }
+function stopTheme(fade = 0.3) { theme?.stop(fade); theme = null; }
+
+// A few sky pixels that twinkle over the backdrop's stars.
+const STARS = Array.from({ length: 18 }, (_, i) => ({ x: (i * 97 + 31) % W, y: 4 + ((i * 53) % 60), p: (i * 0.37) % 1 }));
+
+const easeOutBounce = (k) => {
+  if (k < 1 / 2.75) return 7.5625 * k * k;
+  if (k < 2 / 2.75) return 7.5625 * (k -= 1.5 / 2.75) * k + 0.75;
+  if (k < 2.5 / 2.75) return 7.5625 * (k -= 2.25 / 2.75) * k + 0.9375;
+  return 7.5625 * (k -= 2.625 / 2.75) * k + 0.984375;
+};
+
+const LOGO_Y = 10;
+
 export class TitleScene extends Scene {
-  constructor(game) {
+  /** @param {{splash?: boolean}} [opts] splash: start on the "press space" screen */
+  constructor(game, { splash = false } = {}) {
     super(game);
     this.t = 0;
+    this.splash = splash;
     this.runners = Array.from({ length: 4 }, (_, i) => ({
       anim: new Anim(athleteSheet(i * 2 % KITS.length, i % SKINS.length), 'run'),
       x: -40 - i * 70,
@@ -51,10 +75,13 @@ export class TitleScene extends Scene {
       { label: 'CHOOSE EVENTS', action: () => game.setScene(new EventPickerScene(game, 'choose')) },
       { label: 'PRACTICE', action: () => game.setScene(new EventPickerScene(game, 'practice')) },
       { label: 'WORLD RECORDS', action: () => game.setScene(new RecordsScene(game)) },
-      { label: 'SPRITE STUDIO', action: () => { window.location.href = 'studio.html'; } },
-      { label: () => `SOUND: ${isMuted() ? 'OFF' : 'ON'}`, action: () => toggleMute() },
+      { label: 'SPRITE STUDIO', action: () => { stopTheme(0.1); window.location.href = 'studio.html'; } },
+      { label: () => `SOUND: ${isMuted() ? 'OFF' : 'ON'}`, action: () => { if (toggleMute()) stopTheme(0.1); else startTheme(); } },
     ]);
   }
+  // Browsers hold sound back until the first key press or click, so on a
+  // fresh page the theme is queued here and starts on that first press.
+  enter() { startTheme(); }
   update(dt, input) {
     this.t += dt;
     for (const r of this.runners) {
@@ -62,34 +89,45 @@ export class TitleScene extends Scene {
       if (r.x > W + 40) r.x = -40 - Math.random() * 120;
       r.anim.update(dt * 1000);
     }
+    if (this.splash) {
+      if (input.confirm()) {
+        if (this.t < 0.7) this.t = 0.7; // first press finishes the logo drop
+        else { sfx.select(); this.splash = false; }
+      }
+      return;
+    }
     this.menu.update(input);
   }
   draw(ctx) {
-    backdrop(ctx, this.game.time, 0.35);
-    // logo: TV-style stripes behind the title
-    const y = 18;
-    const stripes = ['red.1', 'orange.2', 'yellow.1', 'green.1', 'cyan.0', 'blue.2'];
-    stripes.forEach((s, i) => fill(ctx, s, 0, y + i * 6, W, 6));
-    fill(ctx, 'grey.0', 0, y + 36, W, 1);
-    const wob = (i) => Math.round(Math.sin(this.t * 3 + i * 0.5) * 1.5);
-    const title = 'MULTISPORTS';
-    const sx = W / 2 - (title.length * 24) / 2;
-    [...title].forEach((ch, i) => {
-      text(ctx, ch, sx + i * 24 + 2, y + 4 + wob(i) + 2, 'grey.0', { scale: 4, shadow: null });
-      text(ctx, ch, sx + i * 24, y + 4 + wob(i), 'grey.6', { scale: 4, shadow: 'blue.0' });
-    });
-    fill(ctx, 'blue.0', 0, y + 37, W, 13);
-    fill(ctx, 'grey.0', 0, y + 50, W, 1);
-    text(ctx, 'THE ALL-ROUND SPORTS CHALLENGE', W / 2, y + 40, 'yellow.2', { align: 'center' });
-    panel(ctx, W / 2 - 80, 78, 160, 78, { bg: 'blue.0', edge: 'blue.2', shadow: 'grey.0' });
-    this.menu.draw(ctx, W / 2, 84);
+    const bg = assets.titleBackground;
+    if (bg) ctx.drawImage(bg, 0, 0);
+    else backdrop(ctx, this.game.time, 0.35);
+    for (const s of STARS) {
+      const k = (this.game.time * 0.6 + s.p) % 1;
+      if (k < 0.12) fill(ctx, k < 0.06 ? 'grey.6' : 'grey.4', s.x, s.y, 1, 1);
+    }
+    // logo drops in and bounces on the splash screen
+    const drop = this.splash ? Math.min(1, this.t / 0.7) : 1;
+    const ly = -60 + (LOGO_Y + 60) * easeOutBounce(drop);
+    drawLogo(ctx, W / 2, ly, this.game.time);
+    if (drop >= 1) text(ctx, BRAND.tagline, W / 2, LOGO_Y + 45, 'yellow.2', { align: 'center', shadow: 'grey.0' });
+
     for (const r of this.runners) r.anim.draw(ctx, r.x, 196);
+    if (this.splash) {
+      if (this.t > 0.9 && Math.floor(this.t * 2.5) % 2 === 0) {
+        text(ctx, 'PRESS SPACE TO START', W / 2, 112, 'grey.6', { align: 'center', shadow: 'grey.0' });
+      }
+      text(ctx, `1-4 PLAYERS   ${EVENTS.length} EVENTS`, W / 2, H - 9, 'grass.3', { align: 'center', shadow: 'grass.0' });
+      return;
+    }
+    panel(ctx, W / 2 - 80, 68, 160, 78, { bg: 'blue.0', edge: 'blue.2', shadow: 'grey.0' });
+    this.menu.draw(ctx, W / 2, 74);
     // records strip
     const recs = allRecords();
     const i = Math.floor(this.t / 3) % recs.length;
     const rc = recs[i];
-    fill(ctx, 'grass.0', 0, 160, W, 11);
-    text(ctx, `RECORD  ${rc.ev.name}  ${rc.ev.format(rc.value)}  ${rc.name}`, W / 2, 162, 'cyan.2', { align: 'center' });
+    fill(ctx, 'grey.0', 0, 152, W, 11);
+    text(ctx, `RECORD  ${rc.ev.name}  ${rc.ev.format(rc.value)}  ${rc.name}`, W / 2, 154, 'cyan.2', { align: 'center' });
     text(ctx, 'ARROWS + SPACE   ENTER TO CONFIRM', W / 2, H - 9, 'grass.3', { align: 'center', shadow: 'grass.0' });
   }
 }
@@ -138,6 +176,7 @@ export class SetupScene extends Scene {
     this.anims[i] = new Anim(athleteSheet(s.kit, s.skin), s.type === 'OFF' ? 'dejected' : 'idle');
   }
 
+  enter() { stopTheme(); }
   exit() { this.anthem?.stop(0.1); }
 
   /** Play a nation's anthem once the player stops flicking through nations. */
@@ -193,7 +232,7 @@ export class SetupScene extends Scene {
     const active = this.slots.filter((s) => s.type !== 'OFF');
     if (!active.some((s) => s.type === 'HUMAN')) { sfx.bad(); this.warn = 'NEED AT LEAST ONE HUMAN'; return; }
     const players = active.map((s) => makePlayer({ name: s.name, kit: s.kit, skin: s.skin, nation: s.nation, cpu: s.type === 'CPU', skill: s.skill }));
-    const comp = new Competition(this.game, players, this.events, { onExit: () => this.game.setScene(new TitleScene(this.game)) });
+    const comp = new Competition(this.game, players, this.events, { onExit: () => this.game.setScene(new TitleScene(this.game, { splash: true })) });
     comp.start();
   }
 
@@ -322,6 +361,7 @@ export class EventPickerScene extends Scene {
 
   practise(ev) {
     sfx.select();
+    stopTheme(0.1);
     const game = this.game;
     new Competition(game, practicePlayers(), [ev], {
       practice: true,
