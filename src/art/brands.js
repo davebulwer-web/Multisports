@@ -1,3 +1,5 @@
+import { GAME_NAME } from '../game/brand.js';
+
 // Invented 80s-flavoured sponsors for the trackside advertising boards.
 //
 // Each brand becomes one 96x16 frame in the `boards` sheet (src/art/boards.js),
@@ -40,7 +42,7 @@ export const BRANDS = [
     bg: 'grid', c: { bg: 'grey.0', bg2: 'green.0', fg: 'green.2', acc: 'green.3', sh: 'green.0' }, letter: 'outline', side: 'right' },
   { id: 'boomtown', name: 'BOOMTOWN', tag: 'STEREO SOUND', seasons: ['any'], icon: 'silver boombox stereo radio cassette player',
     bg: 'stripes', c: { bg: 'purple.0', bg2: 'lamp.2', fg: 'cyan.2', acc: 'lamp.2', sh: 'blue.0' }, letter: 'plain', side: 'left' },
-  { id: 'multisports', name: 'MULTISPORTS', tag: null, seasons: ['any'], icon: null,
+  { id: 'multisports', name: GAME_NAME, tag: null, seasons: ['any'], icon: null,
     bg: 'solid', c: { bg: 'blue.1', bg2: 'blue.0', fg: 'grey.6', acc: 'yellow.2', sh: 'blue.0' }, letter: 'tall', side: 'left' },
   { id: 'goforgold', name: 'GO FOR GOLD', tag: null, seasons: ['any'], icon: 'shiny gold medal with a red ribbon',
     bg: 'sunset', c: { bg: 'lamp.0', bg2: 'lamp.1', fg: 'yellow.2', acc: 'yellow.2', sh: 'lamp.0' }, letter: 'plain', side: 'left' },

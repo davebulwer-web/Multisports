@@ -1,4 +1,4 @@
-# Multisports
+# Podium '88
 
 A browser multi-event sports game in the spirit of the mid-80s home-computer sports compilations and the all-rounder TV contests of the 70s and 80s. Every event tests a **different skill** (rhythm, timing, power and angle, balance) rather than how fast you can hammer a key.
 
