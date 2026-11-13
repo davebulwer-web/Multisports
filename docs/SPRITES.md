@@ -92,7 +92,7 @@ The trackside hoardings come from the `boards` sheet: one 96×16 frame per inven
 
   Each logo costs one generation. You can also edit the rows in `logos.js` by hand: `.` is transparent, any other character is a palette index.
 - **Hand-painted boards:** like every sheet, `assets/art/boards/<brand>_0.png` (96×16, palette colours) replaces that board at export.
-- **Where they appear:** `drawBoardRow()` in `src/game/boards.js` draws a scrolling row from a season's pool (its own brands plus the `any` ones). The stadium events (including the hammer) and rowing use the summer pool, speed skating and figure skating the winter pool, caber and log rolling the world pool, the assault course and gym tests the challenge pool, and footbag and BMX the beach pool; the title screen cycles through every brand. Each row is shuffled per event and per competition, so no two neighbouring boards repeat. To add a sponsor, add a brand, run the logo tool, then export.
+- **Where they appear:** `drawBoardRow()` in `src/game/boards.js` draws a scrolling row from a season's pool (its own brands plus the `any` ones). The stadium events (including the hammer and long jump), pistol shooting, the vault arena and rowing use the summer pool, figure skating the winter pool, caber and log rolling the world pool, gym tests the challenge pool, and footbag and BMX the beach pool; the title screen cycles through every brand. Each row is shuffled per event and per competition, so no two neighbouring boards repeat. To add a sponsor, add a brand, run the logo tool, then export.
 
 ## Opening ceremony
 

@@ -42,9 +42,9 @@ test('picking events builds an ordered programme', () => {
 });
 
 test('whole-season toggle adds the missing ones, then removes them all', () => {
-  const winter = ['skijump', 'biathlon', 'curling', 'bobsleigh'];
+  const winter = ['skijump', 'biathlon', 'curling', 'figure'];
   let p = toggleGroup(['sprint', 'curling'], winter);
-  assert.deepEqual(p, ['sprint', 'curling', 'skijump', 'biathlon', 'bobsleigh']);
+  assert.deepEqual(p, ['sprint', 'curling', 'skijump', 'biathlon', 'figure']);
   p = toggleGroup(p, winter);
   assert.deepEqual(p, ['sprint']);
 });

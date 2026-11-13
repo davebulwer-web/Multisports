@@ -11,7 +11,6 @@ import { ClayScene } from './clay.js';
 import { SkiJumpScene } from './skijump.js';
 import { BiathlonScene } from './biathlon.js';
 import { CurlingScene } from './curling.js';
-import { BobsleighScene } from './bobsleigh.js';
 import { CaberScene } from './caber.js';
 import { CliffDiveScene } from './cliffdive.js';
 import { FootbagScene } from './footbag.js';
@@ -19,14 +18,15 @@ import { SurfScene } from './surfing.js';
 import { HalfPipeScene } from './halfpipe.js';
 import { PoleVaultScene } from './polevault.js';
 import { SlalomScene } from './slalom.js';
-import { SkatingScene } from './skating.js';
-import { AssaultScene } from './assault.js';
 import { HammerScene } from './hammer.js';
 import { RowingScene } from './rowing.js';
 import { FigureScene } from './figure.js';
 import { LogRollScene } from './logroll.js';
 import { BmxScene } from './bmx.js';
 import { GymScene, fmtReps } from './gym.js';
+import { PistolScene } from './pistol.js';
+import { LongJumpScene } from './longjump.js';
+import { VaultingScene } from './vaulting.js';
 import { cpuSprint } from '../sim/sprint.js';
 import { cpuJavelin } from '../sim/javelin.js';
 import { cpuLift } from '../sim/lift.js';
@@ -35,7 +35,6 @@ import { cpuClay, totalClays } from '../sim/clay.js';
 import { cpuSki } from '../sim/ski.js';
 import { cpuBiathlon, fmtRace } from '../sim/biathlon.js';
 import { cpuCurling, maxScore } from '../sim/curling.js';
-import { cpuBob, fmtBob } from '../sim/bob.js';
 import { cpuCaber } from '../sim/caber.js';
 import { cpuDive } from '../sim/dive.js';
 import { cpuFootbag } from '../sim/footbag.js';
@@ -43,14 +42,15 @@ import { cpuSurf } from '../sim/surf.js';
 import { cpuPipe } from '../sim/halfpipe.js';
 import { cpuVault } from '../sim/vault.js';
 import { cpuSlalom, fmtSlalom } from '../sim/slalom.js';
-import { cpuSkate, fmtSkate } from '../sim/skate.js';
-import { cpuAssault, fmtAssault } from '../sim/assault.js';
 import { cpuHammer } from '../sim/hammer.js';
 import { cpuRow, fmtRow } from '../sim/row.js';
 import { cpuFigure } from '../sim/figure.js';
 import { cpuLog } from '../sim/logroll.js';
 import { cpuBmx } from '../sim/bmx.js';
 import { cpuGym } from '../sim/gym.js';
+import { cpuPistol } from '../sim/pistol.js';
+import { cpuLongJump } from '../sim/longjump.js';
+import { cpuVaulting, fmtGym } from '../sim/gymvault.js';
 import { fmtTime, fmtDist, fmtKg, fmtPts, fmtClays } from '../hud.js';
 
 export const EVENTS = [
@@ -70,6 +70,24 @@ export const EVENTS = [
       'PRESS ON THE BEAT: WATCH THE BAR, LISTEN FOR THE TICK.',
       'THE BEAT GETS FASTER AS YOU DO.',
       'RUSHING OR USING THE SAME FOOT TWICE SLOWS YOU.',
+    ],
+  },
+  {
+    id: 'longjump',
+    season: 'summer',
+    name: 'LONG JUMP',
+    skill: 'SPEED + TAKE-OFF',
+    better: 'higher',
+    format: fmtDist,
+    cpu: cpuLongJump,
+    Scene: LongJumpScene,
+    baseRecord: 8.9,
+    help: [
+      'STRIDE WITH [ AND ] ON THE BEAT, LIKE THE SPRINT.',
+      'NEAR THE BOARD HOLD UP: THE TAKE-OFF ANGLE RISES.',
+      'LET GO ON THE WHITE BOARD. OVER IT IS A FOUL.',
+      'ABOUT 20 DEGREES IS BEST. IN THE AIR PRESS DOWN',
+      'JUST BEFORE YOU LAND. 3 JUMPS, BEST COUNTS.',
     ],
   },
   {
@@ -143,7 +161,26 @@ export const EVENTS = [
       'FURTHER AHEAD THE FURTHER AWAY IT IS. SPACE FIRES.',
       '6 SINGLES THEN 3 DOUBLES. 2 SHELLS EACH ROUND.',
     ],
-  },  {
+  },
+  {
+    id: 'pistol',
+    season: 'summer',
+    name: 'PISTOL SHOOTING',
+    skill: 'RECOIL + RHYTHM',
+    better: 'higher',
+    format: fmtPts,
+    cpu: cpuPistol,
+    Scene: PistolScene,
+    baseRecord: 142,
+    help: [
+      'FIVE TARGETS TURN TO FACE YOU FOR 8, 6, THEN 4',
+      'SECONDS. ONE SHOT EACH, LEFT TO RIGHT.',
+      'AIM WITH ARROWS, SPACE FIRES. EACH SHOT KICKS THE',
+      'GUN UP: RIDE IT DOWN ONTO THE NEXT TARGET.',
+      'RINGS SCORE 10 TO 5. 150 IS PERFECT.',
+    ],
+  },
+  {
     id: 'polevault',
     season: 'summer',
     name: 'POLE VAULT',
@@ -195,6 +232,24 @@ export const EVENTS = [
       'PRESS AGAIN AS IT ROLLS TO THE FRONT. HOLD ON TOO',
       'LONG AND YOU CATCH A CRAB. HOLD UP ON THE DRIVE FOR',
       'POWER: IT BURNS STAMINA, SO SAVE IT FOR THE END.',
+    ],
+  },
+  {
+    id: 'vaulting',
+    season: 'summer',
+    name: 'GYMNASTIC VAULT',
+    skill: 'TIMING + ROTATION',
+    better: 'higher',
+    format: fmtGym,
+    cpu: cpuVaulting,
+    Scene: VaultingScene,
+    baseRecord: 15,
+    help: [
+      'PICK A VAULT. HOLD RIGHT TO SPRINT AT THE TABLE.',
+      'DOWN TO HURDLE ONTO THE RED SPOT ON THE BOARD,',
+      'SPACE AS YOUR HANDS MEET THE TABLE TO BLOCK.',
+      'YOU SPIN UNTIL UP OPENS YOU OUT: LAND UPRIGHT,',
+      'THEN LEFT/RIGHT TO STICK IT. 2 VAULTS, AVERAGED.',
     ],
   },
 
@@ -253,41 +308,6 @@ export const EVENTS = [
     ],
   },
   {
-    id: 'bobsleigh',
-    season: 'winter',
-    name: 'BOBSLEIGH',
-    skill: 'PUSH + LINE',
-    better: 'lower',
-    format: fmtBob,
-    cpu: cpuBob,
-    Scene: BobsleighScene,
-    baseRecord: 52.5,
-    help: [
-      'HOLD SPACE TO PUSH. PRESS DOWN TO JUMP IN',
-      'JUST BEFORE THE RED LINE. LATE COSTS SPEED.',
-      'IN THE BENDS THE SLED SWINGS UP THE WALL.',
-      'STEER [ ] TO KEEP IT ON THE GREEN MARK.',
-      'SWINGING AND STEERING SCRUB SPEED. TOO HIGH: ROLL.',
-    ],
-  },  {
-    id: 'skating',
-    season: 'winter',
-    name: 'SPEED SKATING',
-    skill: 'RHYTHM + LEAN',
-    better: 'lower',
-    format: fmtSkate,
-    cpu: cpuSkate,
-    Scene: SkatingScene,
-    baseRecord: 37.2,
-    help: [
-      '500 METRES. PUSH OFF WITH SPACE ON THE GUN.',
-      'PUSH AGAIN AT THE END OF EACH GLIDE (THE GREEN).',
-      'EARLY PUSHES ARE WEAK. LATE ONES WASTE SPEED.',
-      'IN THE BENDS HOLD LEFT TO LEAN. KEEP IT IN THE GREEN:',
-      'TOO LITTLE AND YOU GO WIDE, TOO MUCH AND YOU SLIP.',
-    ],
-  },
-  {
     id: 'figure',
     season: 'winter',
     name: 'FIGURE SKATING',
@@ -341,7 +361,8 @@ export const EVENTS = [
       'LET GO TO OPEN OUT: ENTER FEET FIRST, UPRIGHT.',
       'HOLD UP TO SLOW THE SPIN. 3 DIVES, 5 JUDGES.',
     ],
-  },  {
+  },
+  {
     id: 'slalom',
     season: 'world',
     name: 'CANOE SLALOM',
@@ -449,24 +470,8 @@ export const EVENTS = [
       'LET GO IN TIME. LEFT/RIGHT TO MATCH THE LANDING.',
       'TRICKS SCORE ONLY IF YOU RIDE AWAY. 45 SECONDS.',
     ],
-  },  {
-    id: 'assault',
-    season: 'challenge',
-    name: 'ASSAULT COURSE',
-    skill: 'TIMING ON EVERY OBSTACLE',
-    better: 'lower',
-    format: fmtAssault,
-    cpu: cpuAssault,
-    Scene: AssaultScene,
-    baseRecord: 30.5,
-    help: [
-      'HOLD SPACE TO RUN. UP JUMPS THE WALL FROM THE ZONE.',
-      'UP CLIMBS THE NET AS IT SWINGS IN TOWARDS YOU.',
-      'BEAM: HOLD SPACE TO WALK, LEFT/RIGHT TO BALANCE.',
-      'ROPE: UP AS IT SWINGS BACK, SPACE TO LET GO',
-      'AT THE FAR END OF THE SWING TO CLEAR THE WATER.',
-    ],
   },
+
   {
     id: 'gym',
     season: 'challenge',
