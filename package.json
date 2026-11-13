@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node tools/serve.mjs",
+    "package": "node tools/package.mjs",
     "export-sprites": "node tools/export-sprites.mjs",
     "pixellab": "node tools/pixellab-enhance.mjs",
     "pixellab-logos": "node tools/pixellab-logos.mjs",

@@ -14,6 +14,8 @@ npm start          # serves the folder on http://localhost:8080
 
 **GitHub Pages:** Settings → Pages → *Deploy from a branch* → `main` / root. That's all it needs.
 
+**Publishing (itch.io and other hosts):** `npm run package` builds an upload-ready zip in `dist/`. See **[docs/PUBLISHING.md](docs/PUBLISHING.md)** for the steps and the rights checklist.
+
 ### Controls
 
 | Action | Keys | Gamepad |
