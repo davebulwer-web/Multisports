@@ -285,38 +285,9 @@ const PV = {
   arch:  { hip: [20, 42], torso: -18, legF: [-30, 34], legB: [-38, 30], armF: [120, 10], armB: [110, 14], toes: true },
 };
 
-// Speed skating: deep crouch, back flat. On the straights the hands rest on
-// the back; in the bends the outside arm swings with the crossovers.
-function skatePose(phase, swing = false) {
-  const a = phase * Math.PI * 2;
-  const leg = (ph) => {
-    const s = Math.sin(ph * Math.PI * 2), c = Math.cos(ph * Math.PI * 2);
-    // push: the leg extends behind; recovery: it folds under the hip
-    return [28 - 62 * Math.max(0, s) + 12 * Math.max(0, -s), 96 - 80 * Math.max(0, s) + 16 * Math.max(0, c)];
-  };
-  return {
-    hip: [19, 47 - 0.8 * Math.abs(Math.sin(a))],
-    torso: 68,
-    legF: leg(phase), legB: leg(phase + 0.5),
-    armF: swing ? [-60 + 140 * (0.5 + 0.5 * Math.sin(a)), 30] : [-112, 40],
-    armB: swing ? [-60 + 140 * (0.5 - 0.5 * Math.sin(a)), 30] : [-104, 46],
-    footFlatF: true, footFlatB: true,
-  };
-}
-const SK = {
-  ready: { hip: [18, 47], torso: 56, legF: [56, 92], legB: [-20, 30], armF: [84, 20], armB: [-70, 20], footFlatF: true, footFlatB: true, headTilt: 1 },
-};
-
-// Assault course.
-const AC = {
-  jump:   { hip: [20, 39], torso: 10, legF: [84, 104], legB: [6, 56], armF: [160, 10], armB: [150, 12] },
-  climbA: { hip: [21, 42], torso: 8, legF: [72, 112], legB: [-4, 24], armF: [178, 0], armB: [148, 44], footFlatF: true },
-  climbB: { hip: [21, 41], torso: 8, legF: [-2, 22], legB: [76, 110], armF: [146, 46], armB: [180, 0], footFlatB: true },
-  beamA:  { hip: [20, 41], torso: 4, legF: [22, 6], legB: [-16, 12], armF: [94, 6], armB: [-96, 6], footFlatF: true, footFlatB: true },
-  beamB:  { hip: [20, 41], torso: 4, legF: [-10, 12], legB: [16, 6], armF: [90, 6], armB: [-90, 6], footFlatF: true, footFlatB: true },
-  hang:   { hip: [20, 43], torso: 0, legF: [34, 40], legB: [24, 46], armF: [176, 0], armB: [184, 0], toes: true },
-  swim:   { hip: [20, 52], torso: 76, legF: [-80, 10], legB: [-92, 14], armF: [150, 10], armB: [40, 20], headTilt: 2, bib: false },
-};
+// Swimming crawl (log rolling's dunked rival climbs out with it). Tag ac_swim
+// kept from the old assault course so its PixelLab art still applies.
+const SWIM = { hip: [20, 52], torso: 76, legF: [-80, 10], legB: [-92, 14], armF: [150, 10], armB: [40, 20], headTilt: 2, bib: false };
 
 // Hammer throw. The scene draws the chain and ball from handF, swinging round
 // an ellipse; the spin is two frames (arms out front, arms across the body)
@@ -391,6 +362,31 @@ const JAV = {
   block:    { hip: [19, 43], torso: -14, legF: [44, 0], legB: [-34, 40], armF: [-100, 0], armB: [90, 60], footFlatF: true },
   release:  { hip: [21, 43], torso: 14, legF: [34, 6], legB: [-40, 50], armF: [168, 10], armB: [20, 40], footFlatF: true },
   follow:   { hip: [18, 44], torso: 34, legF: [20, 20], legB: [-60, 70], armF: [70, 10], armB: [-30, 30], footFlatF: true },
+};
+
+// Rapid-fire pistol: side-on, free hand in the pocket. The pistol is drawn
+// in code at handF: arm lowered between series, straight out to aim.
+const PI = {
+  ready: { hip: [20, 41], torso: 0, legF: [10, 2], legB: [-8, 2], armF: [42, 4], armB: [-14, 40], footFlatF: true, footFlatB: true },
+  aim:   { hip: [20, 41], torso: -4, legF: [10, 2], legB: [-8, 2], armF: [92, 0], armB: [-14, 40], footFlatF: true, footFlatB: true },
+};
+
+// Long jump: take-off drive, hang in the air, legs shot forward to land.
+const LJP = {
+  takeoff: { hip: [20, 40], torso: 4, legF: [96, 100], legB: [-28, 8], armF: [-40, 40], armB: [120, 40], toes: true },
+  hang:    { hip: [20, 42], torso: -10, legF: [-6, 70], legB: [-18, 84], armF: [168, 10], armB: [156, 14], toes: true },
+  reach:   { hip: [20, 44], torso: 48, legF: [100, 0], legB: [94, 4], armF: [112, 0], armB: [98, 6], toes: true },
+  sit:     { hip: [16, 58], torso: 24, legF: [92, 8], legB: [86, 12], armF: [70, 20], armB: [60, 30], footFlatF: true, footFlatB: true },
+};
+
+// Gymnastic vault: hurdle onto the board, straight body through the block
+// (drawn rotated round the hands), tucked or piked salto, then the landing.
+const VT = {
+  hurdle: { hip: [20, 42], torso: 8, legF: [18, 22], legB: [10, 20], armF: [-34, 12], armB: [-40, 12], toes: true, bib: false },
+  block:  { hip: [20, 41], torso: 0, legF: [2, 0], legB: [-2, 0], armF: [178, 0], armB: [182, 0], toes: true, bib: false },
+  tuck:   { hip: [20, 41], torso: 20, legF: [150, 150], legB: [140, 146], armF: [28, 6], armB: [22, 10], toes: true, bib: false },
+  pike:   { hip: [20, 41], torso: 6, legF: [146, 0], legB: [150, 0], armF: [150, 0], armB: [156, 0], toes: true, bib: false },
+  land:   { hip: [20, 46], torso: 18, legF: [40, 64], legB: [32, 60], armF: [150, 0], armB: [140, 0], footFlatF: true, footFlatB: true, bib: false },
 };
 
 /** Animation definitions: tag -> list of [pose, durationMs]. */
@@ -481,14 +477,18 @@ export function animations() {
     { tag: 'pv_rock', frames: [[PV.rock, 500]] },
     { tag: 'pv_push', frames: [[PV.push, 500]] },
     { tag: 'pv_arch', frames: [[PV.arch, 500]] },
-    { tag: 'sk_ready', frames: [[SK.ready, 500]] },
-    { tag: 'sk_stride', frames: Array.from({ length: 6 }, (_, i) => [skatePose(i / 6), 110]) },
-    { tag: 'sk_cross', frames: Array.from({ length: 6 }, (_, i) => [skatePose(i / 6, true), 90]) },
-    { tag: 'ac_jump', frames: [[AC.jump, 500]] },
-    { tag: 'ac_climb', frames: [[AC.climbA, 220], [AC.climbB, 220]] },
-    { tag: 'ac_beam', frames: [[AC.beamA, 300], [AC.beamB, 300]] },
-    { tag: 'ac_hang', frames: [[AC.hang, 500]] },
-    { tag: 'ac_swim', frames: [[AC.swim, 300], [{ ...AC.swim, armF: [40, 20], armB: [150, 10] }, 300]] },
+    { tag: 'ac_swim', frames: [[SWIM, 300], [{ ...SWIM, armF: [40, 20], armB: [150, 10] }, 300]] },
+    { tag: 'pi_ready', frames: [[PI.ready, 500]] },
+    { tag: 'pi_aim', frames: [[PI.aim, 500]] },
+    { tag: 'lj_takeoff', frames: [[LJP.takeoff, 500]] },
+    { tag: 'lj_hang', frames: [[LJP.hang, 500]] },
+    { tag: 'lj_reach', frames: [[LJP.reach, 500]] },
+    { tag: 'lj_sit', frames: [[LJP.sit, 500]] },
+    { tag: 'vt_hurdle', frames: [[VT.hurdle, 500]] },
+    { tag: 'vt_block', frames: [[VT.block, 500]] },
+    { tag: 'vt_tuck', frames: [[VT.tuck, 500]] },
+    { tag: 'vt_pike', frames: [[VT.pike, 500]] },
+    { tag: 'vt_land', frames: [[VT.land, 500]] },
     { tag: 'hm_wind', frames: [[HM.wind, 500]] },
     { tag: 'hm_spin', frames: [[HM.out, 100], [HM.across, 100]] },
     { tag: 'hm_release', frames: [[HM.release, 500]] },

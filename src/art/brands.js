@@ -103,7 +103,7 @@ export const BRANDS = [
   { id: 'highland', name: 'HIGHLAND', tag: 'SHORTBREAD', seasons: ['world'], icon: 'tin of shortbread biscuits with tartan lid',
     bg: 'split', c: { bg: 'blue.1', bg2: 'grey.6', fg: 'grey.6', acc: 'lamp.2', sh: 'blue.0' }, letter: 'italic', side: 'left' },
 
-  // ---- challenge (assault course) ----
+  // ---- challenge (gym tests) ----
   { id: 'gripmaster', name: 'GRIPMASTER', tag: 'WORK GLOVES', seasons: ['challenge'], icon: 'brown leather work glove',
     bg: 'check', c: { bg: 'brown.1', bg2: 'yellow.1', fg: 'yellow.2', acc: 'yellow.2', sh: 'grey.0' }, letter: 'plain', side: 'left' },
   { id: 'brawn', name: 'BRAWN BEANS', tag: 'FUEL FOR HEROES', seasons: ['challenge'], icon: 'tin can of baked beans with orange label',

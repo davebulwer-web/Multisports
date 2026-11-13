@@ -466,46 +466,6 @@ test('curling: CPU scores scale with skill', () => {
   assert.ok(avg(0.9) > avg(0.3) + 8);
 });
 
-// Bobsleigh
-import { Bob, BOB, curveAt, idealAngle, cpuBob } from '../src/game/sim/bob.js';
-
-/** One run. loadAt = where (m, 0 = the line) to jump in; steer = controller or null. */
-function bobRun({ loadAt = -2, steer = true } = {}) {
-  const b = new Bob();
-  while (b.phase === 'push') b.push(1 / 60, true, b.s > loadAt);
-  while (b.phase === 'run' && b.t < 200) {
-    const ahead = idealAngle(b.v, curveAt(b.s + b.v * 0.4));
-    b.run(1 / 60, steer ? (ahead - b.angle) * 1.2 - b.spin * 0.5 : 0);
-  }
-  return b;
-}
-
-test('bobsleigh: holding the line is much faster than letting it swing', () => {
-  const good = bobRun(), loose = bobRun({ steer: false });
-  assert.ok(good.finish < loose.finish - 5, `${good.finish} vs ${loose.finish}`);
-  assert.equal(good.crashes, 0);
-  assert.ok(loose.crashes > 0, 'an unsteered sled should roll somewhere');
-});
-
-test('bobsleigh: loading in late costs time', () => {
-  const late = bobRun({ loadAt: 5 });
-  assert.ok(late.lateLoad);
-  assert.ok(late.finish > bobRun().finish + 1);
-});
-
-test('bobsleigh: bends throw the sled up the outside wall', () => {
-  assert.ok(idealAngle(30, 0.015) < -0.5, 'right-hand bend: up the left wall');
-  assert.ok(idealAngle(30, -0.015) > 0.5);
-  assert.equal(idealAngle(30, 0), -0);
-});
-
-test('bobsleigh: CPU times scale with skill', () => {
-  const rng = makeRng(8);
-  const avg = (sk) => { let t = 0; for (let i = 0; i < 100; i++) t += cpuBob(sk, rng); return t / 100; };
-  assert.ok(avg(0.9) < avg(0.3) - 4);
-  assert.ok(avg(1) > bobRun().finish - 3, 'a perfect run should be competitive with the best CPU');
-});
-
 import { Caber, CABER, tossResult, tossPoints, fmtClock, cpuCaber } from '../src/game/sim/caber.js';
 
 /** Run with the caber: balance on `target` lean, ease off near the end and toss at 13°. */
@@ -825,75 +785,6 @@ test('canoe slalom: drifting misses gates, a pilot gets round', () => {
   assert.ok(cpuSlalom(0.95, rng) < cpuSlalom(0.1, makeRng(2)));
 });
 
-// ---- speed skating ---------------------------------------------------------
-import { Skater as IceSkater, runSkater, pushQuality, cpuSkate } from '../src/game/sim/skate.js';
-
-test('speed skating: pushing at the end of the glide is fastest; mashing is slow', () => {
-  const good = runSkater({ at: 0.9 });
-  const early = runSkater({ at: 0.6 });
-  const mash = runSkater({ at: 0.3 });
-  const late = runSkater({ at: 1.4 });
-  assert.ok(good.t > 35 && good.t < 39, `good ${good.t}`);
-  assert.ok(early.t > good.t + 3 && mash.t > good.t + 10 && late.t > good.t + 3);
-  assert.equal(pushQuality(0.95), 1);
-});
-
-test('speed skating: too little lean drifts wide, too much slips', () => {
-  const ok = runSkater({});
-  const under = runSkater({ leanErr: -12 });
-  const over = runSkater({ leanErr: 16 });
-  assert.ok(under.stats.wide > 0 && under.t > ok.t + 2);
-  assert.ok(over.stats.falls > 0 && over.t > ok.t + 5);
-  const s = new IceSkater();
-  s.v = 14; s.d = 120; // in the first bend
-  assert.ok(s.need > 30 && s.need < 45, `need ${s.need}`);
-  const rng = makeRng(3);
-  assert.ok(cpuSkate(1, rng) < cpuSkate(0, makeRng(3)));
-});
-
-// ---- assault course --------------------------------------------------------
-import { ASSAULT, Assault, runAssault, cpuAssault } from '../src/game/sim/assault.js';
-
-test('assault course: a clean run takes about half a minute; mistakes cost time', () => {
-  const clean = runAssault(0, makeRng(1));
-  assert.ok(clean.finished && clean.t > 27 && clean.t < 33, `clean ${clean.t}`);
-  const sloppy = runAssault(0.45, makeRng(5));
-  assert.ok(sloppy.t > clean.t);
-  assert.ok(cpuAssault(1, makeRng(1)) < cpuAssault(0, makeRng(1)));
-});
-
-test('assault course: jumping the wall needs the zone and the speed', () => {
-  const at = (x, v) => { const a = new Assault(makeRng(1)); a.x = x; a.v = v; return a.update(1 / 120, { run: true, up: true })[0]; };
-  assert.equal(at(ASSAULT.wall.x - 1.7, 6).type, 'jump');
-  assert.equal(at(ASSAULT.wall.x - 3, 6).why, 'SHORT');
-  assert.equal(at(ASSAULT.wall.x - 1.7, 2).why, 'TOO SLOW');
-});
-
-test('assault course: climbing the net out of time slips back', () => {
-  const a = new Assault(makeRng(1));
-  a.x = ASSAULT.net.x - 0.5; a.set('net'); a.rung = 2; a.stateT = 1;
-  while (a.netSway > 0) a.update(1 / 120);
-  a.stateT = 1;
-  const ev = a.update(1 / 120, { up: true });
-  assert.equal(ev[0].type, 'slip');
-  assert.equal(a.rung, 1);
-});
-
-test('assault course: let go of the rope too soon and you land in the water', () => {
-  const release = (deg) => {
-    const a = new Assault(makeRng(1));
-    a.x = ASSAULT.rope.edge - 0.4; a.set('edge');
-    while (a.state === 'edge' && a.t < 20) a.update(1 / 120, { up: a.ropeEnd.x <= ASSAULT.rope.reach - 0.2 });
-    while (a.t < 30) {
-      const ev = a.update(1 / 120, { act: a.state === 'rope' && a.ropeW > 0 && a.ropeA * 180 / Math.PI >= deg });
-      const end = ev.find((e) => e.type === 'land' || e.type === 'splash');
-      if (end) return end.type;
-    }
-  };
-  assert.equal(release(2), 'splash');
-  assert.equal(release(24), 'land');
-});
-
 // ---- hammer throw ----------------------------------------------------------
 import { HAMMER, runHammer, turnQuality, cpuHammer } from '../src/game/sim/hammer.js';
 
@@ -1012,4 +903,112 @@ test('gym tests: springing off each end beats waiting; turning early is no rep',
     assert.ok(early.noReps > 10);
   }
   assert.ok(cpuGym(1, makeRng(1)) > cpuGym(0, makeRng(1)));
+});
+
+// ---- pistol shooting ---------------------------------------------------------
+import { PISTOL, ringFor, runSeries, cpuPistol } from '../src/game/sim/pistol.js';
+
+test('pistol: rings score 10 down to 5, nothing outside', () => {
+  assert.equal(ringFor(0), 10);
+  assert.equal(ringFor(2.9), 10);
+  assert.equal(ringFor(4), 9);
+  assert.equal(ringFor(17.5), 5);
+  assert.equal(ringFor(19), 0);
+});
+
+test('pistol: riding the kick down scores; rushing the next shot goes high', () => {
+  for (const time of PISTOL.series) {
+    const steady = runSeries(time, makeRng(3));
+    assert.equal(steady.shots.length, 5);
+    assert.ok(steady.score >= 46, `steady ${time}s: ${steady.score}`);
+  }
+  const rushed = runSeries(8, makeRng(3), { gap: 0.25 });
+  assert.ok(rushed.score < 35, `rushed ${rushed.score}`);
+  const slow = runSeries(4, makeRng(3), { gap: 0.9 });
+  assert.ok(slow.shots.length < 5, 'too slow on the 4 second series runs out of time');
+});
+
+test('pistol: a second hole in the same target scores nothing', async () => {
+  const { Series } = await import('../src/game/sim/pistol.js');
+  const s = new Series(8);
+  assert.equal(s.shot(PISTOL.targets[0], PISTOL.targetY).ring, 10);
+  assert.equal(s.shot(PISTOL.targets[0] + 1, PISTOL.targetY).ring, 0);
+  assert.ok(cpuPistol(1, makeRng(1)) > cpuPistol(0, makeRng(1)));
+});
+
+// ---- long jump ------------------------------------------------------------------
+import { LJ, runUp, jumpResult, landingGain, cpuLongJump } from '../src/game/sim/longjump.js';
+
+/** Perfect rhythm down the runway, `off` seconds late on every stride. */
+function ljRun(off = 0) {
+  const r = runUp();
+  let t = 0, foot = 'right';
+  r.step('left', 0);
+  while (r.x < LJ.runway) { t += 1 / 240; r.update(t); if (t >= r.nextIdeal + off) { r.step(foot, t); foot = foot === 'left' ? 'right' : 'left'; } }
+  return r.v;
+}
+
+test('long jump: a fast run, a good board and 20 degrees jumps near the record', () => {
+  const v = ljRun();
+  const best = jumpResult({ speed: v, behind: 0.03, angle: 20, early: LJ.reachAt });
+  assert.ok(best.distance > 8.6 && best.distance < 9.2, `best ${best.distance}`);
+  assert.ok(jumpResult({ speed: ljRun(0.05), behind: 0.03, angle: 20, early: LJ.reachAt }).distance < best.distance - 0.5);
+  assert.ok(jumpResult({ speed: v, behind: 0.03, angle: 30, early: LJ.reachAt }).distance < best.distance - 0.5, 'too steep');
+  assert.ok(jumpResult({ speed: v, behind: 0.03, angle: 12, early: LJ.reachAt }).distance < best.distance - 1, 'too flat');
+});
+
+test('long jump: over the board is a foul; behind it is lost distance', () => {
+  const v = ljRun();
+  assert.equal(jumpResult({ speed: v, behind: -0.01, angle: 20, early: 0.25 }).foul, true);
+  const near = jumpResult({ speed: v, behind: 0.01, angle: 20, early: 0.25 }).distance;
+  const far = jumpResult({ speed: v, behind: 0.4, angle: 20, early: 0.25 }).distance;
+  assert.ok(Math.abs(near - far - 0.39) < 0.02);
+});
+
+test('long jump: legs forward just before landing gains; never is a fall back', () => {
+  assert.ok(landingGain(LJ.reachAt) > landingGain(0.6) + 0.3);
+  assert.ok(landingGain(LJ.reachAt) > landingGain(0.02) + 0.3);
+  assert.ok(landingGain(null) < 0);
+  const rng = makeRng(4);
+  let hi = 0, lo = 0;
+  for (let i = 0; i < 50; i++) { hi += cpuLongJump(1, rng) ?? 0; lo += cpuLongJump(0, rng) ?? 0; }
+  assert.ok(hi > lo + 50);
+});
+
+// ---- gymnastic vault --------------------------------------------------------------
+import { GV, playVault, boardContact, blockQuality, Stick, cpuVaulting } from '../src/game/sim/gymvault.js';
+
+test('vault: a clean vault scores difficulty plus nearly 10', () => {
+  for (const vault of GV.vaults) {
+    const r = playVault({ vault });
+    assert.ok(Math.abs(r.landErr) < 2, `${vault.name} lands upright`);
+    assert.ok(r.total > vault.d + 9.5, `${vault.name} ${r.total}`);
+  }
+});
+
+test('vault: opening out early or late costs marks and can be a fall', () => {
+  const v = GV.vaults[0], clean = playVault({ vault: v }).total;
+  assert.ok(playVault({ vault: v, openErr: 0.06 }).total < clean - 0.5);
+  assert.ok(playVault({ vault: v, openErr: -0.08 }).total < clean - 0.5);
+  assert.ok(playVault({ vault: v, openErr: 0.2 }).ded.fall > 0, 'way over-rotated falls');
+});
+
+test('vault: the double front needs a fast run and a good block', () => {
+  const dbl = GV.vaults[2];
+  assert.ok(playVault({ vault: dbl, speed: 6 }).ded.fall > 0);
+  assert.ok(playVault({ vault: dbl, speed: 7, blockErr: 0.12 }).ded.fall > 0);
+  assert.ok(playVault({ vault: GV.vaults[0], speed: 6 }).ded.fall === 0, 'a single still makes it round');
+});
+
+test('vault: board and block timing', () => {
+  const v = GV.vmax;
+  assert.equal(boardContact(GV.runway - v * GV.hurdle, v).q, 1);
+  assert.equal(boardContact(GV.runway - v * GV.hurdle - 1, v).balk, 'SHORT OF THE BOARD');
+  assert.equal(boardContact(GV.runway - v * GV.hurdle + 1, v).balk, 'TOO CLOSE TO THE TABLE');
+  assert.equal(blockQuality(0.02), 1);
+  assert.ok(blockQuality(0.15) < 0.7 && blockQuality(null) < 0.2);
+  const st = new Stick(40);
+  while (!st.done) st.update(1 / 120, 0);
+  assert.ok(st.steps > 0, 'an unheld landing steps');
+  assert.ok(cpuVaulting(1, makeRng(2)) > cpuVaulting(0, makeRng(2)));
 });
